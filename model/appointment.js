@@ -6,23 +6,10 @@ var Appointment = mongoose.model("appointment",{
     process: String,
     notes: String,
     time: Number,
-    date: Number,
+    date: Date,
     doctor: String
 })
 
 module.exports = {
     Appointment
-}
-
-
-exports.create = function() {
-
-}
-
-exports.update = function() {
-
-}
-
-exports.delete = function() {
-
 }
