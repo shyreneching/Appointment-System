@@ -5,7 +5,6 @@ const urlencoder = bodyParser.urlencoded({
     extended: false
 }) 
 
-const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const path = require("path");
 var app = new express();
@@ -17,17 +16,12 @@ mongoose.connect(MONGOLAB_URI, {
     useNewUrlParser: true
   }).catch(err => console.log(err))
 
-
-app.use(cookieParser());
 app.use(urlencoder);
 app.use(session({
     resave: true,
     name: "appointment-system",
     saveUninitialized: true, 
-    secret: "secretpass",
-    cookie: {
-        maxAge: 100*60*60*1000
-    }
+    secret: "secretpass"
 }))
 app.use(express.static(path.join(__dirname, 'public')));
 
