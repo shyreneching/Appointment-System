@@ -1,10 +1,51 @@
 const express = require("express");
 const router = express.Router();
 const {Appointment} = require("../model/appointment");
+const fs = require('fs');
+
+// router.get("/", (req, res) => {
+//     res.render("addappointment.hbs");
+// })
+
+
+/*
+    Ty Added :)
+*/
 
 router.get("/", (req, res) => {
-    res.render("addappointment.hbs");
-})
+    res.render('page_templates/secretary_view.hbs');
+});
+
+/*
+    Getting templates for filtering 
+*/
+router.get("/week_all", function (request, result){
+    let all_week = fs.readFileSync('./views/module_templates/secretary_week_all.hbs', 'utf-8');
+    result.send(all_week);
+});
+
+router.get("/week_one", function (request, result){
+    let one_doc = fs.readFileSync('./views/module_templates/secretary_week_one_doctor.hbs', 'utf-8');
+    result.send(one_doc);
+});
+
+router.get("/week_unavailable", function (request, result){
+    let week_unavailable = fs.readFileSync('./views/module_templates/secretary_week_unavail.hbs', 'utf-8');
+    result.send(week_unavailable);
+});
+
+router.get("/week_available", function (request, result){
+    let week_available = fs.readFileSync('./views/module_templates/secretary_week_avail.hbs', 'utf-8');
+    result.send(week_available);
+});
+
+router.get("/table_header", function (request, result){
+    let table_header = fs.readFileSync('./views/module_templates/secretary_weekdates.hbs', 'utf-8');
+    result.send(table_header);
+});
+/*
+    End of Templates
+*/
 
 router.get("/appointmentlist", (req, res) => {
     Appointment.find({}, (err, docs)=>{
