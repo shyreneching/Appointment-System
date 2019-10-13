@@ -15,6 +15,7 @@ $(document).ready(function(){
             let date = $(this).calendar('get focusDate');
             setViewToDay();
             initializeTHead(date);
+            updateTableRows();
         }
     });
 
@@ -25,7 +26,7 @@ $(document).ready(function(){
                 $('.docs-avail').removeClass('disabled');
             } else if (value="day-view"){
                 $('.docs-avail').addClass('disabled');
-                let filterChoice = $('#filter-dropdown').dropdown('get value')
+                let filterChoice = $('#filter-dropdown').dropdown('get value');
 
                 if (filterChoice == "unav" || filterChoice == "av"){
                     $('#filter-dropdown').dropdown('set selected', 'all');
@@ -33,6 +34,7 @@ $(document).ready(function(){
             }
             let date = $('#standard_calendar').calendar('get focusDate');
             initializeTHead(date);
+            updateTableRows();
         }
     });
 
@@ -41,6 +43,7 @@ $(document).ready(function(){
         setViewToDay();
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
+        updateTableRows();
     });
 
     //Set Next and Prev Buttons
@@ -52,10 +55,12 @@ $(document).ready(function(){
             let nextDay = moment(date).clone().add(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
+            updateTableRows();
         } else {
             let nextWeek = moment(date).clone().add(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
+            updateTableRows();
         }
     });
 
@@ -67,10 +72,12 @@ $(document).ready(function(){
             let nextDay = moment(date).clone().subtract(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
+            updateTableRows();
         } else {
             let nextWeek = moment(date).clone().subtract(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
+            updateTableRows();
         }
     });
 
@@ -81,6 +88,7 @@ $(document).ready(function(){
 
         $('.active.dimmer').toggle();
         // Compile Data
+        $('.loader').toggle();
         let template = Handlebars.compile(data);
         $('#the-body').html(template(null));
 
@@ -88,64 +96,74 @@ $(document).ready(function(){
         $('#main-menu').sticky({
             context: '#schedule-table'
         });
+
+        
     });
 
     // Filter dropdown ajax calls
     $('#filter-dropdown').dropdown('setting', 'onChange', function(){
-        console.log('fire');
-        let choice = $(this).dropdown('get value');
-        let viewType = $('#view-chooser').dropdown('get value');
-        let actualName = $(this).dropdown('get text');
-
-        console.log('choice');
-
-        if (viewType == "week-view"){
-            if (choice == 'all'){
-                $('#the-body').html("");
-                $('.loader').toggle();
-                $.get("/secretary/week_all", function (data){
-                    let template = Handlebars.compile(data);
-                    $('.loader').toggle();
-                    $('#the-body').html(template(null));
-                });
-            } else if (choice == "unav"){
-                $('#the-body').html("");
-                $('.loader').toggle();
-                $.get("/secretary/week_unavailable", function (data){
-                    let template = Handlebars.compile(data);
-                    $('.loader').toggle();
-                    $('#the-body').html(template(null));
-                });
-            } else if (choice == "av"){
-                $('#the-body').html("");
-                $('.loader').toggle();
-                $.get("/secretary/week_available", function (data){
-                    let template = Handlebars.compile(data);
-                    $('.loader').toggle();
-                    $('#the-body').html(template(null));
-                });
-            } else {
-                $('#the-body').html("");
-                $('.loader').toggle();
-                $.get("/secretary/week_one", function (data){
-                    let template = Handlebars.compile(data);
-                    $('.loader').toggle();
-                    $('#the-body').html(template({name: actualName}));
-                });
-            }
-        } else {
-            if (choice =="all"){
-                $('#the-body').html("");
-                $('.loader').toggle();
-                $.get("/secretary/day_all", function (data){
-                    let template = Handlebars.compile(data);
-                    $('.loader').toggle();
-                    $('#the-body').html(template(null));
-                });
-            }
-        }
+        updateTableRows();
     });
 });
+
+function updateTableRows() {
+    let date = $('#standard_calendar').calendar('get focusDate');
+    let choice = $('#filter-dropdown').dropdown('get value');
+    let viewType = $('#view-chooser').dropdown('get value');
+    
+    console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
+    let actualName = $('#filter-dropdown').dropdown('get text');
+
+    if (viewType == "week-view") {
+        if (choice == 'all') {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/week_all", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template(null));
+            });
+        }
+        else if (choice == "unav") {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/week_unavailable", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template(null));
+            });
+        }
+        else if (choice == "av") {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/week_available", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template(null));
+            });
+        }
+        else {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/week_one", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template({ name: actualName }));
+            });
+        }
+    }
+    else {
+        if (choice == "all") {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/day_all", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template(null));
+            });
+        }
+    }
+}
 
 /*
 
@@ -245,6 +263,7 @@ async function initializeTHead(date){
             setViewToDay();
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
+            updateTableRows();
         });
     }
     
