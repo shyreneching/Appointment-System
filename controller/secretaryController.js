@@ -43,6 +43,11 @@ router.get("/table_header", function (request, result){
     let table_header = fs.readFileSync('./views/module_templates/secretary_weekdates.hbs', 'utf-8');
     result.send(table_header);
 });
+
+router.get("/day_all", function (request, result){
+    let all_week = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
+    result.send(all_week);
+});
 /*
     End of Templates
 */

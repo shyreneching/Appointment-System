@@ -4,16 +4,7 @@ $(document).ready(function(){
     //Initializes dropdown
     $('.ui.dropdown').dropdown();
     setViewToDay();
-
-    // Initializes
-    $.get("/secretary/week_all", function (data){
-        let template = Handlebars.compile(data);
-        $('.active.dimmer').toggle();
-        $('#the-body').html(template(null));
-        $('#main-menu').sticky({
-            context: '#schedule-table'
-        });
-    });
+    $('#filter-dropdown').dropdown('set selected', 'all');
 
     //Sets Calendar
     $('#standard_calendar').calendar({
@@ -34,10 +25,14 @@ $(document).ready(function(){
                 $('.docs-avail').removeClass('disabled');
             } else if (value="day-view"){
                 $('.docs-avail').addClass('disabled');
+                let filterChoice = $('#filter-dropdown').dropdown('get value')
+
+                if (filterChoice == "unav" || filterChoice == "av"){
+                    $('#filter-dropdown').dropdown('set selected', 'all');
+                }
             }
             let date = $('#standard_calendar').calendar('get focusDate');
             initializeTHead(date);
-            $('#filter-dropdown').dropdown('set selected', 'all');
         }
     });
 
@@ -81,44 +76,73 @@ $(document).ready(function(){
 
     // Initialize Table header
     initializeTHead(moment().toDate());
+    // Initializes to show today
+    $.get("/secretary/day_all", function (data){
+
+        $('.active.dimmer').toggle();
+        // Compile Data
+        let template = Handlebars.compile(data);
+        $('#the-body').html(template(null));
+
+        //Set up sticky top
+        $('#main-menu').sticky({
+            context: '#schedule-table'
+        });
+    });
 
     // Filter dropdown ajax calls
     $('#filter-dropdown').dropdown('setting', 'onChange', function(){
+        console.log('fire');
         let choice = $(this).dropdown('get value');
+        let viewType = $('#view-chooser').dropdown('get value');
         let actualName = $(this).dropdown('get text');
 
-        if (choice == 'all'){
-            $('#the-body').html("");
-            $('.loader').toggle();
-            $.get("/secretary/week_all", function (data){
-                let template = Handlebars.compile(data);
+        console.log('choice');
+
+        if (viewType == "week-view"){
+            if (choice == 'all'){
+                $('#the-body').html("");
                 $('.loader').toggle();
-                $('#the-body').html(template(null));
-            });
-        } else if (choice == "unav"){
-            $('#the-body').html("");
-            $('.loader').toggle();
-            $.get("/secretary/week_unavailable", function (data){
-                let template = Handlebars.compile(data);
+                $.get("/secretary/week_all", function (data){
+                    let template = Handlebars.compile(data);
+                    $('.loader').toggle();
+                    $('#the-body').html(template(null));
+                });
+            } else if (choice == "unav"){
+                $('#the-body').html("");
                 $('.loader').toggle();
-                $('#the-body').html(template(null));
-            });
-        } else if (choice == "av"){
-            $('#the-body').html("");
-            $('.loader').toggle();
-            $.get("/secretary/week_available", function (data){
-                let template = Handlebars.compile(data);
+                $.get("/secretary/week_unavailable", function (data){
+                    let template = Handlebars.compile(data);
+                    $('.loader').toggle();
+                    $('#the-body').html(template(null));
+                });
+            } else if (choice == "av"){
+                $('#the-body').html("");
                 $('.loader').toggle();
-                $('#the-body').html(template(null));
-            });
+                $.get("/secretary/week_available", function (data){
+                    let template = Handlebars.compile(data);
+                    $('.loader').toggle();
+                    $('#the-body').html(template(null));
+                });
+            } else {
+                $('#the-body').html("");
+                $('.loader').toggle();
+                $.get("/secretary/week_one", function (data){
+                    let template = Handlebars.compile(data);
+                    $('.loader').toggle();
+                    $('#the-body').html(template({name: actualName}));
+                });
+            }
         } else {
-            $('#the-body').html("");
-            $('.loader').toggle();
-            $.get("/secretary/week_one", function (data){
-                let template = Handlebars.compile(data);
+            if (choice =="all"){
+                $('#the-body').html("");
                 $('.loader').toggle();
-                $('#the-body').html(template({name: actualName}));
-            });
+                $.get("/secretary/day_all", function (data){
+                    let template = Handlebars.compile(data);
+                    $('.loader').toggle();
+                    $('#the-body').html(template(null));
+                });
+            }
         }
     });
 });
@@ -132,7 +156,6 @@ $(document).ready(function(){
 function setViewToDay() {
     $('#view-chooser').dropdown('set selected', 'day-view');
     $('.docs-avail').addClass('disabled');
-    $('#filter-dropdown').dropdown('set selected', 'all');
 }
 
 /*
@@ -199,6 +222,7 @@ async function initializeTHead(date){
         return data;
     });
 
+    // Compiles date data
     $('.loader').toggle();
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
