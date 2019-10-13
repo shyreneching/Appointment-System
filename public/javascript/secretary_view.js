@@ -161,6 +161,14 @@ function updateTableRows() {
                 $('.loader').toggle();
                 $('#the-body').html(template(null));
             });
+        } else {
+            $('#the-body').html("");
+            $('.loader').toggle();
+            $.get("/secretary/day_one", function (data) {
+                let template = Handlebars.compile(data);
+                $('.loader').toggle();
+                $('#the-body').html(template({ name: actualName }));
+            });
         }
     }
 }

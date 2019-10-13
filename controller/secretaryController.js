@@ -48,6 +48,11 @@ router.get("/day_all", function (request, result){
     let all_week = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
     result.send(all_week);
 });
+
+router.get("/day_one", function (request, result){
+    let one_day_doc = fs.readFileSync('./views/module_templates/secretary_day_one_doc.hbs', 'utf-8');
+    result.send(one_day_doc);
+});
 /*
     End of Templates
 */
