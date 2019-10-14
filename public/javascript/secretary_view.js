@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
 
 
     //Initializes dropdown
@@ -11,7 +11,7 @@ $(document).ready(function(){
         type: 'date',
         today: false,
         initialDate: moment().toDate(),
-        onChange: function(){
+        onChange: function () {
             let date = $(this).calendar('get focusDate');
             setViewToDay();
             initializeTHead(date);
@@ -21,14 +21,14 @@ $(document).ready(function(){
 
     // Set view chooser
     $('#view-chooser').dropdown({
-        onChange: function(value){
-            if (value=="week-view"){
+        onChange: function (value) {
+            if (value == "week-view") {
                 $('.docs-avail').removeClass('disabled');
-            } else if (value="day-view"){
+            } else if (value = "day-view") {
                 $('.docs-avail').addClass('disabled');
                 let filterChoice = $('#filter-dropdown').dropdown('get value');
 
-                if (filterChoice == "unav" || filterChoice == "av"){
+                if (filterChoice == "unav" || filterChoice == "av") {
                     $('#filter-dropdown').dropdown('set selected', 'all');
                 }
             }
@@ -39,7 +39,7 @@ $(document).ready(function(){
     });
 
     //Set Today
-    $('#today').click (function(){
+    $('#today').click(function () {
         setViewToDay();
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
@@ -47,11 +47,11 @@ $(document).ready(function(){
     });
 
     //Set Next and Prev Buttons
-    $('#next-button').click(function(){
+    $('#next-button').click(function () {
         let date = $('#standard_calendar').calendar('get focusDate');
         let viewType = $('#view-chooser').dropdown('get value');
 
-        if (viewType == 'day-view'){
+        if (viewType == 'day-view') {
             let nextDay = moment(date).clone().add(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
@@ -64,11 +64,11 @@ $(document).ready(function(){
         }
     });
 
-    $('#prev-button').click(function(){
+    $('#prev-button').click(function () {
         let date = $('#standard_calendar').calendar('get focusDate');
         let viewType = $('#view-chooser').dropdown('get value');
 
-        if (viewType == 'day-view'){
+        if (viewType == 'day-view') {
             let nextDay = moment(date).clone().subtract(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
@@ -83,8 +83,11 @@ $(document).ready(function(){
 
     // Initialize Table header
     initializeTHead(moment().toDate());
+
+
+
     // Initializes to show today
-    $.get("/secretary/day_all", function (data){
+    $.get("/secretary/day_all", function (data) {
 
         $('.active.dimmer').toggle();
         // Compile Data
@@ -97,11 +100,11 @@ $(document).ready(function(){
             context: '#schedule-table'
         });
 
-        
+
     });
 
     // Filter dropdown ajax calls
-    $('#filter-dropdown').dropdown('setting', 'onChange', function(){
+    $('#filter-dropdown').dropdown('setting', 'onChange', function () {
         updateTableRows();
     });
 });
@@ -110,7 +113,7 @@ function updateTableRows() {
     let date = $('#standard_calendar').calendar('get focusDate');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
-    
+
     console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
     let actualName = $('#filter-dropdown').dropdown('get text');
 
@@ -190,13 +193,13 @@ function setViewToDay() {
     This is also where the on clicks are set for each.
 
 */
-async function initializeTHead(date){
+async function initializeTHead(date) {
 
     $('.loader').toggle();
     let today = moment().toDate();
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
-    
+
     // gets days of week
     var days = [];
     var day = startOfWeek;
@@ -209,7 +212,7 @@ async function initializeTHead(date){
     let viewType = $('#view-chooser').dropdown('get value');
 
     // Set header Text
-    if (viewType == "week-view"){
+    if (viewType == "week-view") {
         $('#focus-date-header').text(`${moment(startOfWeek).format('MMMM D, YYYY')} - ${moment(endOfWeek).format('MMMM D, YYYY')}`);
     } else {
         $('#focus-date-header').text(`${moment(date).format('MMMM D, YYYY')}`);
@@ -217,7 +220,7 @@ async function initializeTHead(date){
 
     // Retrieve data
     let theadData = [];
-    for (var i = 0; i < 7; i++){
+    for (var i = 0; i < 7; i++) {
         let oneDate = days[i];
         let singleDate = moment(oneDate);
         //if chosen
@@ -225,26 +228,26 @@ async function initializeTHead(date){
 
         //if today
         let todayDay = "";
-        if(singleDate.isSame(today, 'date')){
-        todayDay = "yes";
-        } 
-        
-        if (viewType == "day-view"){
-        if(singleDate.isSame(date, 'date')){
-            chosenDay = "yes";
-        } 
+        if (singleDate.isSame(today, 'date')) {
+            todayDay = "yes";
+        }
+
+        if (viewType == "day-view") {
+            if (singleDate.isSame(date, 'date')) {
+                chosenDay = "yes";
+            }
         }
 
         let oneDay = {
-        "day" : moment(singleDate).format("dddd").toString(),
-        "date" : moment(singleDate).format("D").toString(),
-        "chosen" : chosenDay,
-        "today" : todayDay
+            "day": moment(singleDate).format("dddd").toString(),
+            "date": moment(singleDate).format("D").toString(),
+            "chosen": chosenDay,
+            "today": todayDay
         };
         theadData.push(oneDay);
     }
 
-    let htmlData = await $.get("/secretary/table_header", function (data){
+    let htmlData = await $.get("/secretary/table_header", function (data) {
         return data;
     });
 
@@ -253,7 +256,46 @@ async function initializeTHead(date){
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
-    for (var i = 0; i < 7; i++){
+
+    /*
+        These function allow the modal to function
+        */
+    $("#add-button").on("click", function () {
+        console.log("ashduiahdusah")
+        $('#modal1').modal('show');
+        
+        $('#modal1').modal({
+            onHidden: function(){
+                $("#multiDoctor").dropdown("clear")
+                $("#multiProcedure").dropdown("clear")
+                $("#lastName").val("");
+                $("#firstName").val("");
+                $("#timeInput").val("");
+                $("#dateInput").val("");
+                $("#notes").val("");
+            }
+        })
+
+        $("#calendar").calendar({   
+            type: 'date',
+            today: 'true'
+        })
+        $('#time_calendar')
+            .calendar({
+                type: 'time',
+                minTimeGap: 30
+            })
+            ;
+        $('#multiDoctor')
+            .dropdown()
+            ;
+
+        $('#multiProcedure')
+            .dropdown()
+            ;
+    })
+
+    for (var i = 0; i < 7; i++) {
         let oneDate = days[i];
         let singleDate = moment(oneDate);
         let dayID = moment(singleDate).format("dddd").toString();
@@ -261,18 +303,19 @@ async function initializeTHead(date){
         let dateString = moment(singleDate).format("D").toString();
         let compareDate = parseInt(dateString);
 
-        if (compareDate < 10){
+        if (compareDate < 10) {
             $(`#${dayID}`).addClass('thin');
         } else {
             $(`#${dayID}`).addClass('fat');
         }
 
-        $(`#${dayID}`).click(function(){
+        $(`#${dayID}`).click(function () {
             setViewToDay();
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
             updateTableRows();
         });
     }
-    
+
 };
+
