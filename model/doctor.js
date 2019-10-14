@@ -1,9 +1,8 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 var Doctor = mongoose.model("doctor",{
-    name: String,
-    status: String,
-    
+    name: String
 })
 
 module.exports = {
