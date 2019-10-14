@@ -14,8 +14,13 @@ const fs = require('fs');
     Ty Added :)
 */
 
-router.get("/", (req, res) => {
-    res.render('page_templates/secretary_view.hbs');
+router.get("/", async function(req, res) {
+    let doctor = await Doctor.getAllDoctors();
+    let process = await Process.getAllProcesses();
+    res.render('page_templates/secretary_view.hbs', {
+        doctor: doctor,
+        process: process
+    });
 });
 
 /*

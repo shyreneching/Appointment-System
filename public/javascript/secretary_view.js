@@ -280,10 +280,17 @@ async function initializeTHead(date) {
             type: 'date',
             today: 'true'
         })
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        maxDate.setHours(18);
+        maxDate.setMinutes(30);
         $('#time_calendar')
             .calendar({
                 type: 'time',
-                minTimeGap: 30
+                minTimeGap: 30,
+                maxDate: maxDate,
+                minDate: minDate
             })
             ;
         $('#multiDoctor')

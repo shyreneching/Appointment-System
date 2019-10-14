@@ -10,6 +10,10 @@ doctorSchema.statics.addDoctor = function(doctor, callback){
     doctor.save().then(callback);
 };
 
+doctorSchema.statics.getAllDoctors = async function(){
+    return await this.find();
+}
+
 var Doctor = mongoose.model("doctor", doctorSchema)
 
 module.exports = {

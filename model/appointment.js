@@ -2,7 +2,8 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
 
 var appointmentSchema = new Schema({
-    patientname: String,
+    firstname: String,
+    lastname: String,
     patientcontact: String,
     process: [{
         type: Schema.Types.ObjectId,
@@ -66,7 +67,8 @@ appointmentSchema.methods.updateAppointment = async function(appointmentID, upda
     return await this.updateOne({
         _id: appointmentID
     }, {
-        patientname,
+        firstname,
+        lastname,
         patientcontact,
         process,
         notes,
