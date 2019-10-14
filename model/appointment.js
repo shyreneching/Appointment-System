@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
 
-var Appointment = mongoose.model("appointment",{
+var appointmentSchema = new Schema({
     patientname: String,
     patientcontact: String,
     process: [{
@@ -16,6 +16,69 @@ var Appointment = mongoose.model("appointment",{
         ref: "Doctor"
     }]
 })
+
+appointmentSchema.statics.addAppointment = function(appointment, callback){
+    appointment.save().then(callback);
+};
+
+appointmentSchema.statics.getAll = async function(){
+    return await this.find();
+}
+
+appointmentSchema.statics.getAppointmentsByID = async function(appointmentID){
+    return await this.findOne({
+        _id: appointmentID
+    });
+};
+
+appointmentSchema.statics.getAppointmentsByDateandTime = async function(date, time){
+    return await this.findOne({
+        time, time,
+        date: date,
+    });
+};
+
+appointmentSchema.statics.getAppByDoctorandDateandTime = async function(doctorID, date, time){
+    return await this.findOne({
+        time, time,
+        date: date,
+        doctor:{
+            "$in": [doctorID]
+        }
+    });
+};
+
+appointmentSchema.statics.getDoctorAppointment = async function(doctorID){
+    return await this.findOne({
+        doctor:{
+            "$in": [doctorID]
+        }        
+    });
+};
+
+appointmentSchema.statics.delete = async function(appointmentID){
+    return await this.deleteOne({
+        _id : appointmentID
+    });
+}
+
+appointmentSchema.methods.updateAppointment = async function(appointmentID, updated){
+    return await this.updateOne({
+        _id: appointmentID
+    }, {
+        patientname,
+        patientcontact,
+        process,
+        notes,
+        time,
+        date,
+        doctor
+    }, {
+        new: true
+    }); 
+};
+
+var Appointment = mongoose.model("appointment",appointmentSchema)
 
 module.exports = {
     Appointment

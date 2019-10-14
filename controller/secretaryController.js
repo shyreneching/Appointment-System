@@ -69,7 +69,8 @@ router.get("/appointmentlist", (req, res) => {
         }
     })
 })
-
+//Get available doctors by getting the appointment dates and if 
+//wala siyang appointment on the time slot, it will mean available
 router.post("/create", (req, res) => {
 
     let patientname = req.body.pn
@@ -79,8 +80,6 @@ router.post("/create", (req, res) => {
     let time = req.body.time
     let date = req.body.date
     let doctor = req.body.doc
- 
-    console.log("hahaha")
 
     let appointment = new Appointment({
         patientname,
@@ -91,11 +90,16 @@ router.post("/create", (req, res) => {
         date,
         doctor
     })
-    appointment.save().then(() => {
-        res.session.msg = "Successfully added " + doc.patientname
-        res.redirect("/")
-    }, (err) => {
-        res.send(err)
+
+    Appointment.addAppointment(appointment, function(appointment){
+        if (req.session.colors_from_home){
+            res.redirect("/secretary");
+        } else {
+            res.redirect("/");
+        }
+        
+    }, (error)=>{
+        res.send(error);
     })
 })
 
