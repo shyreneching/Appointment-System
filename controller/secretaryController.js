@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const {Appointment} = require("../model/appointment");
+const {Doctor} = require("../model/doctor");
+const {Process} = require("../model/process");
 const fs = require('fs');
 
 // router.get("/", (req, res) => {
@@ -55,6 +57,37 @@ router.get("/day_one", function (request, result){
 });
 /*
     End of Templates
+*/
+
+/*
+    Temporary doctor adding routes for testing purposes, remove when done
+*/
+
+router.get("/adddoc", (req, res) => {
+    // let doctor = new Doctor({
+    //     firstname: "Jiminey",
+    //     lastname: "Cricket"
+    // });
+    // Doctor.addDoctor(doctor, function(doctor){
+    //     res.send(doctor);
+    // }, (error)=>{
+    //     res.send(error);
+    // })
+})
+
+router.get("/addproc", (req, res) => {
+    // let process = new Process({
+    //     processname: "Tartar Removal"
+    // });
+    // Process.addProcess(process, function(process){
+    //     res.send(process);
+    // }, (error)=>{
+    //     res.send(error);
+    // })
+})
+
+/*
+    End of Temp
 */
 
 router.get("/appointmentlist", (req, res) => {
