@@ -282,7 +282,7 @@ async function initializeTHead(date) {
         })
         var minDate = new Date();
         var maxDate = new Date();
-        minDate.setHours(8);
+        minDate.setHours(7);
         maxDate.setHours(18);
         maxDate.setMinutes(30);
         $('#time_calendar')
