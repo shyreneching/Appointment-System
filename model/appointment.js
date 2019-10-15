@@ -33,14 +33,14 @@ appointmentSchema.statics.getAppointmentsByID = async function(appointmentID){
 };
 
 appointmentSchema.statics.getAppointmentsByDateandTime = async function(date, time){
-    return await this.findOne({
+    return await this.find({
         time, time,
         date: date,
     });
 };
 
 appointmentSchema.statics.getAppByDoctorandDateandTime = async function(doctorID, date, time){
-    return await this.findOne({
+    return await this.find({
         time, time,
         date: date,
         doctor:{
@@ -50,7 +50,7 @@ appointmentSchema.statics.getAppByDoctorandDateandTime = async function(doctorID
 };
 
 appointmentSchema.statics.getDoctorAppointment = async function(doctorID){
-    return await this.findOne({
+    return await this.find({
         doctor:{
             "$in": [doctorID]
         }        

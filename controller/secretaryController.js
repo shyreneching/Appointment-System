@@ -5,6 +5,10 @@ const {Doctor} = require("../model/doctor");
 const {Process} = require("../model/process");
 const moment = require('moment');
 const fs = require('fs');
+const bodyparser = require("body-parser");
+const urlencoder = bodyparser.urlencoded({
+    extended : false
+});
 
 // router.get("/", (req, res) => {
 //     res.render("addappointment.hbs");
@@ -52,8 +56,10 @@ router.get("/table_header", function (request, result){
     result.send(table_header);
 });
 
-router.get("/day_all", async function (request, result){
-    let date = moment();
+router.post("/day_all", urlencoder, async function (request, result){
+    
+    let date = request.body.date;
+
     let all_week = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
     let timeSlotsArray = ["8:00 AM", "8:30 AM",
     "9:00 AM", "9:30 AM",
@@ -85,7 +91,7 @@ router.get("/day_all", async function (request, result){
 
         let data = {
             slot: timeSlot,
-            appointments: appoinments
+            appointments: appointments
         };
 
         dataArray.push(data);
