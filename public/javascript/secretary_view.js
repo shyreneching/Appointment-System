@@ -84,24 +84,19 @@ $(document).ready(function () {
     // Initialize Table header
     initializeTHead(moment().toDate());
 
-    let date = $('#standard_calendar').calendar('get focusDate');
+    let focusDate = $('#standard_calendar').calendar('get focusDate');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
+    let momentDate = moment(focusDate).format("MMM D YYYY").toString();
     let sentData = {
-        date: date,
-        choice: choice,
-        viewType: viewType
+        date: momentDate
     };
 
-
     $.post("/secretary/day_all", sentData, function (data) {
-        
         $('.active.dimmer').toggle();
         // Compile Data
         $('.loader').toggle();
-        console.log(data);
-        console.log(data.htmlData);
         let template = Handlebars.compile(data.htmlData);
         $('.loader').toggle();
         $('#the-body').html(template(data.data));
@@ -124,9 +119,7 @@ function updateTableRows() {
     let viewType = $('#view-chooser').dropdown('get value');
 
     let sentData = {
-        date: date,
-        choice: choice,
-        viewType: viewType
+        "date": moment(date).format("MMM D YYYY").toString()
     };
 
     console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
