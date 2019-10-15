@@ -270,37 +270,46 @@ async function initializeTHead(date) {
                 $("#multiProcedure").dropdown("clear")
                 $("#lastName").val("");
                 $("#firstName").val("");
-                $("#timeInput").val("");
-                $("#dateInput").val("");
+                $("#date_calendar").calendar('set date', null, true, false);
+                $("#time_calendar").calendar('set date', null, true, false);
                 $("#notes").val("");
             }
         })
 
-        $("#calendar").calendar({   
+        $("#date_calendar").calendar({   
             type: 'date',
             today: 'true'
         })
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(7);
+        minDate.setMinutes(30);
         maxDate.setHours(18);
-        maxDate.setMinutes(30);
-        $('#time_calendar')
-            .calendar({
-                type: 'time',
-                minTimeGap: 30,
-                maxDate: maxDate,
-                minDate: minDate
-            })
-            ;
-        $('#multiDoctor')
-            .dropdown()
-            ;
+        $('#time_calendar').calendar({
+            type: 'time',
+            minTimeGap: 30,
+            maxDate: maxDate,
+            minDate: minDate
+        });
+        $('#multiDoctor').dropdown();
+        $('#multiProcedure').dropdown();
 
-        $('#multiProcedure')
-            .dropdown()
-            ;
-    })
+        $('#save-button').on('click', function(){
+            let firstName = $('#firstName').val();
+            let lastName = $('#lastName').val();
+            let dateInput = $('#date_calendar').calendar('get focusDate');
+            let timeInput = $('#time_calendar').calendar('get focusDate');
+            let doctors = $("#multiDoctor").dropdown("get value");
+            let procedures = $("#multiProcedure").dropdown("get value");
+
+            console.log(firstName);
+            console.log(lastName);
+            console.log(dateInput);
+            console.log(timeInput);
+            console.log(doctors);
+            console.log(procedures);
+        });
+    });
 
     for (var i = 0; i < 7; i++) {
         let oneDate = days[i];
