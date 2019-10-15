@@ -84,23 +84,32 @@ $(document).ready(function () {
     // Initialize Table header
     initializeTHead(moment().toDate());
 
+    let date = $('#standard_calendar').calendar('get focusDate');
+    let choice = $('#filter-dropdown').dropdown('get value');
+    let viewType = $('#view-chooser').dropdown('get value');
+
+    let sentData = {
+        date: date,
+        choice: choice,
+        viewType: viewType
+    };
 
 
-    // Initializes to show today
-    $.get("/secretary/day_all", function (data) {
-
+    $.post("/secretary/day_all", sentData, function (data) {
+        
         $('.active.dimmer').toggle();
         // Compile Data
         $('.loader').toggle();
-        let template = Handlebars.compile(data);
-        $('#the-body').html(template(null));
+        console.log(data);
+        console.log(data.htmlData);
+        let template = Handlebars.compile(data.htmlData);
+        $('.loader').toggle();
+        $('#the-body').html(template(data.data));
 
         //Set up sticky top
         $('#main-menu').sticky({
             context: '#schedule-table'
         });
-
-
     });
 
     // Filter dropdown ajax calls
@@ -113,6 +122,12 @@ function updateTableRows() {
     let date = $('#standard_calendar').calendar('get focusDate');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
+
+    let sentData = {
+        date: date,
+        choice: choice,
+        viewType: viewType
+    };
 
     console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
     let actualName = $('#filter-dropdown').dropdown('get text');
@@ -159,7 +174,9 @@ function updateTableRows() {
         if (choice == "all") {
             $('#the-body').html("");
             $('.loader').toggle();
-            $.get("/secretary/day_all", function (data) {
+            $.post("/secretary/day_all", sentData, function (data) {
+                console.log(data);
+                console.log(data.htmlData);
                 let template = Handlebars.compile(data.htmlData);
                 $('.loader').toggle();
                 $('#the-body').html(template(data.data));
