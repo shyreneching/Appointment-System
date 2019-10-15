@@ -14,6 +14,23 @@ doctorSchema.statics.getAllDoctors = async function(){
     return await this.find();
 }
 
+doctorSchema.statics.delete = async function(doctorID){
+    return await this.deleteOne({
+        _id : doctorID
+    });
+}
+
+doctorSchema.methods.updateDoctor = async function(doctorID, updated){
+    return await this.updateOne({
+        _id: doctorID
+    }, {
+        firstname,
+        lastname
+    }, {
+        new: true
+    }); 
+};
+
 var Doctor = mongoose.model("doctor", doctorSchema)
 
 module.exports = {
