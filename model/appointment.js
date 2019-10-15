@@ -80,6 +80,18 @@ appointmentSchema.methods.updateAppointment = async function(appointmentID, upda
     }); 
 };
 
+appointmentSchema.methods.populateDoctor = async function(){
+    return await Appointment.findOne({
+        _id: this._id
+    }).populate("doctor");
+};
+
+appointmentSchema.methods.populateProcess = async function(){
+    return await Appointment.findOne({
+        _id: this._id
+    }).populate("process");
+};
+
 var Appointment = mongoose.model("appointment",appointmentSchema)
 
 module.exports = {
