@@ -160,9 +160,9 @@ function updateTableRows() {
             $('#the-body').html("");
             $('.loader').toggle();
             $.get("/secretary/day_all", function (data) {
-                let template = Handlebars.compile(data);
+                let template = Handlebars.compile(data.htmlData);
                 $('.loader').toggle();
-                $('#the-body').html(template(null));
+                $('#the-body').html(template(data.data));
             });
         } else {
             $('#the-body').html("");
