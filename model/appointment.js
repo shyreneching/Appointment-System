@@ -1,6 +1,9 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
 
+
+const {Doctor} = require("../model/doctor");
+
 var appointmentSchema = new Schema({
     firstname: String,
     lastname: String,
@@ -80,16 +83,10 @@ appointmentSchema.methods.updateAppointment = async function(appointmentID, upda
     }); 
 };
 
-appointmentSchema.methods.populateDoctor = async function(){
+appointmentSchema.methods.populateDoctorAndProcess = async function(){
     return await Appointment.findOne({
         _id: this._id
-    }).populate("doctor");
-};
-
-appointmentSchema.methods.populateProcess = async function(){
-    return await Appointment.findOne({
-        _id: this._id
-    }).populate("process");
+    }).populate("process doctor");
 };
 
 var Appointment = mongoose.model("appointment",appointmentSchema)

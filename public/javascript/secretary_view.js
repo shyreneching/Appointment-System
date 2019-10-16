@@ -283,6 +283,17 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
+    $('.ui.form').form({
+        fields: {
+            lastName: 'empty',
+            firstName: 'empty',
+            time_calendar: 'empty',
+            date_calendar: 'empty',
+            doctors: 'empty',
+            procedures: 'empty'
+        }
+    });
+
     $("#add-button").on("click", function () {
         console.log("ashduiahdusah")
         $('#modal1').modal('show');
@@ -292,6 +303,7 @@ async function initializeTHead(date) {
             type: 'date',
             today: 'true',
             disabledDaysOfWeek: [0],
+            initialDate: moment().toDate()
         })
 
         
@@ -305,7 +317,8 @@ async function initializeTHead(date) {
             type: 'time',
             minTimeGap: 30,
             maxDate: maxDate,
-            minDate: minDate
+            minDate: minDate,
+            initialDate: minDate
         });
 
         $('#multiDoctor').dropdown();
@@ -342,22 +355,22 @@ async function initializeTHead(date) {
                 $("#lastName").val("");
                 $("#firstName").val("");
                 $("#notes").val("");
+                $("#contact").val("");
 
-                $("#fieldDoctors").removeClass("error");
-                $("#fieldProcedures").removeClass("error");
-                $("#fieldLastName").removeClass("error");
-                $("#fieldFirstName").removeClass("error");
-                $("#fieldDateCalendar").removeClass("error");
-                $("#fieldTimeCalendar").removeClass("error");
+                $("#fieldProcedures").removeClass("error")
+                $("#fieldDoctors").removeClass("error")
+                $("#fieldFirstName").removeClass("error")
+                $("#fieldLastName").removeClass("error")
             },
-
             onApprove: function () {
                 let firstName = $('#firstName').val();
                 let lastName = $('#lastName').val();
+                let contact = $('#contact').val();
                 let dateInput = $('#date_calendar').calendar('get focusDate');
                 let timeInput = $('#time_calendar').calendar('get focusDate');
                 let doctors = $("#multiDoctor").dropdown("get value");
                 let procedures = $("#multiProcedure").dropdown("get value");
+                let notes = $("#notes").val();
 
                 console.log(dateInput);
                 console.log(timeInput);
@@ -373,17 +386,16 @@ async function initializeTHead(date) {
                     flag = false;
                 }
 
-                if (moment().format("MM[/]DD[/]YY") == moment(dateInput).format("MM[/]DD[/]YY")) {
-                    $("#fieldDateCalendar").addClass("error")
-                    flag = false;
-                }
+                // if (moment().format("MM[/]DD[/]YY") == moment(dateInput).format("MM[/]DD[/]YY")) {
+                //     $("#fieldDateCalendar").addClass("error")
+                //     flag = false;
+                // }
 
                 
-                if (moment().format("H[:]MM") == moment(timeInput).format("H[:]MM")) {
-                    $("#fieldTimeCalendar").addClass("error")
-                    flag = false;
-                }
-
+                // if (moment().format("H[:]MM") == moment(timeInput).format("H[:]MM")) {
+                //     $("#fieldTimeCalendar").addClass("error")
+                //     flag = false;
+                // }
 
                 if (doctors === undefined || doctors.length == 0) {
                     $("#fieldDoctors").addClass("error")
@@ -393,6 +405,23 @@ async function initializeTHead(date) {
                 if (procedures === undefined || procedures.length == 0) {
                     $("#fieldProcedures").addClass("error")
                     flag = false;
+                }
+
+                // if all fields are filled
+                if (flag){
+                    let ajaxData = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        contact: contact,
+                        dateInput: moment(dateInput).format("MMM D YYYY").toString(),
+                        timeInput: moment(timeInput).format("H:mm A").toString(),
+                        doctors: doctors,
+                        procedures: procedures,
+                        notes: notes
+                    };
+
+                    console.log(ajaxData);
+                    $.post("/secretary/create", ajaxData);
                 }
                 return flag;
 

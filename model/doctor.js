@@ -9,7 +9,7 @@ var doctorSchema = new Schema({
 doctorSchema.statics.getDoctorByID = async function(doctorID){
     return await this.findOne({
         _id: doctorID
-    });
+    }); 
 };
 
 doctorSchema.statics.addDoctor = function(doctor, callback){
@@ -37,7 +37,7 @@ doctorSchema.methods.updateDoctor = async function(doctorID, updated){
     }); 
 };
 
-var Doctor = mongoose.model("doctor", doctorSchema)
+var Doctor = mongoose.model("Doctor", doctorSchema)
 
 module.exports = {
     Doctor

@@ -4,7 +4,7 @@ const moment = require('moment');
 const fs = require('fs');
 const bodyparser = require("body-parser");
 const urlencoder = bodyparser.urlencoded({
-    extended : false
+    extended : true
 });
 
 // router.get("/", (req, res) => {
@@ -89,8 +89,7 @@ router.post("/day_all", urlencoder, async function (request, result){
         for (var k = 0; k < appointmentlist.length; k++){
             let appointment = appointmentlist[i];
             //populate necessary info
-            appointment = await appointment.populateDoctor();
-            appointment = await appointment.populateProcess();
+            appointment = await appointment.populateDoctorAndProcess();
             appointments.push(appointment);
         }
 
@@ -146,8 +145,7 @@ router.post("/day_one", urlencoder, async function (request, result){
         for (var k = 0; k < appointmentlist.length; k++){
             let appointment = appointmentlist[i];
             //populate necessary info
-            appointment = await appointment.populateDoctor();
-            appointment = await appointment.populateProcess();
+            appointment = await appointment.populateDoctorAndProcess();
             appointments.push(appointment);
         }
 
@@ -233,28 +231,36 @@ router.get("/appointmentlist", (req, res) => {
 })
 //Get available doctors by getting the appointment dates and if 
 //wala siyang appointment on the time slot, it will mean available
-router.post("/create", (req, res) => {
+router.post("/create", urlencoder, (req, res) => {
 
-    let patientname = req.body.pn
-    let patientcontact = req.body.pc
-    let process = req.body.pp
-    let notes = req.body.note
-    let time = req.body.time
-    let date = req.body.date
-    let doctor = req.body.doc
+    console.log(req.body);
+    let firstname = req.body.firstName;
+    let lastname = req.body.lastName;
+    let patientcontact = req.body.contact;
+    let process = req.body["procedures[]"];
+    let notes = req.body.notes;
+    let time = req.body.timeInput;
+    let date = req.body.dateInput;
+    let doctor = req.body["doctors[]"];
+
+    console.log(process);
+    console.log(doctor);
 
     let appointment = new Appointment({
-        patientname,
+        firstname,
+        lastname,
         patientcontact,
         process,
         notes,
         time,
         date,
         doctor
-    })
+    });
+
+    console.log(appointment);
 
     Appointment.addAppointment(appointment, function(appointment){
-        if (req.session.colors_from_home){
+        if (appointment){
             res.redirect("/secretary");
         } else {
             res.redirect("/");
