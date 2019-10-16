@@ -293,6 +293,13 @@ async function initializeTHead(date) {
                 $("#date_calendar").calendar('set date', null, true, false);
                 $("#time_calendar").calendar('set date', null, true, false);
                 $("#notes").val("");
+
+                $("#fieldDoctors").removeClass("error");
+                $("#fieldProcedures").removeClass("error");
+                $("#fieldLastName").removeClass("error");
+                $("#fieldFirstName").removeClass("error");
+                $("#fieldDateCalendar").removeClass("error");
+                $("#fieldTimeCalendar").removeClass("error");
             },
 
             onApprove: function () {
