@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 var accountSchema = new Schema({
     usernamename: String,
-    password: password, 
+    password: String, 
     accountType: String
 })
 
@@ -21,7 +21,7 @@ accountSchema.statics.delete = async function(accountID){
     });
 }
 
-accountSchema.methods.updateDoctor = async function(accountID, updated){
+accountSchema.methods.updateAccount = async function(accountID, updated){
     return await this.updateOne({
         _id: accountID
     }, {

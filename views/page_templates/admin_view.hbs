@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.7.8/semantic.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.7.8/semantic.min.js"></script>
+</head>
+
+<body>
+  <div class="ui top attached tabular menu">
+    <a class="item active" data-tab="first">Users</a>
+    <a class="item" data-tab="second">Dentists</a>
+    <a class="item" data-tab="third">Procedures</a>
+  </div>
+  <div class="ui bottom attached tab segment active" data-tab="first">
+    <table class="ui striped table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Password</th>
+          <th class="center aligned">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each user}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{password}}</td>
+          <td class="center aligned">
+            <button class="ui button" data-id="{{id of user}}">Edit</button>
+            <button class="negative ui button" data-id="{{id of user}}">Delete</button>
+          </td>
+        </tr>
+        {{/each}}
+
+
+        <!-- <tr>
+          <td>Bob</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Joe</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>@#!@#</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Rob</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Dom</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Jamie</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Jill</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Job</td>
+          <td>***************</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr> -->
+        <tr>
+          <button class="ui green basic button">
+            Add
+          </button>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="second">
+    <table class="ui striped table">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th class="center aligned">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each dentist}}
+        <tr>
+          <td>{{firstName}}</td>
+          <td>{{lastName}}</td>
+          <td class="center aligned">
+            <button class="ui button" data-id="{{id of user}}">Edit</button>
+            <button class="negative ui button" data-id="{{id of user}}">Delete</button>
+          </td>
+        </tr>
+
+        {{!-- <tr>
+          <td>Bob</td>
+          <td>ho</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Joe</td>
+          <td>tan</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>@#!@#</td>
+          <td>tan</td>
+
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Rob</td>
+          <td>tan</td>
+
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Dom</td>
+          <td>tan</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Jamie</td>
+          <td>tan</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Jill</td>
+          <td>tan</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Job</td>
+          <td>tan</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr> --}}
+        <tr>
+          <button class="ui green basic button">
+            Add
+          </button>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="third">
+    <table class="ui striped table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="center aligned">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each procedure}}
+        <tr>
+          <td>{{name}}</td>
+          <td class="center aligned">
+            <button class="ui button" data-id="{{id of user}}">Edit</button>
+            <button class="negative ui button" data-id="{{id of user}}">Delete</button>
+          </td>
+        </tr>
+        {{/each}}
+        {{!-- <tr>
+          <td>Tooth removal</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Teeth repair</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Babysitting teeth</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Pasta</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Replacement teeth</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Opera</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Open wide</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr>
+        <tr>
+          <td>Idk even</td>
+          <td class="center aligned">
+            <button class="ui button">Edit</button>
+            <button class="negative ui button">Delete</button>
+
+          </td>
+        </tr> --}}
+        <tr>
+          <button class="ui green basic button">
+            Add
+          </button>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    $('.menu .item')
+      .tab()
+      ;
+  </script>
+</body>
+
+</html>
