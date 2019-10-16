@@ -1,8 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const {Appointment} = require("../model/appointment");
-const {Doctor} = require("../model/doctor");
-const {Process} = require("../model/process");
 const moment = require('moment');
 const fs = require('fs');
 const bodyparser = require("body-parser");
@@ -13,9 +10,13 @@ const urlencoder = bodyparser.urlencoded({
 // router.get("/", (req, res) => {
 //     res.render("addappointment.hbs");
 // })
+// External files imports
 
+const {Appointment} = require("../model/appointment");
+const {Doctor} = require("../model/doctor");
+const {Process} = require("../model/process");
 
-/*
+/* 
     Ty Added :)
 */
 
@@ -58,34 +59,95 @@ router.get("/table_header", function (request, result){
 
 router.post("/day_all", urlencoder, async function (request, result){
     
+    // Get the date from sent data
     let date = request.body.date;
 
+    // Load up the html template
     let all_week = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
+
+    // Array for iterating time slots
     let timeSlotsArray = ["8:00 AM", "8:30 AM",
-    "9:00 AM", "9:30 AM",
-    "10:00 AM", "10:30 AM",
-    "11:00 AM", "11:30 AM",
-    "12:00 PM", "12:30 PM",
-    "1:00 PM", "1:30 PM",
-    "12:00 PM", "12:30 PM",
-    "1:00 PM", "1:30 PM",
-    "2:00 PM", "2:30 PM",
-    "3:00 PM", "3:30 PM",
-    "4:00 PM", "4:30 PM",
-    "5:00 PM", "5:30 PM",
-    "6:00 PM"];
+        "9:00 AM", "9:30 AM",
+        "10:00 AM", "10:30 AM",
+        "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"];
 
     let dataArray = [];
-
     for (var i = 0; i < timeSlotsArray.length; i++){
         let timeSlot = timeSlotsArray[i];
+        // get all appointments in this date and time slot
         let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
         let appointments = [];
         for (var k = 0; k < appointmentlist.length; k++){
             let appointment = appointmentlist[i];
+            //populate necessary info
             appointment = await appointment.populateDoctor();
             appointment = await appointment.populateProcess();
-            // populate the procedure
+            appointments.push(appointment);
+        }
+
+        let data = {
+            slot: timeSlot,
+            appointments: appointments
+        };
+
+        dataArray.push(data);
+    }
+
+    let final = {
+        data: dataArray
+    }
+
+
+
+    result.send({
+        htmlData: all_week,
+        data: final
+    });
+});
+
+router.post("/day_one", urlencoder, async function (request, result){
+    // Get the date from sent data
+    let date = request.body.date;
+    let doctorID = request.body.doctor;
+
+    // Load up the html template
+    let one_day_doc = fs.readFileSync('./views/module_templates/secretary_day_one_doc.hbs', 'utf-8');
+
+    // Array for iterating time slots
+    let timeSlotsArray = ["8:00 AM", "8:30 AM",
+        "9:00 AM", "9:30 AM",
+        "10:00 AM", "10:30 AM",
+        "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"];
+
+    let dataArray = [];
+    for (var i = 0; i < timeSlotsArray.length; i++){
+        let timeSlot = timeSlotsArray[i];
+        // get all appointments in this date and time slot
+        let appointmentlist = await Appointment.getAppByDoctorandDateandTime(doctorID, date, timeSlot);
+        let appointments = [];
+        for (var k = 0; k < appointmentlist.length; k++){
+            let appointment = appointmentlist[i];
+            //populate necessary info
+            appointment = await appointment.populateDoctor();
+            appointment = await appointment.populateProcess();
             appointments.push(appointment);
         }
 
@@ -98,16 +160,10 @@ router.post("/day_all", urlencoder, async function (request, result){
     }
 
 
-
     result.send({
-        htmlData: all_week,
+        htmlData: one_day_doc,
         data: dataArray
     });
-});
-
-router.get("/day_one", function (request, result){
-    let one_day_doc = fs.readFileSync('./views/module_templates/secretary_day_one_doc.hbs', 'utf-8');
-    result.send(one_day_doc);
 });
 /*
     End of Templates
