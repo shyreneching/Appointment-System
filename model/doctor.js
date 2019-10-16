@@ -6,6 +6,12 @@ var doctorSchema = new Schema({
     lastname: String
 })
 
+doctorSchema.statics.getDoctorsByID = async function(doctorID){
+    return await this.findOne({
+        _id: doctorID
+    });
+};
+
 doctorSchema.statics.addDoctor = function(doctor, callback){
     doctor.save().then(callback);
 };

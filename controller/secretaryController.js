@@ -106,8 +106,6 @@ router.post("/day_all", urlencoder, async function (request, result){
         data: dataArray
     }
 
-
-
     result.send({
         htmlData: all_week,
         data: final
@@ -159,6 +157,11 @@ router.post("/day_one", urlencoder, async function (request, result){
         dataArray.push(data);
     }
 
+    let doctorFound = await Doctor.getDoctorById(doctorID);
+    let final = {
+        doctor: doctorFound,
+        data: dataArray
+    }
 
     result.send({
         htmlData: one_day_doc,
