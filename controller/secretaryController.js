@@ -117,6 +117,8 @@ router.post("/day_one", urlencoder, async function (request, result){
     let date = request.body.date;
     let doctorID = request.body.doctor;
 
+    console.log(doctorID);
+
     // Load up the html template
     let one_day_doc = fs.readFileSync('./views/module_templates/secretary_day_one_doc.hbs', 'utf-8');
 
@@ -157,7 +159,7 @@ router.post("/day_one", urlencoder, async function (request, result){
         dataArray.push(data);
     }
 
-    let doctorFound = await Doctor.getDoctorById(doctorID);
+    let doctorFound = await Doctor.getDoctorByID(doctorID);
     let final = {
         doctor: doctorFound,
         data: dataArray
@@ -165,7 +167,7 @@ router.post("/day_one", urlencoder, async function (request, result){
 
     result.send({
         htmlData: one_day_doc,
-        data: dataArray
+        data: final
     });
 });
 /*

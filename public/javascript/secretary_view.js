@@ -177,20 +177,23 @@ function updateTableRows() {
             });
         } else {
 
+            //Some Screen flair
+            $('#the-body').html("");
+            $('.loader').toggle();
+
+
+            console.log(choice);
             let sendData = {
                 "date": moment(date).format("MMM D YYYY").toString(),
                 "doctor": choice
             };
 
-            //Some Screen flair
-            $('#the-body').html("");
-            $('.loader').toggle();
-
+            
             // The ajax query
             $.post("/secretary/day_one", sendData, function (data) {
-                let template = Handlebars.compile(data);
+                let template = Handlebars.compile(data.htmlData);
                 $('.loader').toggle();
-                $('#the-body').html(template({ name: actualName }));
+                $('#the-body').html(template(data.data));
             });
         }
     }

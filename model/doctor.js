@@ -6,7 +6,7 @@ var doctorSchema = new Schema({
     lastname: String
 })
 
-doctorSchema.statics.getDoctorsByID = async function(doctorID){
+doctorSchema.statics.getDoctorByID = async function(doctorID){
     return await this.findOne({
         _id: doctorID
     });
