@@ -81,6 +81,10 @@ $(document).ready(function () {
         }
     });
 
+
+    
+
+
     // Initialize Table header
     initializeTHead(moment().toDate());
 
@@ -279,10 +283,57 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
-
     $("#add-button").on("click", function () {
         console.log("ashduiahdusah")
         $('#modal1').modal('show');
+
+            // Initialize popup stuff
+        $("#date_calendar").calendar({
+            type: 'date',
+            today: 'true',
+            disabledDaysOfWeek: [0],
+        })
+
+        
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        minDate.setMinutes(0);
+        maxDate.setHours(18);
+        maxDate.setMinutes(0);
+        $('#time_calendar').calendar({
+            type: 'time',
+            minTimeGap: 30,
+            maxDate: maxDate,
+            minDate: minDate
+        });
+
+        $('#multiDoctor').dropdown();
+        $('#multiProcedure').dropdown();
+
+        $("#lastName").keypress(function(){
+            $("#fieldLastName").removeClass("error")
+        })
+
+        $("#firstName").keypress(function(){
+            $("#fieldFirstName").removeClass("error")
+        })
+
+        $("#date_calendar").on("click", function(){
+            $("#fieldDateCalendar").removeClass("error")
+        })
+
+        $("#time_calendar").on("click", function(){
+            $("#fieldTimeCalendar").removeClass("error")
+        })
+
+        $("#fieldDoctors").on("click", function(){
+            $("#fieldDoctors").removeClass("error")
+        })
+
+        $("#fieldProcedures").on("click", function(){
+            $("#fieldProcedures").removeClass("error")
+        })
 
         $('#modal1').modal({
             onHidden: function () {
@@ -290,8 +341,6 @@ async function initializeTHead(date) {
                 $("#multiProcedure").dropdown("clear")
                 $("#lastName").val("");
                 $("#firstName").val("");
-                $("#date_calendar").calendar('set date', null, true, false);
-                $("#time_calendar").calendar('set date', null, true, false);
                 $("#notes").val("");
 
                 $("#fieldDoctors").removeClass("error");
@@ -310,6 +359,8 @@ async function initializeTHead(date) {
                 let doctors = $("#multiDoctor").dropdown("get value");
                 let procedures = $("#multiProcedure").dropdown("get value");
 
+                console.log(dateInput);
+                console.log(timeInput);
                 var flag = true;
 
                 if (lastName == "") {
@@ -343,85 +394,11 @@ async function initializeTHead(date) {
                     $("#fieldProcedures").addClass("error")
                     flag = false;
                 }
-
-                console.log(firstName);
-                console.log(lastName);
-                console.log(dateInput);
-                console.log(timeInput);
-                console.log(doctors);
-                console.log(procedures);
                 return flag;
 
             }
         })
-
-        $("#date_calendar").calendar({
-            type: 'date',
-            today: 'true',
-            disabledDaysOfWeek: [0],
-            
-        })
-        var minDate = new Date();
-        var maxDate = new Date();
-        minDate.setHours(8);
-        minDate.setMinutes(0);
-        maxDate.setHours(18);
-        maxDate.setMinutes(0);
-        $('#time_calendar').calendar({
-            type: 'time',
-            minTimeGap: 30,
-            maxDate: maxDate,
-            minDate: minDate
-        });
-        $('#multiDoctor').dropdown();
-        $('#multiProcedure').dropdown();
-
-        // $('#save-button').on('click', function () {
-        //     let firstName = $('#firstName').val();
-        //     let lastName = $('#lastName').val();
-        //     let dateInput = $('#date_calendar').calendar('get focusDate');
-        //     let timeInput = $('#time_calendar').calendar('get focusDate');
-        //     let doctors = $("#multiDoctor").dropdown("get value");
-        //     let procedures = $("#multiProcedure").dropdown("get value");
-
-        //     console.log(firstName);
-        //     console.log(lastName);
-        //     console.log(dateInput);
-        //     console.log(timeInput);
-        //     console.log(doctors);
-        //     console.log(procedures);
-        // });
     });
-
-    $("#lastName").keypress(function(){
-        $("#fieldLastName").removeClass("error")
-    })
-
-    $("#firstName").keypress(function(){
-        $("#fieldFirstName").removeClass("error")
-    })
-
-    $("#date_calendar").on("click", function(){
-        $("#fieldDateCalendar").removeClass("error")
-    })
-
-    $("#time_calendar").on("click", function(){
-        $("#fieldTimeCalendar").removeClass("error")
-    })
-
-    $("#fieldDoctors").on("click", function(){
-        $("#fieldDoctors").removeClass("error")
-    })
-
-    $("#fieldProcedures").on("click", function(){
-        $("#fieldProcedures").removeClass("error")
-    })
-
-
-    /*
-
-
-    */
 
     for (var i = 0; i < 7; i++) {
         let oneDate = days[i];

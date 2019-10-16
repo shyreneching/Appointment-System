@@ -170,6 +170,20 @@ router.post("/day_one", urlencoder, async function (request, result){
         data: final
     });
 });
+
+router.post("/check_valid_appointment", urlencoder, async function (request, result){
+    // Get the date from sent data
+    let date = request.body.date;
+    let time = request.body.time;
+    let doctors = request.body.doctors;
+    console.log(date);
+    console.log(time);
+    console.log(doctors);
+
+    
+
+    result.send("Something");
+});
 /*
     End of Templates
 */
