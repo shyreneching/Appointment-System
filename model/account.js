@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 var accountSchema = new Schema({
-    usernamename: String,
-    password: password, 
+    username: String,
+    password: String, 
     accountType: String
 })
 
@@ -11,7 +11,7 @@ accountSchema.statics.addAccount = function(account, callback){
     account.save().then(callback);
 };
 
-accountSchema.statics.getAllAcounts = async function(){
+accountSchema.statics.getAllAccounts = async function(){
     return await this.find();
 }
 
@@ -21,7 +21,7 @@ accountSchema.statics.delete = async function(accountID){
     });
 }
 
-accountSchema.methods.updateDoctor = async function(accountID, updated){
+accountSchema.methods.updateAccount = async function(accountID, updated){
     return await this.updateOne({
         _id: accountID
     }, {

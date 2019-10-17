@@ -21,12 +21,16 @@ const {Process} = require("../model/process");
 */
 
 router.get("/", async function(req, res) {
-    let doctor = await Doctor.getAllDoctors();
-    let process = await Process.getAllProcesses();
-    res.render('page_templates/secretary_view.hbs', {
-        doctor: doctor,
-        process: process
-    });
+    if(req.session.username == "secretary") {
+        let doctor = await Doctor.getAllDoctors();
+        let process = await Process.getAllProcesses();
+        res.render('page_templates/secretary_view.hbs', {
+            doctor: doctor,
+            process: process
+        });
+    } else {
+        res.redirect("/login");
+    }
 });
 
 /*
