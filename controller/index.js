@@ -31,7 +31,7 @@ router.post("/login", (req, res) => {
     } else if(req.body.username == "doctor") {
 
     } else if(req.body.username == "admin") {
-
+        res.redirect("/admin");
     }
 })
 

@@ -11,7 +11,7 @@ accountSchema.statics.addAccount = function(account, callback){
     account.save().then(callback);
 };
 
-accountSchema.statics.getAllAcounts = async function(){
+accountSchema.statics.getAllAccounts = async function(){
     return await this.find();
 }
 
