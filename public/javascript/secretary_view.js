@@ -362,7 +362,7 @@ async function initializeTHead(date) {
                 $("#fieldFirstName").removeClass("error")
                 $("#fieldLastName").removeClass("error")
             },
-            onApprove: function () {
+            onApprove: async function () {
                 let firstName = $('#firstName').val();
                 let lastName = $('#lastName').val();
                 let contact = $('#contact').val();
@@ -385,17 +385,6 @@ async function initializeTHead(date) {
                     $("#fieldFirstName").addClass("error")
                     flag = false;
                 }
-
-                // if (moment().format("MM[/]DD[/]YY") == moment(dateInput).format("MM[/]DD[/]YY")) {
-                //     $("#fieldDateCalendar").addClass("error")
-                //     flag = false;
-                // }
-
-                
-                // if (moment().format("H[:]MM") == moment(timeInput).format("H[:]MM")) {
-                //     $("#fieldTimeCalendar").addClass("error")
-                //     flag = false;
-                // }
 
                 if (doctors === undefined || doctors.length == 0) {
                     $("#fieldDoctors").addClass("error")
@@ -421,7 +410,14 @@ async function initializeTHead(date) {
                     };
 
                     console.log(ajaxData);
-                    $.post("/secretary/create", ajaxData);
+                    await $.post("/secretary/create", ajaxData, function(data){
+                        $('#standard_calendar').calendar('set date', dateInput, true, false);
+                        $('#view-chooser').dropdown('set selected', "day-view");
+                    
+                        initializeTHead(dateInput);
+                        updateTableRows();
+                        
+                    });
                 }
                 return flag;
 
