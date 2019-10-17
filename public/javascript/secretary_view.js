@@ -81,6 +81,10 @@ $(document).ready(function () {
         }
     });
 
+
+    
+
+
     // Initialize Table header
     initializeTHead(moment().toDate());
 
@@ -177,20 +181,23 @@ function updateTableRows() {
             });
         } else {
 
+            //Some Screen flair
+            $('#the-body').html("");
+            $('.loader').toggle();
+
+
+            console.log(choice);
             let sendData = {
                 "date": moment(date).format("MMM D YYYY").toString(),
                 "doctor": choice
             };
 
-            //Some Screen flair
-            $('#the-body').html("");
-            $('.loader').toggle();
-
+            
             // The ajax query
             $.post("/secretary/day_one", sendData, function (data) {
-                let template = Handlebars.compile(data);
+                let template = Handlebars.compile(data.htmlData);
                 $('.loader').toggle();
-                $('#the-body').html(template({ name: actualName }));
+                $('#the-body').html(template(data.data));
             });
         }
     }
@@ -276,30 +283,30 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
+    $('.ui.form').form({
+        fields: {
+            lastName: 'empty',
+            firstName: 'empty',
+            time_calendar: 'empty',
+            date_calendar: 'empty',
+            doctors: 'empty',
+            procedures: 'empty'
+        }
+    });
 
-    /*
-        These function allow the modal to function
-        */
     $("#add-button").on("click", function () {
         console.log("ashduiahdusah")
         $('#modal1').modal('show');
-        
-        $('#modal1').modal({
-            onHidden: function(){
-                $("#multiDoctor").dropdown("clear")
-                $("#multiProcedure").dropdown("clear")
-                $("#lastName").val("");
-                $("#firstName").val("");
-                $("#date_calendar").calendar('set date', null, true, false);
-                $("#time_calendar").calendar('set date', null, true, false);
-                $("#notes").val("");
-            }
+
+            // Initialize popup stuff
+        $("#date_calendar").calendar({
+            type: 'date',
+            today: 'true',
+            disabledDaysOfWeek: [0],
+            initialDate: moment().toDate()
         })
 
-        $("#date_calendar").calendar({   
-            type: 'date',
-            today: 'true'
-        })
+        
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
@@ -310,26 +317,116 @@ async function initializeTHead(date) {
             type: 'time',
             minTimeGap: 30,
             maxDate: maxDate,
-            minDate: minDate
+            minDate: minDate,
+            initialDate: minDate
         });
+
         $('#multiDoctor').dropdown();
         $('#multiProcedure').dropdown();
 
-        $('#save-button').on('click', function(){
-            let firstName = $('#firstName').val();
-            let lastName = $('#lastName').val();
-            let dateInput = $('#date_calendar').calendar('get focusDate');
-            let timeInput = $('#time_calendar').calendar('get focusDate');
-            let doctors = $("#multiDoctor").dropdown("get value");
-            let procedures = $("#multiProcedure").dropdown("get value");
+        $("#lastName").keypress(function(){
+            $("#fieldLastName").removeClass("error")
+        })
 
-            console.log(firstName);
-            console.log(lastName);
-            console.log(dateInput);
-            console.log(timeInput);
-            console.log(doctors);
-            console.log(procedures);
-        });
+        $("#firstName").keypress(function(){
+            $("#fieldFirstName").removeClass("error")
+        })
+
+        $("#date_calendar").on("click", function(){
+            $("#fieldDateCalendar").removeClass("error")
+        })
+
+        $("#time_calendar").on("click", function(){
+            $("#fieldTimeCalendar").removeClass("error")
+        })
+
+        $("#fieldDoctors").on("click", function(){
+            $("#fieldDoctors").removeClass("error")
+        })
+
+        $("#fieldProcedures").on("click", function(){
+            $("#fieldProcedures").removeClass("error")
+        })
+
+        $('#modal1').modal({
+            onHidden: function () {
+                $("#multiDoctor").dropdown("clear")
+                $("#multiProcedure").dropdown("clear")
+                $("#lastName").val("");
+                $("#firstName").val("");
+                $("#notes").val("");
+                $("#contact").val("");
+
+                $("#fieldProcedures").removeClass("error")
+                $("#fieldDoctors").removeClass("error")
+                $("#fieldFirstName").removeClass("error")
+                $("#fieldLastName").removeClass("error")
+            },
+            onApprove: function () {
+                let firstName = $('#firstName').val();
+                let lastName = $('#lastName').val();
+                let contact = $('#contact').val();
+                let dateInput = $('#date_calendar').calendar('get focusDate');
+                let timeInput = $('#time_calendar').calendar('get focusDate');
+                let doctors = $("#multiDoctor").dropdown("get value");
+                let procedures = $("#multiProcedure").dropdown("get value");
+                let notes = $("#notes").val();
+
+                console.log(dateInput);
+                console.log(timeInput);
+                var flag = true;
+
+                if (lastName == "") {
+                    $("#fieldLastName").addClass("error")
+                    flag = false;
+                }
+
+                if (firstName == "") {
+                    $("#fieldFirstName").addClass("error")
+                    flag = false;
+                }
+
+                // if (moment().format("MM[/]DD[/]YY") == moment(dateInput).format("MM[/]DD[/]YY")) {
+                //     $("#fieldDateCalendar").addClass("error")
+                //     flag = false;
+                // }
+
+                
+                // if (moment().format("H[:]MM") == moment(timeInput).format("H[:]MM")) {
+                //     $("#fieldTimeCalendar").addClass("error")
+                //     flag = false;
+                // }
+
+                if (doctors === undefined || doctors.length == 0) {
+                    $("#fieldDoctors").addClass("error")
+                    flag = false;
+                }
+
+                if (procedures === undefined || procedures.length == 0) {
+                    $("#fieldProcedures").addClass("error")
+                    flag = false;
+                }
+
+                // if all fields are filled
+                if (flag){
+                    let ajaxData = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        contact: contact,
+                        dateInput: moment(dateInput).format("MMM D YYYY").toString(),
+                        timeInput: moment(timeInput).format("H:mm A").toString(),
+                        doctors: doctors,
+                        procedures: procedures,
+                        notes: notes
+                    };
+
+                    console.log(ajaxData);
+                    $.post("/secretary/create", ajaxData);
+                }
+                return flag;
+
+            }
+        })
     });
 
     for (var i = 0; i < 7; i++) {

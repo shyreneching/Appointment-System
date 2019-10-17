@@ -29,7 +29,7 @@ processSchema.methods.updateProcess = async function(processID, updated){
     }); 
 };
 
-var Process = mongoose.model('process', processSchema)
+var Process = mongoose.model('Process', processSchema)
 
 module.exports = {
     Process
