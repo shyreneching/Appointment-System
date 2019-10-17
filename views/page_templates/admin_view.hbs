@@ -29,7 +29,7 @@
         <tbody>
           {{#each user}}
           <tr>
-            <td>{{name}}</td>
+            <td>{{username}}</td>
             <td>{{password}}</td>
             <td class="center aligned">
               <button class="ui button" data-id="{{_id}}">Edit</button>
@@ -111,7 +111,7 @@
             </td>
           </tr> -->
           <tr>
-            <button class="ui green basic button">
+            <button class="ui green basic button" id="user-button">
               Add
             </button>
 
@@ -131,11 +131,11 @@
         <tbody>
           {{#each dentist}}
           <tr>
-            <td>{{firstName}}</td>
-            <td>{{lastName}}</td>
+            <td>{{firstname}}</td>
+            <td>{{lastname}}</td>
             <td class="center aligned">
-              <button class="ui button" data-id="{{id of user}}">Edit</button>
-              <button class="negative ui button" data-id="{{id of user}}">Delete</button>
+              <button class="ui button" data-id="{{_id}}">Edit</button>
+              <button class="negative ui button" data-id="{{_id}}">Delete</button>
             </td>
           </tr>
           {{/each}}
@@ -213,7 +213,7 @@
             </td>
           </tr> --}}
           <tr>
-            <button class="ui green basic button">
+            <button class="ui green basic button" id="dentist-button">
               Add
             </button>
 
@@ -232,10 +232,10 @@
         <tbody>
           {{#each procedure}}
           <tr>
-            <td>{{name}}</td>
+            <td>{{processname}}</td>
             <td class="center aligned">
-              <button class="ui button" data-id="{{id of user}}">Edit</button>
-              <button class="negative ui button" data-id="{{id of user}}">Delete</button>
+              <button class="ui button" data-id="{{_id}}">Edit</button>
+              <button class="negative ui button" data-id="{{_id}}">Delete</button>
             </td>
           </tr>
           {{/each}}
@@ -303,7 +303,7 @@
             </td>
           </tr> --}}
           <tr>
-            <button class="ui green basic button">
+            <button class="ui green basic button" id="procedure-button">
               Add
             </button>
 
@@ -311,9 +311,6 @@
         </tbody>
       </table>
     </div>
-    <script>
-      $('.menu .item')
-        .tab();
-    </script>
+    <script <script src="javascript/admin_view.js"></script>
   </body>
 </html>
