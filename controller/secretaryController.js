@@ -87,7 +87,7 @@ router.post("/day_all", urlencoder, async function (request, result){
         let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
         let appointments = [];
         for (var k = 0; k < appointmentlist.length; k++){
-            let appointment = appointmentlist[i];
+            let appointment = appointmentlist[k];
             //populate necessary info
             appointment = await appointment.populateDoctorAndProcess();
             appointments.push(appointment);
@@ -116,8 +116,6 @@ router.post("/day_one", urlencoder, async function (request, result){
     let date = request.body.date;
     let doctorID = request.body.doctor;
 
-    console.log(doctorID);
-
     // Load up the html template
     let one_day_doc = fs.readFileSync('./views/module_templates/secretary_day_one_doc.hbs', 'utf-8');
 
@@ -143,7 +141,7 @@ router.post("/day_one", urlencoder, async function (request, result){
         let appointmentlist = await Appointment.getAppByDoctorandDateandTime(doctorID, date, timeSlot);
         let appointments = [];
         for (var k = 0; k < appointmentlist.length; k++){
-            let appointment = appointmentlist[i];
+            let appointment = appointmentlist[k];
             //populate necessary info
             appointment = await appointment.populateDoctorAndProcess();
             appointments.push(appointment);
