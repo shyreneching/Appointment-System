@@ -231,7 +231,6 @@ router.get("/appointmentlist", (req, res) => {
 //wala siyang appointment on the time slot, it will mean available
 router.post("/create", urlencoder, (req, res) => {
 
-    console.log(req.body);
     let firstname = req.body.firstName;
     let lastname = req.body.lastName;
     let patientcontact = req.body.contact;
@@ -241,11 +240,14 @@ router.post("/create", urlencoder, (req, res) => {
     let date = req.body.dateInput;
     let doctor = req.body["doctors[]"];
 
-    console.log(process);
-    console.log(doctor);
-    // if(parseInt(time.substring(0, time.indexOf(":"))) > 12) {
-    //     time = (parseInt(time.substring(0, time.indexOf(":"))) - 12) + time.substring(time.indexOf(":"));
-    // }
+    console.log(time);
+    console.log(date);
+    let newTime = Date.parse(time);
+    let formattedTime = moment(newTime).format("h:mm A");
+
+    let newDate = Date.parse(date);
+    let formattedDate = moment(newDate).format("MMM D YYYY");
+    
 
     let appointment = new Appointment({
         firstname,
@@ -253,12 +255,10 @@ router.post("/create", urlencoder, (req, res) => {
         patientcontact,
         process,
         notes,
-        time,
-        date,
+        time : formattedTime,
+        date : formattedDate,
         doctor
     });
-
-    console.log(appointment);
 
     Appointment.addAppointment(appointment, function(appointment){
         if (appointment){
