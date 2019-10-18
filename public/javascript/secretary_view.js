@@ -12,7 +12,7 @@ $(document).ready(function () {
         today: false,
         initialDate: moment().toDate(),
         onChange: function () {
-            let date = $(this).calendar('get focusDate');
+            let date = $(this).calendar('get date');
             setViewToDay();
             initializeTHead(date);
             updateTableRows();
@@ -32,7 +32,7 @@ $(document).ready(function () {
                     $('#filter-dropdown').dropdown('set selected', 'all');
                 }
             }
-            let date = $('#standard_calendar').calendar('get focusDate');
+            let date = $('#standard_calendar').calendar('get date');
             initializeTHead(date);
             updateTableRows();
         }
@@ -48,7 +48,7 @@ $(document).ready(function () {
 
     //Set Next and Prev Buttons
     $('#next-button').click(function () {
-        let date = $('#standard_calendar').calendar('get focusDate');
+        let date = $('#standard_calendar').calendar('get date');
         let viewType = $('#view-chooser').dropdown('get value');
 
         if (viewType == 'day-view') {
@@ -65,7 +65,7 @@ $(document).ready(function () {
     });
 
     $('#prev-button').click(function () {
-        let date = $('#standard_calendar').calendar('get focusDate');
+        let date = $('#standard_calendar').calendar('get date');
         let viewType = $('#view-chooser').dropdown('get value');
 
         if (viewType == 'day-view') {
@@ -88,7 +88,7 @@ $(document).ready(function () {
     // Initialize Table header
     initializeTHead(moment().toDate());
 
-    let focusDate = $('#standard_calendar').calendar('get focusDate');
+    let focusDate = $('#standard_calendar').calendar('get date');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -118,7 +118,7 @@ $(document).ready(function () {
 });
 
 function updateTableRows() {
-    let date = $('#standard_calendar').calendar('get focusDate');
+    let date = $('#standard_calendar').calendar('get date');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -366,8 +366,8 @@ async function initializeTHead(date) {
                 let firstName = $('#firstName').val();
                 let lastName = $('#lastName').val();
                 let contact = $('#contact').val();
-                let dateInput = $('#date_calendar').calendar('get focusDate');
-                let timeInput = $('#time_calendar').calendar('get focusDate');
+                let dateInput = $('#date_calendar').calendar('get date');
+                let timeInput = $('#time_calendar').calendar('get date');
                 let doctors = $("#multiDoctor").dropdown("get value");
                 let procedures = $("#multiProcedure").dropdown("get value");
                 let notes = $("#notes").val();
