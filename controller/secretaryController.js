@@ -21,16 +21,16 @@ const {Process} = require("../model/process");
 */
 
 router.get("/", async function(req, res) {
-    // if(req.session.username == "secretary") {
+    if(req.session.username == "secretary") {
         let doctor = await Doctor.getAllDoctors();
         let process = await Process.getAllProcesses();
         res.render('page_templates/secretary_view.hbs', {
             doctor: doctor,
             process: process
         });
-    // } else {
-    //     res.redirect("/login");
-    // }
+    } else {
+        res.redirect("/login");
+    }
 });
 
 /*
@@ -243,9 +243,6 @@ router.post("/create", urlencoder, (req, res) => {
 
     console.log(process);
     console.log(doctor);
-    // if(parseInt(time.substring(0, time.indexOf(":"))) > 12) {
-    //     time = (parseInt(time.substring(0, time.indexOf(":"))) - 12) + time.substring(time.indexOf(":"));
-    // }
 
     let appointment = new Appointment({
         firstname,

@@ -1,12 +1,35 @@
-var tab;
-var defaultIndex;
-
 $(document).ready(() => {
     $(".ui .button").on("click", click);
-    $(".menu .item").tab({
-        alwaysRefresh: true
-    });
 })
+
+$(".menu .item").tab({
+    alwaysRefresh: true,
+    onVisible: function() {
+        localStorage.setItem("page", $(this).attr("data-tab"));
+    }
+});
+
+$("#logout").click(() => {
+    localStorage.setItem("page", "first");
+    window.location.href="/logout";
+})
+
+function setup() {
+    if(localStorage.getItem("page") == "") {
+        localStorage.setItem("page", "first");    
+    }
+    $.tab("change tab", localStorage.getItem("page"));
+    $(".menu .item").removeClass("active");
+    var list = $(".menu .item"); 
+    var tab;
+    for(var i = 0; i < list.length; i++) {
+        if($(list[i]).attr("data-tab") == localStorage.getItem("page")) {
+            tab = list[i];
+            break;
+        }
+    }
+    $(tab).addClass("active");
+}
 
 $("#user-button").click(() => {
     $.ajax({
@@ -49,6 +72,7 @@ function click() {
                     accountID: $(this).data("id")
                 }
             })
+            location.reload();
         } else if($(this).text() == "Edit") {
     
         }
@@ -61,6 +85,7 @@ function click() {
                     doctorID: $(this).data("id")
                 }
             })
+            location.reload();
         } else if($(this).text() == "Edit") {
     
         }
@@ -73,12 +98,9 @@ function click() {
                     processID: $(this).data("id")
                 }
             })
+            location.reload();
         } else if($(this).text() == "Edit") {
     
         }
     }
-}
-
-function load() {
-    console.log("loading...");
 }
