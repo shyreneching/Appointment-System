@@ -11,11 +11,12 @@
     <script src="semantic/dist/semantic.min.js"></script>
   </head>
 
-  <body>
+  <body onload="setup()">
     <div class="ui top attached tabular menu">
       <a class="item active" data-tab="first">Users</a>
       <a class="item" data-tab="second">Dentists</a>
       <a class="item" data-tab="third">Procedures</a>
+      <button class="ui button" id="logout">Logout</button>
     </div>
     <div class="ui bottom attached tab segment active" data-tab="first">
       <table class="ui striped table">
