@@ -12,7 +12,7 @@ $(document).ready(function () {
         today: false,
         initialDate: moment().toDate(),
         onChange: function () {
-            let date = $(this).calendar('get date');
+            let date = $(this).calendar('get focusDate');
             setViewToDay();
             initializeTHead(date);
             updateTableRows();
@@ -88,7 +88,7 @@ $(document).ready(function () {
     // Initialize Table header
     initializeTHead(moment().toDate());
 
-    let focusDate = $('#standard_calendar').calendar('get date');
+    let focusDate = $('#standard_calendar').calendar('get focusDate');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -118,7 +118,7 @@ $(document).ready(function () {
 });
 
 function updateTableRows() {
-    let date = $('#standard_calendar').calendar('get date');
+    let date = $('#standard_calendar').calendar('get focusDate');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -226,7 +226,7 @@ async function initializeTHead(date) {
     let today = moment().toDate();
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
-
+    console.log("are u not here");
     // gets days of week
     var days = [];
     var day = startOfWeek;
