@@ -243,9 +243,9 @@ router.post("/create", urlencoder, (req, res) => {
 
     console.log(process);
     console.log(doctor);
-    if(parseInt(time.substring(0, time.indexOf(":"))) > 12) {
-        time = (parseInt(time.substring(0, time.indexOf(":"))) - 12) + time.substring(time.indexOf(":"));
-    }
+    // if(parseInt(time.substring(0, time.indexOf(":"))) > 12) {
+    //     time = (parseInt(time.substring(0, time.indexOf(":"))) - 12) + time.substring(time.indexOf(":"));
+    // }
 
     let appointment = new Appointment({
         firstname,

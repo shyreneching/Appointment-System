@@ -403,7 +403,7 @@ async function initializeTHead(date) {
                         lastName: lastName,
                         contact: contact,
                         dateInput: moment(dateInput).format("MMM D YYYY").toString(),
-                        timeInput: moment(timeInput).format("H:mm A").toString(),
+                        timeInput: moment(timeInput).format("h:mm A").toString(),
                         doctors: doctors,
                         procedures: procedures,
                         notes: notes
