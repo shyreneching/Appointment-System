@@ -100,9 +100,7 @@ $(document).ready(function () {
     $.post("/secretary/day_all", sentData, function (data) {
         $('.active.dimmer').toggle();
         // Compile Data
-        $('.loader').toggle();
         let template = Handlebars.compile(data.htmlData);
-        $('.loader').toggle();
         $('#the-body').html(template(data.data));
 
         //Set up sticky top
@@ -132,37 +130,37 @@ function updateTableRows() {
     if (viewType == "week-view") {
         if (choice == 'all') {
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
             $.get("/secretary/week_all", function (data) {
                 let template = Handlebars.compile(data);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template(null));
             });
         }
         else if (choice == "unav") {
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
             $.get("/secretary/week_unavailable", function (data) {
                 let template = Handlebars.compile(data);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template(null));
             });
         }
         else if (choice == "av") {
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
             $.get("/secretary/week_available", function (data) {
                 let template = Handlebars.compile(data);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template(null));
             });
         }
         else {
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
             $.get("/secretary/week_one", function (data) {
                 let template = Handlebars.compile(data);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template({ name: actualName }));
             });
         }
@@ -171,19 +169,19 @@ function updateTableRows() {
         if (choice == "all") {
             // Some Screen flair
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
 
             // The ajax query
             $.post("/secretary/day_all", sentData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template(data.data));
             });
         } else {
 
             //Some Screen flair
             $('#the-body').html("");
-            $('.loader').toggle();
+            $('.active.dimmer').toggle();
 
 
             console.log(choice);
@@ -196,7 +194,7 @@ function updateTableRows() {
             // The ajax query
             $.post("/secretary/day_one", sendData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
-                $('.loader').toggle();
+                $('.active.dimmer').toggle();
                 $('#the-body').html(template(data.data));
             });
         }
@@ -222,7 +220,7 @@ function setViewToDay() {
 */
 async function initializeTHead(date) {
 
-    $('.loader').toggle();
+    $('.active.dimmer').toggle();
     let today = moment().toDate();
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
@@ -279,7 +277,7 @@ async function initializeTHead(date) {
     });
 
     // Compiles date data
-    $('.loader').toggle();
+    $('.active.dimmer').toggle();
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
