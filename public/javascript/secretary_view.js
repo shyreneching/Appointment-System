@@ -135,6 +135,8 @@ function updateTableRows() {
                 let template = Handlebars.compile(data);
                 $('.active.dimmer').toggle();
                 $('#the-body').html(template(null));
+
+                $(".largest.is.three").height($(".three.height.time.slot").height());
             });
         }
         else if (choice == "unav") {
