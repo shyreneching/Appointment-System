@@ -162,6 +162,15 @@ function updateTableRows() {
             $.post("/secretary/week_all", weekData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
+
+                $(".slot.in.week").each(function(){
+                    let oneSlot = this;
+                    $(oneSlot).find(".less-cell-count").each(function(){
+                        $(this).height($(oneSlot).find(".max-cell-count").height());
+                    });
+                    
+                })
+
                 $('.active.dimmer').toggle();
                 
             });

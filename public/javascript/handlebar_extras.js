@@ -15,3 +15,12 @@ Handlebars.registerHelper('commafy', function(index) {
         return new Handlebars.SafeString("");
     }
 });
+
+Handlebars.registerHelper('maxify', function(maxCount, cellCount) {
+    console.log("max =" + maxCount + "curr = " + cellCount);
+    if (cellCount == maxCount){
+        return new Handlebars.SafeString("max-cell-count");
+    } else {
+        return new Handlebars.SafeString("less-cell-count");
+    }
+});
