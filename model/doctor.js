@@ -3,12 +3,19 @@ const Schema = mongoose.Schema;
 
 var doctorSchema = new Schema({
     firstname: String,
-    lastname: String
+    lastname: String,
+    status: String
 })
 
 doctorSchema.statics.getDoctorByID = async function(doctorID){
     return await this.findOne({
         _id: doctorID
+    }); 
+};
+
+doctorSchema.statics.getAvailableDoctor = async function(){
+    return await this.find({
+        status: "available"
     }); 
 };
 
@@ -31,7 +38,8 @@ doctorSchema.methods.updateDoctor = async function(doctorID, updated){
         _id: doctorID
     }, {
         firstname,
-        lastname
+        lastname,
+        status
     }, {
         new: true
     }); 
