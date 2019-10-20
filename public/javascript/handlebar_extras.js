@@ -24,10 +24,18 @@ Handlebars.registerHelper('maxify', function(maxCount, cellCount) {
     }
 });
 
-Handlebars.registerHelper('weekColorAll', function(index) {
+Handlebars.registerHelper('weekBlue', function(index) {
     if (index % 2 == 0){
         return new Handlebars.SafeString("light blue pastel colored cell");
     } else {
         return new Handlebars.SafeString("dark blue pastel colored cell");
+    }
+});
+
+Handlebars.registerHelper('weekYellow', function(index) {
+    if (index % 2 == 0){
+        return new Handlebars.SafeString("light yellow pastel colored cell");
+    } else {
+        return new Handlebars.SafeString("dark yellow pastel colored cell");
     }
 });

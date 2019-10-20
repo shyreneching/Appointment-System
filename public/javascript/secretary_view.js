@@ -151,12 +151,13 @@ function updateTableRows() {
         day = day.clone().add(1, 'd');
     }
 
-    let weekData = {
-        "dates": days
-    }
+    
 
     if (viewType == "week-view") {
         if (choice == 'all') {
+            let weekData = {
+                "dates": days
+            }
             $('#the-body').html("");
             $('.active.dimmer').toggle();
             $.post("/secretary/week_all", weekData, function (data) {
@@ -194,11 +195,25 @@ function updateTableRows() {
             });
         }
         else {
+            let weekData = {
+                "dates": days,
+                "doctor": choice
+            }
             $('#the-body').html("");
             $('.active.dimmer').toggle();
-            $.get("/secretary/week_one", function (data) {
-                let template = Handlebars.compile(data);
-                $('#the-body').html(template({ name: actualName }));
+            $.post("/secretary/week_one", weekData, function (data) {
+                let template = Handlebars.compile(data.htmlData);
+                $('#the-body').html(template(data.data));
+
+                $(".slot.in.week").each(function(){
+                    let oneSlot = this;
+                    $(oneSlot).find(".less-cell-count").each(function(){
+                        $(this).height($(oneSlot).find(".max-cell-count").height());
+                    });
+                    
+                })
+                $("#filter-heading-title").html(`Weekly Appointments of ${actualName}`);
+
                 $('.active.dimmer').toggle();
             });
         }
