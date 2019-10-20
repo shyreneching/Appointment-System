@@ -160,11 +160,10 @@ function updateTableRows() {
             $('#the-body').html("");
             $('.active.dimmer').toggle();
             $.post("/secretary/week_all", weekData, function (data) {
-                // let template = Handlebars.compile(data);
-                // $('#the-body').html(template(null));
-                // $('.active.dimmer').toggle();
-
-                // $(".largest.is.three").height($(".three.height.time.slot").height());
+                let template = Handlebars.compile(data.htmlData);
+                $('#the-body').html(template(data.data));
+                $('.active.dimmer').toggle();
+                
             });
         }
         else if (choice == "unav") {

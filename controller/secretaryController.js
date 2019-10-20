@@ -106,7 +106,7 @@ router.post("/week_all", urlencoder, async function (request, result){
         let data = {
             slot: timeSlot,
             max: maxInWeek,
-            appointments: weekAppointments
+            weekAppointments: weekAppointments
         };
 
         dataArray.push(data);
