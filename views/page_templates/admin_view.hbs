@@ -8,6 +8,11 @@
     <script src="javascript/jquery.js"></script>
     <link rel="stylesheet" type="text/css"
       href="semantic/dist/semantic.min.css">
+    <style type="text/css"> 
+        #createUser-button {
+          margin-top: 25px;
+        }
+    </style>
     <script src="semantic/dist/semantic.min.js"></script>
   </head>
 
@@ -38,88 +43,62 @@
             </td>
           </tr>
           {{/each}}
-
-
-          <!-- <tr>
-            <td>Bob</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Joe</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>@#!@#</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Rob</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Dom</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Jamie</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Job</td>
-            <td>***************</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr> -->
           <tr>
             <button class="ui green basic button" id="user-button">
               Add
             </button>
-
           </tr>
         </tbody>
       </table>
     </div>
+    <div class="ui mini modal" id="addUser">
+      <div class="header">New User</div>
+      <div class="content middle aligned center">
+        <div class="ui form">
+            <div class="required field" id="usernameField">
+                <label>Username</label>
+                <input type="text" name="username" id="addUsername" placeholder="Username">
+            </div>
+            <div class="required field" id="passwordField">
+                <label>Password</label>
+                <input type="password" name="password" id="addPassword" placeholder="Password">
+            </div>
+            <div class="required field" id="confirmPasswordField">
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+            </div>
+            <div class="inline fields three wide column">
+              <div class="field" id="checkbox1">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="frequency" value="admin"/>
+                  <label>Admin</label>
+                </div>
+              </div>
+              <div class="field" id="checkbox2">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="frequency" value="doctor" />
+                  <label>Dentist</label>
+                </div>
+              </div>
+              <div class="field" id="checkbox3">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="frequency" value="secretary" />
+                  <label>Secretary</label>
+                </div>
+              </div>
+            </div>
+            <div class="ui grid">
+              <div class="actions column">
+                <div class="ui right floated labeled icon green button very padded" id="createUser-button">
+                    CREATE
+                    <i class="checkmark icon"></i>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="ui bottom attached tab segment" data-tab="second">
       <table class="ui striped table">
         <thead>
@@ -140,88 +119,15 @@
             </td>
           </tr>
           {{/each}}
-          {{!-- <tr>
-            <td>Bob</td>
-            <td>ho</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Joe</td>
-            <td>tan</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>@#!@#</td>
-            <td>tan</td>
-
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Rob</td>
-            <td>tan</td>
-
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Dom</td>
-            <td>tan</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Jamie</td>
-            <td>tan</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>tan</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Job</td>
-            <td>tan</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr> --}}
           <tr>
             <button class="ui green basic button" id="dentist-button">
               Add
             </button>
-
           </tr>
         </tbody>
       </table>
     </div>
+    
     <div class="ui bottom attached tab segment" data-tab="third">
       <table class="ui striped table">
         <thead>
@@ -240,74 +146,10 @@
             </td>
           </tr>
           {{/each}}
-          {{!-- <tr>
-            <td>Tooth removal</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Teeth repair</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Babysitting teeth</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Pasta</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Replacement teeth</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Opera</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Open wide</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr>
-          <tr>
-            <td>Idk even</td>
-            <td class="center aligned">
-              <button class="ui button">Edit</button>
-              <button class="negative ui button">Delete</button>
-
-            </td>
-          </tr> --}}
           <tr>
             <button class="ui green basic button" id="procedure-button">
               Add
             </button>
-
           </tr>
         </tbody>
       </table>

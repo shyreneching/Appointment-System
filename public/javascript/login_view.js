@@ -4,20 +4,17 @@ $(document).ready(() => {
     $("#submit").click((e) => {
         var temp = validate($("#username").val(), $("#password").val());
         if(temp == undefined) {
+            $("#username-input").addClass("error");
+            $("#password-input").addClass("error");
+            $("#password").val("");
             e.preventDefault();
-            $("#password").addClass("error");
-            $("#message").removeClass("error");
-            $("#message").addClass("negative");
-            $("#message").text("Invalid username or password");
         } 
     })
 })
 
 $(document).on("keydown", () => {
-    $("#password").removeClass("error");
-    $("#message").removeClass("negative");
-    $("#message").addClass("error");
-    $("#message").text("");
+    $("#username-input").removeClass("error");
+    $("#password-input").removeClass("error");
 })
 
 function validate(username, password) {

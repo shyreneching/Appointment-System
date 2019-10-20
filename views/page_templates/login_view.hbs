@@ -32,22 +32,21 @@
 
             <form class="ui large form" method="post" action="/login">
                 <div class="ui stacked segment">
-                    <div class="field">
+                    <div class="field" id="username-input">
                         <div class="ui left icon input">
                             <i class="user icon"></i>
-                            <input type="text" name="username" placeholder="Username" id="username">
+                            <input type="text" name="username" id="username" placeholder="Username">
                         </div>
                     </div>
-                    <div class="field">
+                    <div class="field" id="password-input">
                         <div class="ui left icon input">
                             <i class="lock icon"></i>
-                            <input type="password" name="password" placeholder="Password" id="password">
+                            <input type="password" name="password" id="password" placeholder="Password">
                         </div>
                     </div>
                     <button id="submit" class="ui fluid large pink submit button">Login</button>
                 </div>
-                <div class="ui message error" id="message"></div>
-            </form>            
+            </form>   
         </div>
     </div>
 </body>

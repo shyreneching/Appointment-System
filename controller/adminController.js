@@ -37,8 +37,9 @@ router.post("/addAccount", function(req, res) {
     //     res.redirect("/");
     // });
     let account = new Account({
-        username: "secretarty",
-        password: "secret@ry"
+        username: req.body.username,
+        password: req.body.password,
+        accountType: req.body.type
     })
     Account.addAccount(account, (value) => {
         res.redirect("/");  

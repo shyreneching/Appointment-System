@@ -2,12 +2,99 @@ $(document).ready(() => {
     $(".ui .button").on("click", click);
 })
 
+$(document).on("keydown", () => {
+    $("#usernameField").removeClass("error");
+    $("#passwordField").removeClass("error");
+    $("#confirmPasswordField").removeClass("error");
+})
+
+$(".field").on("click", () => {
+    $("#checkbox1").removeClass("error");
+    $("#checkbox2").removeClass("error");
+    $("#checkbox3").removeClass("error");
+})
+
 $(".menu .item").tab({
     alwaysRefresh: true,
     onVisible: function() {
         localStorage.setItem("page", $(this).attr("data-tab"));
     }
 });
+
+$("#addUser").modal({
+    onShow: function() {
+        $('#addUser').form("clear");
+    }
+})
+
+$("#user-button").click(() => {
+    $("#addUser").modal("show");
+})
+
+$("#createUser-button").click((e) => {
+    var done = true;
+    if($("#addUsername").val() == "") {
+        $("#usernameField").addClass("error");
+        done = false;
+    }
+    if($("#addPassword").val() == "") {
+        $("#passwordField").addClass("error");
+        done = false;
+    }
+    if($("#confirmPassword").val() == "") {
+        $("#confirmPasswordField").addClass("error");
+        done = false;
+    }
+    if($("input[name='frequency']:checked").length == 0) {
+        $("#checkbox1").addClass("error");
+        $("#checkbox2").addClass("error");
+        $("#checkbox3").addClass("error");
+        done = false;
+    }
+    if($("#addPassword").val() != $("#confirmPassword").val()) {
+        $("#passwordField").addClass("error");
+        $("#confirmPasswordField").addClass("error");
+        done = false;
+    }
+    var temp = $("input[name='frequency']:checked")[0].value;
+
+    if(!done) {
+        e.preventDefault();
+    } else {
+        $.ajax({
+            type: "post",
+            url: "/admin/addAccount",
+            data: {
+                username: $("#addUsername").val(),
+                password: $("#addPassword").val(),
+                type: temp
+            },
+            success: function(data) {
+                location.reload();
+            }
+        })
+    }
+})
+
+$("#dentist-button").click(() => {
+    // $.ajax({
+    //     type: "post",
+    //     url: "/admin/addDentist",
+    //     success: function(data) {
+    //         location.reload();
+    //     }
+    // })
+})
+
+$("#procedure-button").click(() => {
+    // $.ajax({
+    //     type: "post",
+    //     url: "/admin/addProcess",
+    //     success: function(data) {
+    //         location.reload();
+    //     }
+    // })
+})
 
 $("#logout").click(() => {
     localStorage.setItem("page", "first");
@@ -30,36 +117,6 @@ function setup() {
     }
     $(tab).addClass("active");
 }
-
-$("#user-button").click(() => {
-    $.ajax({
-        type: "post",
-        url: "/admin/addAccount",
-        success: function(data) {
-            location.reload();
-        }
-    })
-})
-
-$("#dentist-button").click(() => {
-    $.ajax({
-        type: "post",
-        url: "/admin/addDentist",
-        success: function(data) {
-            location.reload();
-        }
-    })
-})
-
-$("#procedure-button").click(() => {
-    $.ajax({
-        type: "post",
-        url: "/admin/addProcess",
-        success: function(data) {
-            location.reload();
-        }
-    })
-})
 
 function click() {
     tab = $(this).parent().parent().parent().parent().parent().attr("data-tab");
