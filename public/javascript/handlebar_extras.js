@@ -17,10 +17,17 @@ Handlebars.registerHelper('commafy', function(index) {
 });
 
 Handlebars.registerHelper('maxify', function(maxCount, cellCount) {
-    console.log("max =" + maxCount + "curr = " + cellCount);
     if (cellCount == maxCount){
         return new Handlebars.SafeString("max-cell-count");
     } else {
         return new Handlebars.SafeString("less-cell-count");
+    }
+});
+
+Handlebars.registerHelper('weekColorAll', function(index) {
+    if (index % 2 == 0){
+        return new Handlebars.SafeString("light blue pastel colored cell");
+    } else {
+        return new Handlebars.SafeString("dark blue pastel colored cell");
     }
 });
