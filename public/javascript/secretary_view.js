@@ -139,16 +139,32 @@ function updateTableRows() {
     console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
     let actualName = $('#filter-dropdown').dropdown('get text');
 
+    // Dates for week view
+    var startOfWeek = moment(date).startOf('week');
+    var endOfWeek = moment(date).endOf('week');
+    
+    // gets days of week-------------------------------------------------
+    var days = [];
+    var day = startOfWeek;
+    while (day <= endOfWeek) {
+        days.push(day.toDate().toString());
+        day = day.clone().add(1, 'd');
+    }
+
+    let weekData = {
+        "dates": days
+    }
+
     if (viewType == "week-view") {
         if (choice == 'all') {
             $('#the-body').html("");
             $('.active.dimmer').toggle();
-            $.get("/secretary/week_all", function (data) {
-                let template = Handlebars.compile(data);
-                $('#the-body').html(template(null));
-                $('.active.dimmer').toggle();
+            $.post("/secretary/week_all", weekData, function (data) {
+                // let template = Handlebars.compile(data);
+                // $('#the-body').html(template(null));
+                // $('.active.dimmer').toggle();
 
-                $(".largest.is.three").height($(".three.height.time.slot").height());
+                // $(".largest.is.three").height($(".three.height.time.slot").height());
             });
         }
         else if (choice == "unav") {
@@ -238,7 +254,7 @@ async function initializeTHead(date) {
     let today = moment().toDate();
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
-    console.log("are u not here");
+    
     // gets days of week-------------------------------------------------
     var days = [];
     var day = startOfWeek;

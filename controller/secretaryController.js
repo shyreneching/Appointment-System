@@ -36,9 +36,91 @@ router.get("/", async function(req, res) {
 /*
     Getting templates for filtering 
 */
-router.get("/week_all", function (request, result){
+router.post("/week_all", urlencoder, async function (request, result){
+
+    let weekData = request.body["dates[]"];
+
+    //Convert data to MMM D YYYY
+    let formattedWeekData = [];
+
+    for(var i = 0; i < weekData.length; i++){
+        let newDate = Date.parse(weekData[i]);
+        let formattedDate = moment(newDate).format("MMM D YYYY");
+        formattedWeekData.push(formattedDate);
+    }
+
+    // Load up the html template
     let all_week = fs.readFileSync('./views/module_templates/secretary_week_all.hbs', 'utf-8');
-    result.send(all_week);
+
+    // Array for iterating time slots
+    let timeSlotsArray = ["8:00 AM", "8:30 AM",
+        "9:00 AM", "9:30 AM",
+        "10:00 AM", "10:30 AM",
+        "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"];
+
+    let dataArray = [];
+    for (var i = 0; i < timeSlotsArray.length; i++){
+        let timeSlot = timeSlotsArray[i];
+        // get all appointments in this date and time slot
+
+        // appointments in a week for a time slot
+        let weekAppointments = [];
+        let maxInWeek = 0;
+
+        // loop through all weekdates in one time slot
+        for (var k = 0; k < formattedWeekData.length; k++){
+            let date = formattedWeekData[k].toString();
+            
+
+            // find all appointments in a date in a timeslot
+            let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
+            let appointments = [];
+            for (var l = 0; l < appointmentlist.length; l++){
+                let appointment = appointmentlist[l];
+                //populate necessary info
+                appointment = await appointment.populateDoctorAndProcess();
+                appointments.push(appointment);
+            }
+
+            if (appointmentlist.length > maxInWeek){
+                maxInWeek = appointmentlist.length;
+            }
+
+            // put in array of week appointments in a time slot
+            let dayInWeek = {
+                num: appointmentlist.length,
+                appointments: appointments
+            }
+
+            weekAppointments.push(dayInWeek);
+        }
+        
+
+        let data = {
+            slot: timeSlot,
+            max: maxInWeek,
+            appointments: weekAppointments
+        };
+
+        dataArray.push(data);
+    }
+
+    let final = {
+        data: dataArray
+    }
+
+
+    result.send({
+        htmlData: all_week,
+        data: final
+    });
 });
 
 router.get("/week_one", function (request, result){
@@ -67,7 +149,7 @@ router.post("/day_all", urlencoder, async function (request, result){
     let date = request.body.date;
 
     // Load up the html template
-    let all_week = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
+    let all_day = fs.readFileSync('./views/module_templates/secretary_day_all.hbs', 'utf-8');
 
     // Array for iterating time slots
     let timeSlotsArray = ["8:00 AM", "8:30 AM",
@@ -108,7 +190,7 @@ router.post("/day_all", urlencoder, async function (request, result){
     }
 
     result.send({
-        htmlData: all_week,
+        htmlData: all_day,
         data: final
     });
 });
