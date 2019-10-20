@@ -37,8 +37,8 @@ router.post("/addAccount", function(req, res) {
     //     res.redirect("/");
     // });
     let account = new Account({
-        username: "admin",
-        password: "@dmin"
+        username: "secretarty",
+        password: "secret@ry"
     })
     Account.addAccount(account, (value) => {
         res.redirect("/");  
@@ -87,7 +87,7 @@ router.post("/addProcess", function(req, res) {
     //     res.redirect("/");
     // })
     let process = new Process({
-        processname: "Tooth Removal"
+        processname: "Dental Prosthesis"
     });
     Process.addProcess(process, (value) => {
         res.redirect("/");
