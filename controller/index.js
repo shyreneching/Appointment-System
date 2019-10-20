@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fs = require('fs');
+const {Account} = require("../model/account");
 
 router.use("/secretary", require("./secretaryController"));
 router.use("/admin", require("./adminController"));
@@ -19,12 +20,14 @@ router.get("/", (req, res) => {
     }
 })
 
-router.get("/login", (req, res) => {
-    let page = fs.readFileSync('./views/page_templates/login_view.hbs', 'utf-8');
-    res.send(page);
+router.get("/login", async (req, res) => {
+    let acc = await Account.getAllAccounts();
+    res.render("page_templates/login_view.hbs", {
+        account: JSON.stringify(acc)
+    })
 })
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     req.session.username = req.body.username;
     if(req.body.username == "secretary") {
         res.redirect("/secretary");
