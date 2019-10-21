@@ -21,16 +21,16 @@ const {Process} = require("../model/process");
 */
 
 router.get("/", async function(req, res) {
-    //if(req.session.username == "secretary") {
+    if(req.session.username == "secretary") {
         let doctor = await Doctor.getAllDoctors();
         let process = await Process.getAllProcesses();
         res.render('page_templates/secretary_view.hbs', {
             doctor: doctor,
             process: process
         });
-    // } else {
-    //     res.redirect("/login");
-    // }
+    } else {
+        res.redirect("/login");
+    }
 });
 
 /*
@@ -211,7 +211,7 @@ router.post("/week_one", urlencoder, async function (request, result){
 
 });
 
-router.get("/week_unavailable", async function (request, result){
+router.post("/week_unavailable", async function (request, result){
     let weekData = request.body["dates[]"];
 
     //Convert data to MMM D YYYY
@@ -239,48 +239,50 @@ router.get("/week_unavailable", async function (request, result){
         "5:00 PM", "5:30 PM",
         "6:00 PM"];
 
+    let doctorsArray = await Doctor.getAllDoctors();
     let dataArray = [];
     for (var i = 0; i < timeSlotsArray.length; i++){
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
 
         // appointments in a week for a time slot
-        let weekAppointments = [];
+        let weekUnavailable = [];
         let maxInWeek = 0;
 
         // loop through all weekdates in one time slot
         for (var k = 0; k < formattedWeekData.length; k++){
             let date = formattedWeekData[k].toString();
             
+            let unavs = [];
+            
+            for (var l = 0; l < doctorsArray.length; l++){
+                let doctorID = doctorsArray[l]._id;
+                let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, timeSlot);
 
-            // find all appointments in a date in a timeslot
-            let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
-            let appointments = [];
-            for (var l = 0; l < appointmentlist.length; l++){
-                let appointment = appointmentlist[l];
-                //populate necessary info
-                appointment = await appointment.populateDoctorAndProcess();
-                appointments.push(appointment);
+                if (appointment){
+                    let unavDoctor = await Doctor.getDoctorByID(doctorID);
+                    unavs.push(unavDoctor);
+                }
             }
 
-            if (appointmentlist.length > maxInWeek){
-                maxInWeek = appointmentlist.length;
+            if (unavs.length > maxInWeek){
+                maxInWeek = unavs.length;
             }
 
             // put in array of week appointments in a time slot
             let dayInWeek = {
-                num: appointmentlist.length,
-                appointments: appointments
+                num: unavs.length,
+                doctors: unavs
             }
 
-            weekAppointments.push(dayInWeek);
+            weekUnavailable.push(dayInWeek);
         }
         
 
         let data = {
             slot: timeSlot,
             max: maxInWeek,
-            weekAppointments: weekAppointments
+            weekUnavailable: weekUnavailable
         };
 
         dataArray.push(data);
