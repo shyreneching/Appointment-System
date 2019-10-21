@@ -198,12 +198,23 @@ function updateTableRows() {
             });
         }
         else if (choice == "av") {
+            let weekData = {
+                "dates": days
+            }
             $('#the-body').html("");
             $('.active.dimmer').toggle();
-            $.get("/secretary/week_available", function (data) {
-                let template = Handlebars.compile(data);
-                $('#the-body').html(template(null));
+            $.post("/secretary/week_available", weekData, function (data) {
+                let template = Handlebars.compile(data.htmlData);
+                $('#the-body').html(template(data.data));
+
+                $(".slot.in.week").each(function(){
+                    let oneSlot = this;
+                    $(oneSlot).find(".less-cell-count").each(function(){
+                        $(this).height($(oneSlot).find(".max-cell-count").height());
+                    });
+                })
                 $('.active.dimmer').toggle();
+                
             });
         }
         else {
