@@ -15,7 +15,7 @@ doctorSchema.statics.getDoctorByID = async function(doctorID){
 
 doctorSchema.statics.getAvailableDoctor = async function(){
     return await this.find({
-        status: "available"
+        status: "Available"
     }); 
 };
 
@@ -33,7 +33,7 @@ doctorSchema.statics.delete = async function(doctorID){
     });
 }
 
-doctorSchema.methods.updateDoctor = async function(doctorID, updated){
+doctorSchema.statics.updateDoctor = async function(doctorID, updated){
     return await this.updateOne({
         _id: doctorID
     }, {
@@ -44,6 +44,14 @@ doctorSchema.methods.updateDoctor = async function(doctorID, updated){
         new: true
     }); 
 };
+
+doctorSchema.statics.updateDoctorStatus = async function(doctorID, status) {
+    return await this.updateOne({
+        _id: doctorID
+    }, { $set: {
+        status,
+    }})
+}
 
 var Doctor = mongoose.model("Doctor", doctorSchema)
 

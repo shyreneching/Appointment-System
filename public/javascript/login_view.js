@@ -7,6 +7,7 @@ $(document).ready(() => {
             $("#username-input").addClass("error");
             $("#password-input").addClass("error");
             $("#password").val("");
+            $('body').toast({message: "Invalid username or password"});
             e.preventDefault();
         } 
     })

@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css"
       href="semantic/dist/semantic.min.css">
     <style type="text/css"> 
-        #createUser-button {
+        #create-user-button, #create-dentist-button, #create-procedure-button {
           margin-top: 25px;
         }
     </style>
@@ -21,8 +21,48 @@
       <a class="item active" data-tab="first">Users</a>
       <a class="item" data-tab="second">Dentists</a>
       <a class="item" data-tab="third">Procedures</a>
-      <button class="ui button" id="logout">Logout</button>
+      <div class="item right aligned">
+        <i style="padding-right: 20px; font-size: 18px;">Hello, Admin!</i>
+        <i id="setting" class="large setting icon link" style="margin-right: 15px;"></i>
+        <i id="logout" class="large sign out icon link"></i>
+      </div>
     </div>
+    {{!-- modal for setting --}}
+    <div class="ui mini modal" id="setting-modal">
+      <div class="header">Edit Admin Password</div>
+      <div class="content">
+        <div class="ui form">
+          <div class="required field" id="current-password-field">
+              <label>Current Password</label>
+              <input type="password" name="currentPassword" id="current-password" data-password="{{password}}" placeholder="Current Password">
+          </div>
+          <div class="required field" id="new-password-field">
+              <label>New Password</label>
+              <input type="password" name="newPassword" id="new-password" placeholder="New Password">
+          </div>
+          <div class="required field" id="confirm-new-password-field">
+              <label>Confirm New Password</label>
+              <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
+          </div>
+          <div class="ui grid two column right aligned" id="edit-password-buttons" style="margin-top: 25px;">
+            <div class="actions column">
+              <div class="ui right floated labeled icon red button" id="save-password">
+                  CONFIRM
+                  <i class="checkmark icon"></i>
+              </div>
+            </div>
+            <div class="actions column">
+              <div class="ui right floated labeled icon button deny">
+                  CANCEL
+                  <i class="cancel icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- user tab --}}
     <div class="ui bottom attached tab segment active" data-tab="first">
       <table class="ui striped table">
         <thead>
@@ -44,7 +84,7 @@
           </tr>
           {{/each}}
           <tr>
-            <button class="ui green basic button" id="user-button">
+            <button class="ui green basic button" id="add-user-button">
               Add
             </button>
           </tr>
@@ -52,39 +92,25 @@
       </table>
     </div>
     {{!-- modal for adding user --}}
-    <div class="ui mini modal" id="addUser">
+    <div class="ui mini modal" id="add-user-modal">
       <div class="header">New User</div>
       <div class="content centered">
         <div class="ui form">
-            <div class="required field" id="usernameField">
+            <div class="required field" id="username-field-user">
                 <label>Username</label>
-                <input type="text" name="username" id="addUsername" placeholder="Username">
+                <input type="text" name="username" id="add-username-user" placeholder="Username">
             </div>
-            <div class="required field" id="passwordField">
+            <div class="required field" id="password-field-user">
                 <label>Password</label>
-                <input type="password" name="password" id="addPassword" placeholder="Password">
+                <input type="password" name="password" id="add-password-user" placeholder="Password">
             </div>
-            <div class="required field" id="confirmPasswordField">
+            <div class="required field" id="confirm-password-field-user">
                 <label>Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
-            </div>
-            <div class="inline fields two column centered grid">
-              <div class="field" id="checkbox1">
-                <div class="ui radio checkbox">
-                  <input type="radio" name="frequency" value="doctor" />
-                  <label>Dentist</label>
-                </div>
-              </div>
-              <div class="field" id="checkbox2">
-                <div class="ui radio checkbox">
-                  <input type="radio" name="frequency" value="secretary" />
-                  <label>Secretary</label>
-                </div>
-              </div>
+                <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
             </div>
             <div class="ui grid">
               <div class="actions column">
-                <div class="ui right floated labeled icon green button very padded" id="createUser-button">
+                <div class="ui right floated labeled icon green button very padded" id="create-user-button">
                     CREATE
                     <i class="checkmark icon"></i>
                 </div>
@@ -94,19 +120,19 @@
       </div>
     </div>
     {{!-- modal for deleting user --}}
-    <div class="ui mini modal" id="deleteUser">
+    <div class="ui mini modal" id="delete-user-modal">
       <div class="header">Delete User</div>
       <div class="content">
         <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
         <div class="ui grid two column right aligned" id="delete-buttons-user" style="margin-top: 25px;">
           <div class="actions column">
-            <div class="ui right floated labeled icon red button" id="deleteUser-button">
+            <div class="ui right floated labeled icon red button" id="delete-user-button">
                 CONFIRM
                 <i class="checkmark icon"></i>
             </div>
           </div>
           <div class="actions column">
-            <div class="ui right floated labeled icon button deny" id="cancelDeleteUser-button">
+            <div class="ui right floated labeled icon button deny">
                 CANCEL
                 <i class="cancel icon"></i>
             </div>
@@ -115,12 +141,14 @@
       </div>
     </div>
 
+    {{!-- dentist tab --}}
     <div class="ui bottom attached tab segment" data-tab="second">
       <table class="ui striped table">
         <thead>
           <tr>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Status</th>
             <th class="center aligned">Action</th>
           </tr>
         </thead>
@@ -129,21 +157,62 @@
           <tr>
             <td>{{firstname}}</td>
             <td>{{lastname}}</td>
+            <td>
+              <div class="ui toggle button active" data-id="{{_id}}" id="status-toggle" style="width: 150px;">
+                {{status}}
+              </div>
+            </td>
             <td class="center aligned">
               <button class="ui button" data-id="{{_id}}">Edit</button>
-              <button class="negative ui button" data-id="{{_id}}">Delete</button>
             </td>
           </tr>
           {{/each}}
           <tr>
-            <button class="ui green basic button" id="dentist-button">
+            <button class="ui green basic button" id="add-dentist-button">
               Add
             </button>
           </tr>
         </tbody>
       </table>
     </div>
-    
+    {{!-- modal for adding dentist --}}
+    <div class="ui mini modal" id="add-dentist-modal">
+      <div class="header">New Dentist</div>
+      <div class="content centered">
+        <div class="ui form">
+            <div class="required field" id="firstname-field-dentist">
+                <label>First Name</label>
+                <input type="text" name="firstname" id="add-firstname-dentist" placeholder="First Name">
+            </div>
+            <div class="required field" id="lastname-field-dentist">
+                <label>Last Name</label>
+                <input type="text" name="lastname" id="add-lastname-dentist" placeholder="Last Name">
+            </div>
+            <div class="required field" id="username-field-dentist">
+                <label>Username</label>
+                <input type="text" name="username" id="add-username-dentist" placeholder="Username">
+            </div>
+            <div class="required field" id="password-field-dentist">
+                <label>Password</label>
+                <input type="password" name="password" id="add-password-dentist" placeholder="Password">
+            </div>
+            <div class="required field" id="confirm-password-field-dentist">
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
+            </div>
+            <div class="ui grid">
+              <div class="actions column">
+                <div class="ui right floated labeled icon green button very padded" id="create-dentist-button">
+                    CREATE
+                    <i class="checkmark icon"></i>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- procedure tab --}}
     <div class="ui bottom attached tab segment" data-tab="third">
       <table class="ui striped table">
         <thead>
@@ -158,18 +227,60 @@
             <td>{{processname}}</td>
             <td class="center aligned">
               <button class="ui button" data-id="{{_id}}">Edit</button>
-              <button class="negative ui button" data-id="{{_id}}">Delete</button>
+              <button class="negative ui button" data-id="{{_id}}" data-name="{{processname}}">Delete</button>
             </td>
           </tr>
           {{/each}}
           <tr>
-            <button class="ui green basic button" id="procedure-button">
+            <button class="ui green basic button" id="add-procedure-button">
               Add
             </button>
           </tr>
         </tbody>
       </table>
     </div>
+    {{!-- modal for adding procedure --}}
+    <div class="ui mini modal" id="procedure-modal">
+      <div class="header">New Procedure</div>
+      <div class="content">
+        <div class="ui form">
+          <div class="required field" id="procedure-field">
+              <label>Procedure Name</label>
+              <input type="text" name="procedure" id="procedure-name" placeholder="Procedure Name">
+          </div>
+        </div>
+        <div class="ui grid">
+          <div class="actions column">
+            <div class="ui right floated labeled icon green button very padded" id="create-procedure-button">
+                CREATE
+                <i class="checkmark icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{!-- modal for deleting procedure --}}
+    <div class="ui mini modal" id="delete-procedure-modal">
+      <div class="header">Delete Procedure</div>
+      <div class="content">
+        <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+        <div class="ui grid two column right aligned" id="delete-buttons-procedure" style="margin-top: 25px;">
+          <div class="actions column">
+            <div class="ui right floated labeled icon red button" id="delete-procedure-button">
+                CONFIRM
+                <i class="checkmark icon"></i>
+            </div>
+          </div>
+          <div class="actions column">
+            <div class="ui right floated labeled icon button deny">
+                CANCEL
+                <i class="cancel icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script <script src="javascript/admin_view.js"></script>
   </body>
 </html>
