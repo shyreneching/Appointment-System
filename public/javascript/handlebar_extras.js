@@ -39,3 +39,19 @@ Handlebars.registerHelper('weekYellow', function(index) {
         return new Handlebars.SafeString("dark yellow pastel colored cell");
     }
 });
+
+Handlebars.registerHelper('weekGreen', function(index) {
+    if (index % 2 == 0){
+        return new Handlebars.SafeString("light green pastel colored cell");
+    } else {
+        return new Handlebars.SafeString("dark green pastel colored cell");
+    }
+});
+
+Handlebars.registerHelper('weekRed', function(index) {
+    if (index % 2 == 0){
+        return new Handlebars.SafeString("light red pastel colored cell");
+    } else {
+        return new Handlebars.SafeString("dark red pastel colored cell");
+    }
+});

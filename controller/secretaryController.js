@@ -21,16 +21,16 @@ const {Process} = require("../model/process");
 */
 
 router.get("/", async function(req, res) {
-    //if(req.session.username == "secretary") {
+    if(req.session.username == "secretary") {
         let doctor = await Doctor.getAllDoctors();
         let process = await Process.getAllProcesses();
         res.render('page_templates/secretary_view.hbs', {
             doctor: doctor,
             process: process
         });
-    // } else {
-    //     res.redirect("/login");
-    // }
+    } else {
+        res.redirect("/login");
+    }
 });
 
 /*
@@ -211,14 +211,184 @@ router.post("/week_one", urlencoder, async function (request, result){
 
 });
 
-router.get("/week_unavailable", function (request, result){
+router.post("/week_unavailable", async function (request, result){
+    let weekData = request.body["dates[]"];
+
+    //Convert data to MMM D YYYY
+    let formattedWeekData = [];
+
+    for(var i = 0; i < weekData.length; i++){
+        let newDate = Date.parse(weekData[i]);
+        let formattedDate = moment(newDate).format("MMM D YYYY");
+        formattedWeekData.push(formattedDate);
+    }
+
+    // Load up the html template
     let week_unavailable = fs.readFileSync('./views/module_templates/secretary_week_unavail.hbs', 'utf-8');
-    result.send(week_unavailable);
+
+    // Array for iterating time slots
+    let timeSlotsArray = ["8:00 AM", "8:30 AM",
+        "9:00 AM", "9:30 AM",
+        "10:00 AM", "10:30 AM",
+        "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"];
+
+    let doctorsArray = await Doctor.getAllDoctors();
+    let dataArray = [];
+    for (var i = 0; i < timeSlotsArray.length; i++){
+        let timeSlot = timeSlotsArray[i];
+        // get all appointments in this date and time slot
+
+        // appointments in a week for a time slot
+        let weekUnavailable = [];
+        let maxInWeek = 0;
+
+        // loop through all weekdates in one time slot
+        for (var k = 0; k < formattedWeekData.length; k++){
+            let date = formattedWeekData[k].toString();
+            
+            let unavs = [];
+            
+            for (var l = 0; l < doctorsArray.length; l++){
+                let doctorID = doctorsArray[l]._id;
+                let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, timeSlot);
+
+                if (appointment){
+                    let unavDoctor = await Doctor.getDoctorByID(doctorID);
+                    unavs.push(unavDoctor);
+                }
+            }
+
+            if (unavs.length > maxInWeek){
+                maxInWeek = unavs.length;
+            }
+
+            // put in array of week appointments in a time slot
+            let dayInWeek = {
+                num: unavs.length,
+                doctors: unavs
+            }
+
+            weekUnavailable.push(dayInWeek);
+        }
+        
+
+        let data = {
+            slot: timeSlot,
+            max: maxInWeek,
+            weekUnavailable: weekUnavailable
+        };
+
+        dataArray.push(data);
+    }
+
+    let final = {
+        data: dataArray
+    }
+
+
+    result.send({
+        htmlData: week_unavailable,
+        data: final
+    });
 });
 
-router.get("/week_available", function (request, result){
+router.post("/week_available", async function (request, result){
+
+    let weekData = request.body["dates[]"];
+
+    //Convert data to MMM D YYYY
+    let formattedWeekData = [];
+
+    for(var i = 0; i < weekData.length; i++){
+        let newDate = Date.parse(weekData[i]);
+        let formattedDate = moment(newDate).format("MMM D YYYY");
+        formattedWeekData.push(formattedDate);
+    }
+
+    // Load up the html template
     let week_available = fs.readFileSync('./views/module_templates/secretary_week_avail.hbs', 'utf-8');
-    result.send(week_available);
+
+    // Array for iterating time slots
+    let timeSlotsArray = ["8:00 AM", "8:30 AM",
+        "9:00 AM", "9:30 AM",
+        "10:00 AM", "10:30 AM",
+        "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM",
+        "1:00 PM", "1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"];
+
+    let doctorsArray = await Doctor.getAllDoctors();
+    let dataArray = [];
+    for (var i = 0; i < timeSlotsArray.length; i++){
+        let timeSlot = timeSlotsArray[i];
+        // get all appointments in this date and time slot
+
+        // appointments in a week for a time slot
+        let weekAvailable = [];
+        let maxInWeek = 0;
+
+        // loop through all weekdates in one time slot
+        for (var k = 0; k < formattedWeekData.length; k++){
+            let date = formattedWeekData[k].toString();
+            
+            let avs = [];
+            
+            for (var l = 0; l < doctorsArray.length; l++){
+                let doctorID = doctorsArray[l]._id;
+                let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, timeSlot);
+
+                if (appointment){
+                    
+                } else {
+                    let avDoctor = await Doctor.getDoctorByID(doctorID);
+                    avs.push(avDoctor);
+                }
+            }
+
+            if (avs.length > maxInWeek){
+                maxInWeek = avs.length;
+            }
+
+            // put in array of week appointments in a time slot
+            let dayInWeek = {
+                num: avs.length,
+                doctors: avs
+            }
+
+            weekAvailable.push(dayInWeek);
+        }
+        
+
+        let data = {
+            slot: timeSlot,
+            max: maxInWeek,
+            weekAvailable: weekAvailable
+        };
+
+        dataArray.push(data);
+    }
+
+    let final = {
+        data: dataArray
+    }
+
+
+    result.send({
+        htmlData: week_available,
+        data: final
+    });
+    
 });
 
 router.get("/table_header", function (request, result){
