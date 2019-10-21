@@ -211,7 +211,7 @@ router.post("/week_one", urlencoder, async function (request, result){
 
 });
 
-router.get("/week_unavailable", function (request, result){
+router.get("/week_unavailable", await function (request, result){
     let weekData = request.body["dates[]"];
 
     //Convert data to MMM D YYYY
