@@ -1,3 +1,5 @@
+var accountDeleteID;
+
 $(document).ready(() => {
     $(".ui .button").on("click", click);
 })
@@ -11,7 +13,6 @@ $(document).on("keydown", () => {
 $(".field").on("click", () => {
     $("#checkbox1").removeClass("error");
     $("#checkbox2").removeClass("error");
-    $("#checkbox3").removeClass("error");
 })
 
 $(".menu .item").tab({
@@ -48,7 +49,6 @@ $("#createUser-button").click((e) => {
     if($("input[name='frequency']:checked").length == 0) {
         $("#checkbox1").addClass("error");
         $("#checkbox2").addClass("error");
-        $("#checkbox3").addClass("error");
         done = false;
     }
     if($("#addPassword").val() != $("#confirmPassword").val()) {
@@ -96,6 +96,21 @@ $("#procedure-button").click(() => {
     // })
 })
 
+$("#deleteUser-button").click(() => {
+    $.ajax({
+        type: "post",
+        url: "/admin/deleteAccount",
+        data: {
+            accountID: accountDeleteID
+        }
+    })
+    location.reload();
+})
+
+$("#cancelDeleteUser-button").click(() => {
+    
+})
+
 $("#logout").click(() => {
     localStorage.setItem("page", "first");
     window.location.href="/logout";
@@ -122,14 +137,9 @@ function click() {
     tab = $(this).parent().parent().parent().parent().parent().attr("data-tab");
     if(tab == "first") {
         if($(this).text() == "Delete") {
-            $.ajax({
-                type: "post",
-                url: "/admin/deleteAccount",
-                data: {
-                    accountID: $(this).data("id")
-                }
-            })
-            location.reload();
+            $("#deleteUser").modal("show");
+            $("#modal-text-delete-user").text($(this).data("username"));
+            accountDeleteID = $(this).data("id");
         } else if($(this).text() == "Edit") {
     
         }

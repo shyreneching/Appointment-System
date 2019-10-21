@@ -38,8 +38,8 @@
             <td>{{username}}</td>
             <td>{{password}}</td>
             <td class="center aligned">
-              <button class="ui button" data-id="{{_id}}">Edit</button>
-              <button class="negative ui button" data-id="{{_id}}">Delete</button>
+              <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
+              <button class="negative ui button" data-id="{{_id}}" data-username="{{username}}">Delete</button>
             </td>
           </tr>
           {{/each}}
@@ -51,9 +51,10 @@
         </tbody>
       </table>
     </div>
+    {{!-- modal for adding user --}}
     <div class="ui mini modal" id="addUser">
       <div class="header">New User</div>
-      <div class="content middle aligned center">
+      <div class="content centered">
         <div class="ui form">
             <div class="required field" id="usernameField">
                 <label>Username</label>
@@ -67,20 +68,14 @@
                 <label>Confirm Password</label>
                 <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
             </div>
-            <div class="inline fields three wide column">
+            <div class="inline fields two column centered grid">
               <div class="field" id="checkbox1">
-                <div class="ui radio checkbox">
-                  <input type="radio" name="frequency" value="admin"/>
-                  <label>Admin</label>
-                </div>
-              </div>
-              <div class="field" id="checkbox2">
                 <div class="ui radio checkbox">
                   <input type="radio" name="frequency" value="doctor" />
                   <label>Dentist</label>
                 </div>
               </div>
-              <div class="field" id="checkbox3">
+              <div class="field" id="checkbox2">
                 <div class="ui radio checkbox">
                   <input type="radio" name="frequency" value="secretary" />
                   <label>Secretary</label>
@@ -98,7 +93,28 @@
         </div>
       </div>
     </div>
-    
+    {{!-- modal for deleting user --}}
+    <div class="ui mini modal" id="deleteUser">
+      <div class="header">Delete User</div>
+      <div class="content">
+        <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+        <div class="ui grid two column right aligned" id="delete-buttons-user" style="margin-top: 25px;">
+          <div class="actions column">
+            <div class="ui right floated labeled icon red button" id="deleteUser-button">
+                CONFIRM
+                <i class="checkmark icon"></i>
+            </div>
+          </div>
+          <div class="actions column">
+            <div class="ui right floated labeled icon button deny" id="cancelDeleteUser-button">
+                CANCEL
+                <i class="cancel icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="ui bottom attached tab segment" data-tab="second">
       <table class="ui striped table">
         <thead>
