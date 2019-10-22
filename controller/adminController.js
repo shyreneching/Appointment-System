@@ -53,8 +53,12 @@ router.post("/addAccount", function(req, res) {
     })
 })
 
-router.post("/deleteAccount", function(req, res) {
+router.post("/deleteAccount", async function(req, res) {
+    let account = await Account.getAccountByUsername(req.body.accountUsername);
     Account.delete(req.body.accountID);
+    if(account.accountType == "dentist") {
+        Doctor.delete(account.doctorID);
+    }
     res.redirect("/");
 })
 

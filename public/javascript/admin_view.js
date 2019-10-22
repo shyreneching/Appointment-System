@@ -1,4 +1,5 @@
-var accountDeleteID, procedureDeleteID;
+var accountDeleteID, procedureDeleteID, accountDeleteUsername;
+var defaultButton;
 
 $(document).ready(() => {
     $(".ui .button").on("click", click);
@@ -19,6 +20,26 @@ $(document).on("keydown", () => {
     $("#new-password-field").removeClass("error");
     $("#confirm-new-password-field").removeClass("error");
 })
+
+$(document).keypress((event) => {
+    if(event.keyCode == 13) {
+        if($("#setting-modal")[0].className.includes("active")) {
+            $("#save-password").click();
+        } else if($("#add-user-modal")[0].className.includes("active")) {
+            $("#create-user-button").click();
+        } else if($("#add-dentist-modal")[0].className.includes("active")) {
+            $("#create-dentist-button").click();
+        } else if($("#procedure-modal")[0].className.includes("active")) {
+            $("#create-procedure-button").click();
+        } else if($("#delete-procedure-modal")[0].className.includes("active")) {
+            $("#delete-procedure-button").click();
+        } else if($("#delete-user-modal")[0].className.includes("active")) {
+            $("#delete-user-button").click();
+        }
+    }
+})
+
+console.log($("#setting-modal")[0].className);
 
 $(".field").on("click", () => {
     $("#checkbox-dentist").removeClass("error");
@@ -95,7 +116,7 @@ $("#add-dentist-modal").modal({
     }
 })
 
-$("procedure-modal").modal({
+$("#procedure-modal").modal({
     onShow: function() {
         $("#procedure-modal").form("clear");
     }
@@ -246,7 +267,8 @@ $("#delete-user-button").click(() => {
         type: "post",
         url: "/admin/deleteAccount",
         data: {
-            accountID: accountDeleteID
+            accountID: accountDeleteID,
+            accountUsername: accountDeleteUsername
         }
     })
     location.reload();
@@ -325,6 +347,7 @@ function click() {
             $("#delete-user-modal").modal("show");
             $("#modal-text-delete-user").text($(this).data("username"));
             accountDeleteID = $(this).data("id");
+            accountDeleteUsername = $(this).data("username");
         } else if($(this).text() == "Edit") {
             
         }
