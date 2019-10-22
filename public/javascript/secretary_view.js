@@ -13,7 +13,6 @@ $(document).ready(function () {
         initialDate: moment().toDate(),
         onChange: function () {
             let date = $(this).calendar('get focusDate');
-            console.log(date);
             setViewToDay();
             initializeTHead(date);
             updateTableRows(date);
@@ -131,10 +130,6 @@ $(document).ready(function () {
 });
 
 function updateTableRows(date) {
-    // let date = $('#standard_calendar').calendar('get focusDate');
-    // console.log("updating" + date);
-    // let ddate = $('#standard_calendar').calendar('get date');
-    // console.log("updating" + ddate);
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -301,7 +296,6 @@ function setViewToDay() {
 
 */
 async function initializeTHead(date) {
-    console.log("in initialize thad");
 
     $('.active.dimmer').toggle();
     let today = moment().toDate();
