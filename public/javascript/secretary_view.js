@@ -129,7 +129,7 @@ $(document).ready(function () {
 });
 
 function updateTableRows() {
-    let date = $('#standard_calendar').calendar('get focusDate');
+    let date = $('#standard_calendar').calendar('get date');
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
