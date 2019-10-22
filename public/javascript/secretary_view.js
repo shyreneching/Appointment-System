@@ -546,7 +546,9 @@ async function openDetailsModal(appointmentID){
     });
 
     $('#edit-multiDoctor').dropdown();
+    $('#edit-multiDoctor').dropdown('set selected', appointment.doctor);
     $('#edit-multiProcedure').dropdown();
+    $('#edit-multiProcedure').dropdown('set selected', appointment.process);
 
     $("#edit-lastName").keypress(function(){
         $("#edit-fieldLastName").removeClass("error")
