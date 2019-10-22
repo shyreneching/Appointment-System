@@ -614,23 +614,40 @@ router.post("/create", urlencoder, (req, res) => {
     })
 })
 
-router.get("/edit", (req, res)=>{
-    //just find the user given the id
-    console.log("GET /edit" + req.query.id)
-    Appointment.findOne({
-        _id: req.query.id
+router.post("/edit", urlencoder, async (req, res)=>{
+    let appointmentID = req.body.appointmentID;
+    let firstname = req.body.firstName;
+    let lastname = req.body.lastName;
+    let patientcontact = req.body.contact;
+    let process = req.body["procedures[]"];
+    let notes = req.body.notes;
+    let time = req.body.timeInput;
+    let date = req.body.dateInput;
+    let doctor = req.body["doctors[]"];
 
-    }, (err, doc)=>{
-        if(err){
-            res.send(err)
-        }else{
-            console.log(doc)
-            //send all the details of the user to edit.hbs
-            res.render("edit.hbs", {
-                appointment: doc
-            })
-        }
-    })
+    console.log(time);
+    console.log(date);
+    let newTime = Date.parse(time);
+    let formattedTime = moment(newTime).format("h:mm A");
+
+    let newDate = Date.parse(date);
+    let formattedDate = moment(newDate).format("MMM D YYYY");
+    
+
+    let appointment = new Appointment({
+        firstname,
+        lastname,
+        patientcontact,
+        process,
+        notes,
+        time : formattedTime,
+        date : formattedDate,
+        doctor
+    });
+
+    let newApp = await Appointment.updateAppointment(appointmentID, appointment);
+
+    res.send("Success");
 })
 
 
