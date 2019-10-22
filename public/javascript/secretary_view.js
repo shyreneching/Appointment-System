@@ -519,6 +519,11 @@ async function openDetailsModal(appointmentID){
         return data;
     });
 
+    $("#edit-lastName").val(appointment.firstname);
+    $("#edit-firstName").val(appointment.lastname);
+    $("#edit-notes").val(appointment.notes);
+    $("#edit-contact").val(appointment.patientcontact);
+
     $('#edit-appointment-modal').modal({
         blurring: true
     }).modal('toggle');
@@ -527,7 +532,7 @@ async function openDetailsModal(appointmentID){
         type: 'date',
         today: 'true',
         disabledDaysOfWeek: [0],
-        initialDate: moment().toDate()
+        initialDate: moment(appointment.date).toDate()
     })
 
     
@@ -537,12 +542,24 @@ async function openDetailsModal(appointmentID){
     minDate.setMinutes(0);
     maxDate.setHours(18);
     maxDate.setMinutes(0);
+
+    var time = appointment.time;
+    var startTime = new Date();
+    var parts = time.match(/(\d+):(\d+) (AM|PM)/);
+    if (parts) {
+        var hours = parseInt(parts[1]),
+            minutes = parseInt(parts[2]),
+            tt = parts[3];
+        if (tt === 'PM' && hours < 12) hours += 12;
+        startTime.setHours(hours, minutes, 0, 0);
+    }
+
     $('#edit-time_calendar').calendar({
         type: 'time',
         minTimeGap: 30,
         maxDate: maxDate,
         minDate: minDate,
-        initialDate: minDate
+        initialDate: startTime
     });
 
     $('#edit-multiDoctor').dropdown();
