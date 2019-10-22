@@ -519,6 +519,13 @@ router.post("/check_valid_appointment", urlencoder, async function (request, res
     End of Templates
 */
 
+router.post("/getAppointment",urlencoder, async (req, res) => {
+    let appID = req.body.appointmentID;
+
+    let appointment = await Appointment.getAppointmentsByID(appID);
+    res.send(appointment);
+})
+
 /*
     Temporary doctor adding routes for testing purposes, remove when done
 */

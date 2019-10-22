@@ -15,7 +15,7 @@ $(document).ready(function () {
             let date = $(this).calendar('get focusDate');
             setViewToDay();
             initializeTHead(date);
-            updateTableRows();
+            updateTableRows(date);
         }
     });
 
@@ -34,7 +34,7 @@ $(document).ready(function () {
             }
             let date = $('#standard_calendar').calendar('get date');
             initializeTHead(date);
-            updateTableRows();
+            updateTableRows(date);
         }
     });
 
@@ -43,7 +43,7 @@ $(document).ready(function () {
         setViewToDay();
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
-        updateTableRows();
+        updateTableRows(moment().toDate());
     });
 
     //Set Next and Prev Buttons
@@ -55,12 +55,12 @@ $(document).ready(function () {
             let nextDay = moment(date).clone().add(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
-            updateTableRows();
+            updateTableRows(nextDay.toDate());
         } else {
             let nextWeek = moment(date).clone().add(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
-            updateTableRows();
+            updateTableRows(nextWeek.toDate());
         }
     });
 
@@ -72,12 +72,12 @@ $(document).ready(function () {
             let nextDay = moment(date).clone().subtract(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
-            updateTableRows();
+            updateTableRows(nextDay.toDate());
         } else {
             let nextWeek = moment(date).clone().subtract(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
-            updateTableRows();
+            updateTableRows(nextWeek.toDate());
         }
     });
 
@@ -103,11 +103,13 @@ $(document).ready(function () {
         $('#main-menu').sticky({
             context: '#schedule-table'
         });
+
     });
 
     // Filter dropdown ajax calls
     $('#filter-dropdown').dropdown('setting', 'onChange', function () {
-        updateTableRows();
+        let date = $('#standard_calendar').calendar('get date');
+        updateTableRows(date);
     });
 
     // Initializes form-------------------------------------------------
@@ -127,8 +129,7 @@ $(document).ready(function () {
     });
 });
 
-function updateTableRows() {
-    let date = $('#standard_calendar').calendar('get focusDate');
+function updateTableRows(date) {
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -395,7 +396,7 @@ async function initializeTHead(date) {
         })
 
         $("#add-date_calendar").on("click", function(){
-            $("#fadd-ieldDateCalendar").removeClass("error")
+            $("#add-fieldDateCalendar").removeClass("error")
         })
 
         $("#add-time_calendar").on("click", function(){
@@ -407,7 +408,7 @@ async function initializeTHead(date) {
         })
 
         $("#add-fieldProcedures").on("click", function(){
-            $("#fadd-ieldProcedures").removeClass("error")
+            $("#add-fieldProcedures").removeClass("error")
         })
 
         $('#add-appointment-modal').modal({
@@ -446,7 +447,7 @@ async function initializeTHead(date) {
             setViewToDay();
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
-            updateTableRows();
+            updateTableRows(oneDate);
         });
     }
 
@@ -505,10 +506,115 @@ async function addAppointment(){
             $('#view-chooser').dropdown('set selected', "day-view");
         
             initializeTHead(dateInput);
-            updateTableRows();
+            updateTableRows(dateInput);
             
         });
     }
 
 }
 
+async function openDetailsModal(appointmentID){
+    console.log("Here");
+
+    $('#edit-delete-button').unbind('click');
+    $('#edit-delete-button').on('click', function(){
+
+    });
+
+    // open second modal on first modal buttons
+    // $('.second.modal')
+    // .modal('attach events', '.first.modal .button')
+    // ;
+
+    let appointment = await $.post("/secretary/getAppointment", {appointmentID: appointmentID}, function(data){
+        return data;
+    });
+
+    $("#edit-lastName").val(appointment.firstname);
+    $("#edit-firstName").val(appointment.lastname);
+    $("#edit-notes").val(appointment.notes);
+    $("#edit-contact").val(appointment.patientcontact);
+
+    $('#edit-appointment-modal').modal({
+        blurring: true
+    }).modal('toggle');
+        // Initialize popup stuff
+    $("#edit-date_calendar").calendar({
+        type: 'date',
+        today: 'true',
+        disabledDaysOfWeek: [0],
+        initialDate: moment(appointment.date).toDate()
+    })
+
+    
+    var minDate = new Date();
+    var maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(18);
+    maxDate.setMinutes(0);
+
+    var time = appointment.time;
+    var startTime = new Date();
+    var parts = time.match(/(\d+):(\d+) (AM|PM)/);
+    if (parts) {
+        var hours = parseInt(parts[1]),
+            minutes = parseInt(parts[2]),
+            tt = parts[3];
+        if (tt === 'PM' && hours < 12) hours += 12;
+        startTime.setHours(hours, minutes, 0, 0);
+    }
+
+    $('#edit-time_calendar').calendar({
+        type: 'time',
+        minTimeGap: 30,
+        maxDate: maxDate,
+        minDate: minDate,
+        initialDate: startTime
+    });
+
+    $('#edit-multiDoctor').dropdown();
+    $('#edit-multiDoctor').dropdown('set selected', appointment.doctor);
+    $('#edit-multiProcedure').dropdown();
+    $('#edit-multiProcedure').dropdown('set selected', appointment.process);
+
+    $("#edit-lastName").keypress(function(){
+        $("#edit-fieldLastName").removeClass("error")
+    })
+
+    $("#edit-firstName").keypress(function(){
+        $("#edit-fieldFirstName").removeClass("error")
+    })
+
+    $("#edit-date_calendar").on("click", function(){
+        $("#edit-fieldDateCalendar").removeClass("error")
+    })
+
+    $("#edit-time_calendar").on("click", function(){
+        $("#edit-fieldTimeCalendar").removeClass("error")
+    })
+
+    $("#edit-fieldDoctors").on("click", function(){
+        $("#edit-fieldDoctors").removeClass("error")
+    })
+
+    $("#edit-fieldProcedures").on("click", function(){
+        $("#edit-fieldProcedures").removeClass("error")
+    })
+
+    $('#edit-appointment-modal').modal({
+        onHidden: function () {
+            $("#edit-multiDoctor").dropdown("clear")
+            $("#edit-multiProcedure").dropdown("clear")
+            $("#edit-lastName").val("");
+            $("#edit-firstName").val("");
+            $("#edit-notes").val("");
+            $("#edit-contact").val("");
+
+            $("#edit-fieldProcedures").removeClass("error")
+            $("#edit-fieldDoctors").removeClass("error")
+            $("#edit-fieldFirstName").removeClass("error")
+            $("#edit-fieldLastName").removeClass("error")
+        }
+    });
+}
