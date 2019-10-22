@@ -13,9 +13,10 @@ $(document).ready(function () {
         initialDate: moment().toDate(),
         onChange: function () {
             let date = $(this).calendar('get focusDate');
+            console.log(date);
             setViewToDay();
             initializeTHead(date);
-            updateTableRows();
+            updateTableRows(date);
         }
     });
 
@@ -34,7 +35,7 @@ $(document).ready(function () {
             }
             let date = $('#standard_calendar').calendar('get date');
             initializeTHead(date);
-            updateTableRows();
+            updateTableRows(date);
         }
     });
 
@@ -43,7 +44,7 @@ $(document).ready(function () {
         setViewToDay();
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
-        updateTableRows();
+        updateTableRows(moment().toDate());
     });
 
     //Set Next and Prev Buttons
@@ -55,12 +56,12 @@ $(document).ready(function () {
             let nextDay = moment(date).clone().add(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
-            updateTableRows();
+            updateTableRows(nextDay.toDate());
         } else {
             let nextWeek = moment(date).clone().add(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
-            updateTableRows();
+            updateTableRows(nextWeek.toDate());
         }
     });
 
@@ -72,12 +73,12 @@ $(document).ready(function () {
             let nextDay = moment(date).clone().subtract(1, 'd');
             $('#standard_calendar').calendar('set date', nextDay.toDate(), true, false);
             initializeTHead(nextDay.toDate());
-            updateTableRows();
+            updateTableRows(nextDay.toDate());
         } else {
             let nextWeek = moment(date).clone().subtract(7, 'd');
             $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
             initializeTHead(nextWeek.toDate());
-            updateTableRows();
+            updateTableRows(nextWeek.toDate());
         }
     });
 
@@ -108,7 +109,8 @@ $(document).ready(function () {
 
     // Filter dropdown ajax calls
     $('#filter-dropdown').dropdown('setting', 'onChange', function () {
-        updateTableRows();
+        let date = $('#standard_calendar').calendar('get date');
+        updateTableRows(date);
     });
 
     // Initializes form-------------------------------------------------
@@ -128,8 +130,11 @@ $(document).ready(function () {
     });
 });
 
-function updateTableRows() {
-    let date = $('#standard_calendar').calendar('get date');
+function updateTableRows(date) {
+    // let date = $('#standard_calendar').calendar('get focusDate');
+    // console.log("updating" + date);
+    // let ddate = $('#standard_calendar').calendar('get date');
+    // console.log("updating" + ddate);
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
 
@@ -296,6 +301,7 @@ function setViewToDay() {
 
 */
 async function initializeTHead(date) {
+    console.log("in initialize thad");
 
     $('.active.dimmer').toggle();
     let today = moment().toDate();
@@ -447,7 +453,7 @@ async function initializeTHead(date) {
             setViewToDay();
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
-            updateTableRows();
+            updateTableRows(oneDate);
         });
     }
 
@@ -506,7 +512,7 @@ async function addAppointment(){
             $('#view-chooser').dropdown('set selected', "day-view");
         
             initializeTHead(dateInput);
-            updateTableRows();
+            updateTableRows(dateInput);
             
         });
     }
