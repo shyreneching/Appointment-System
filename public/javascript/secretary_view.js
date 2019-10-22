@@ -515,6 +515,17 @@ async function addAppointment(){
 
 async function openDetailsModal(appointmentID){
     console.log("Here");
+
+    $('#edit-delete-button').unbind('click');
+    $('#edit-delete-button').on('click', function(){
+
+    });
+
+    // open second modal on first modal buttons
+    // $('.second.modal')
+    // .modal('attach events', '.first.modal .button')
+    // ;
+
     let appointment = await $.post("/secretary/getAppointment", {appointmentID: appointmentID}, function(data){
         return data;
     });
