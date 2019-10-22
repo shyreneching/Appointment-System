@@ -127,6 +127,7 @@ $(document).ready(function () {
     $('#add-save-button').on('click', function(){
         addAppointment();
     });
+
 });
 
 function updateTableRows(date) {
@@ -487,7 +488,6 @@ async function addAppointment(){
 
     // if all fields are filled
     if (flag){
-        console.log("adding");
         let ajaxData = {
             firstName: firstName,
             lastName: lastName,
@@ -499,7 +499,6 @@ async function addAppointment(){
             notes: notes
         };
 
-        console.log(ajaxData);
         await $.post("/secretary/create", ajaxData, function(data){
             $("#add-appointment-modal").modal('hide');
             $('#standard_calendar').calendar('set date', dateInput, true, false);
@@ -514,7 +513,6 @@ async function addAppointment(){
 }
 
 async function openDetailsModal(appointmentID){
-    console.log("Here");
 
     $('#edit-appointment-modal').modal({
         blurring: true,
@@ -629,4 +627,68 @@ async function openDetailsModal(appointmentID){
             $("#edit-fieldLastName").removeClass("error")
         }
     });
+
+    $('#edit-save-button').unbind('click');
+    $('#edit-save-button').on('click', function(){
+        editAppointment(appointmentID);
+    });
+}
+
+async function editAppointment(appointmentID){
+    let firstName = $('#edit-firstName').val();
+    let lastName = $('#edit-lastName').val();
+    let contact = $('#edit-contact').val();
+    let dateInput = $('#edit-date_calendar').calendar('get date');
+    let timeInput = $('#edit-time_calendar').calendar('get date');
+    let doctors = $("#edit-multiDoctor").dropdown("get value");
+    let procedures = $("#edit-multiProcedure").dropdown("get value");
+    let notes = $("#edit-notes").val();
+
+    var flag = true;
+
+    if (lastName == "") {
+        $("#edit-fieldLastName").addClass("error")
+        flag = false;
+    }
+
+    if (firstName == "") {
+        $("#edit-fieldFirstName").addClass("error")
+        flag = false;
+    }
+
+    if (doctors === undefined || doctors.length == 0) {
+        $("#edit-fieldDoctors").addClass("error")
+        flag = false;
+    }
+
+    if (procedures === undefined || procedures.length == 0) {
+        $("#edit-fieldProcedures").addClass("error")
+        flag = false;
+    }
+
+    // if all fields are filled
+    if (flag){
+        let ajaxData = {
+            appointmentID: appointmentID,
+            firstName: firstName,
+            lastName: lastName,
+            contact: contact,
+            dateInput:dateInput.toString(),
+            timeInput: timeInput.toString(),
+            doctors: doctors,
+            procedures: procedures,
+            notes: notes
+        };
+
+        await $.post("/secretary/edit", ajaxData, function(data){
+            $("#edit-appointment-modal").modal('hide');
+            $('#standard_calendar').calendar('set date', dateInput, true, false);
+            $('#view-chooser').dropdown('set selected', "day-view");
+        
+            initializeTHead(dateInput);
+            updateTableRows(dateInput);
+            
+        });
+    }
+
 }

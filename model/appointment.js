@@ -76,18 +76,18 @@ appointmentSchema.statics.delete = async function(appointmentID){
     });
 }
 
-appointmentSchema.methods.updateAppointment = async function(appointmentID, updated){
+appointmentSchema.statics.updateAppointment = async function(appointmentID, updated){
     return await this.updateOne({
         _id: appointmentID
     }, {
-        firstname,
-        lastname,
-        patientcontact,
-        process,
-        notes,
-        time,
-        date,
-        doctor
+        firstname: updated.firstname,
+        lastname: updated.lastname,
+        patientcontact: updated.patientcontact,
+        process: updated.process,
+        notes: updated.notes,
+        time: updated.time,
+        date: updated.date,
+        doctor: updated.doctor
     }, {
         new: true
     }); 
