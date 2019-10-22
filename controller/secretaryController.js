@@ -21,7 +21,7 @@ const {Process} = require("../model/process");
 */
 
 router.get("/", async function(req, res) {
-    if(req.session.username == "secretary") {
+    if(req.session.username != null) {
         let doctor = await Doctor.getAllDoctors();
         let process = await Process.getAllProcesses();
         res.render('page_templates/secretary_view.hbs', {

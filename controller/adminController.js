@@ -47,7 +47,7 @@ router.post("/addAccount", function(req, res) {
         accountType: req.body.type,
         doctorID: ""
     }), (value) => {
-        res.redirect("/login");
+        res.redirect("/");
     }, (err) => {
         res.send(err);
     })
