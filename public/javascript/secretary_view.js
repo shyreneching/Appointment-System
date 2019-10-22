@@ -516,16 +516,30 @@ async function addAppointment(){
 async function openDetailsModal(appointmentID){
     console.log("Here");
 
-    $('#edit-delete-button').unbind('click');
-    $('#edit-delete-button').on('click', function(){
-
+    $('#edit-appointment-modal').modal({
+        blurring: true,
     });
 
-    // open second modal on first modal buttons
-    // $('.second.modal')
-    // .modal('attach events', '.first.modal .button')
-    // ;
+    //open second modal on first modal buttons
+    $('.second.modal.confirmation').modal('attach events', '#edit-appointment-modal #edit-delete-button');
+    $('#edit-appointment-modal').modal('show');
 
+    $('#edit-cancel-button').unbind('click');
+    $('#edit-cancel-button').on('click', function(){
+        $('.second.modal.confirmation').modal('toggle');
+        openDetailsModal(appointmentID);
+    });
+
+    $('#edit-continue-button').unbind('click');
+    $('#edit-continue-button').on('click', function(){
+        $.post("/secretary/delete", {appointmentID: appointmentID}, function(data){
+            $('.second.modal.confirmation').modal('hide');
+            let date = $('#standard_calendar').calendar('get date');
+            updateTableRows(date);
+        });
+    });
+
+    
     let appointment = await $.post("/secretary/getAppointment", {appointmentID: appointmentID}, function(data){
         return data;
     });
@@ -535,9 +549,7 @@ async function openDetailsModal(appointmentID){
     $("#edit-notes").val(appointment.notes);
     $("#edit-contact").val(appointment.patientcontact);
 
-    $('#edit-appointment-modal').modal({
-        blurring: true
-    }).modal('toggle');
+    
         // Initialize popup stuff
     $("#edit-date_calendar").calendar({
         type: 'date',

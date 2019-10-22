@@ -654,17 +654,12 @@ router.post("/update", (req, res) => {
     })
 })
 
-router.post("/delete", (req, res) => {
-    Appointment.deleteOne({
-        _id: req.body.id
-    }, (err, doc)=>{
-       if(err){
-           res.send(err)
-       }else{
-           //res.redirect("/users")
-           res.send(doc)
-       }
-    })
+router.post("/delete", urlencoder, async (req, res) => {
+    let appID = req.body.appointmentID;
+
+    await Appointment.delete(appID);
+
+    res.send("Success");
 })
 
 module.exports = router;
