@@ -651,25 +651,39 @@ router.post("/edit", urlencoder, async (req, res)=>{
 })
 
 
-router.post("/update", (req, res) => {
-    Appointment.update({
-        _id: req.body.id
-    }, {
-        patientname:  req.body.pn,
-        patientcontact: req.body.pc,
-        process: req.body.pp,
-        notes: req.body.note,
-        time: req.body.time,
-        date: req.body.date,
-        doctor: req.body.doc
-    }, (err, doc)=>{
-       if(err){
-           res.send(err)
-       }else{
-           res.redirect("/")
-       }
-    })
-})
+router.post("/check_app_exists", urlencoder, async (req, res) => {
+    let time = req.body.timeInput;
+    let date = req.body.dateInput;
+    let doctor = req.body["doctors[]"];
+
+    let newTime = Date.parse(time);
+    let formattedTime = moment(newTime).format("h:mm A");
+
+    let newDate = Date.parse(date);
+    let formattedDate = moment(newDate).format("MMM D YYYY");
+
+    let found = false;
+
+    if (typeof doctor === 'object'){
+        for (var i = 0; i < doctor.length; i++){
+            let doctorID = doctor[i];
+            let appointment = await Appointment.getAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
+    
+            if (appointment){
+                found = true;
+            }
+        }    
+    } else {
+        let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctor, formattedDate, formattedTime);
+        console.log(appointment);
+    
+        if (appointment){
+            found = true;
+        }
+    }
+    
+    res.send(found);
+});
 
 router.post("/delete", urlencoder, async (req, res) => {
     let appID = req.body.appointmentID;
