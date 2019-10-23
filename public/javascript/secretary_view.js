@@ -156,7 +156,7 @@ function updateTableRows(date) {
 
 
     if (viewType == "week-view") {
-        if (choice == 'all') {
+        if (choice == 'all'|| choice == 'all1') {
             let weekData = {
                 "dates": days
             }
@@ -244,7 +244,7 @@ function updateTableRows(date) {
         }
     }
     else {
-        if (choice == "all") {
+        if (choice == "all" || choice == 'all1') {
             // Some Screen flair
             $('#the-body').html("");
             $('.active.dimmer').toggle();
