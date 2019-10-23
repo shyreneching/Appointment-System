@@ -24,7 +24,6 @@ router.get("/", async (req, res) => {
         })
     } else {
         if(req.session.username == null) {
-            console.log("error");
             res.redirect("/login");
         } else {
             let account = await Account.getAccountByUsername(req.session.username);
@@ -47,10 +46,9 @@ router.get("/login", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
+    let account = await Account.getAccountByUsername(req.body.username);
     req.session.username = req.body.username;
-    let account = await Account.getAccountByUsername(req.session.username);
     if(account.accountType == "secretary") {
-        console.log("in");
         res.redirect("/secretary");
     } else if(account.accountType == "doctor") {
 

@@ -39,8 +39,6 @@ $(document).keypress((event) => {
     }
 })
 
-console.log($("#setting-modal")[0].className);
-
 $(".field").on("click", () => {
     $("#checkbox-dentist").removeClass("error");
     $("#checkbox-secretary").removeClass("error");
@@ -305,17 +303,19 @@ function setup() {
         }
     }
     $(tab).addClass("active");
-    var status = $("#status-toggle").text().trim(); 
-    if(status == "Unavailable") {
-        $("#status-toggle").removeClass("active");
+    var statusList = $(".ui .toggle");
+    for(var i = 0; i < statusList.length; i++) {
+        if($(statusList[i]).text().trim() == "Unavailable") {
+            $(statusList[i]).removeClass("active");
+        }
     }
 }
 
 function change() {
-    var status = $("#status-toggle").text().trim(); 
+    var status = $(this).text().trim(); 
     if(status == 'Available') {
-        $("#status-toggle").removeClass("active");
-        $("#status-toggle").text("Unavailable");
+        $(this).removeClass("active");
+        $(this).text("Unavailable");
         $.ajax({
             type: "post",
             url: "/admin/editDentist",
@@ -326,8 +326,8 @@ function change() {
             }
         })
     } else if(status == 'Unavailable') {
-        $("#status-toggle").addClass("active");
-        $("#status-toggle").text("Available");
+        $(this).addClass("active");
+        $(this).text("Available");
         $.ajax({
             type: "post",
             url: "/admin/editDentist",

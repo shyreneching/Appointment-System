@@ -55,3 +55,11 @@ Handlebars.registerHelper('weekRed', function(index) {
         return new Handlebars.SafeString("dark red pastel colored cell");
     }
 });
+
+Handlebars.registerHelper('hash', function(password) {
+    var hash = "";
+    for(var i = 0; i < password.length; i++) {
+        hash += "●";
+    }
+    return new Handlebars.SafeString(hash);
+});
