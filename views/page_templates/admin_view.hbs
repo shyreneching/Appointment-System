@@ -77,7 +77,7 @@
           {{#each user}}
           <tr>
             <td>{{username}}</td>
-            <td>{{password}}</td>
+            <td>{{hashPassword password}}</td>
             <td>{{accountType}}</td>
             <td class="center aligned">
               <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
@@ -282,7 +282,8 @@
         </div>
       </div>
     </div>
-
-    <script <script src="javascript/admin_view.js"></script>
+    <script src="javascript/handlebars.js"></script>
+    <script src="javascript/handlebar_extras.js"></script>
+    <script src="javascript/admin_view.js"></script>
   </body>
 </html>
