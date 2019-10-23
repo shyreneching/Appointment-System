@@ -862,10 +862,14 @@ async function editAppointment(appointmentID, initialDoctors) {
 
             var clone = doctors.slice(0);
 
-            var index = clone.indexOf(initialDoctors[0]);
-            if (index > -1) {
-                clone.splice(index, 1);
+            for (var i = 0; i<initialDoctors.length; i++){
+                var index = clone.indexOf(initialDoctors[i]);
+                if (index > -1) {
+                    clone.splice(index, 1);
+                }
             }
+
+            
             let checkData = {
                 dateInput: dateInput.toString(),
                 timeInput: timeInput.toString(),
