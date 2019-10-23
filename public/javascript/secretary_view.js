@@ -124,7 +124,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#add-save-button').on('click', function(){
+    $('#add-save-button').on('click', function () {
         addAppointment();
     });
 
@@ -144,7 +144,7 @@ function updateTableRows(date) {
     // Dates for week view
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
-    
+
     // gets days of week-------------------------------------------------
     var days = [];
     var day = startOfWeek;
@@ -153,10 +153,10 @@ function updateTableRows(date) {
         day = day.clone().add(1, 'd');
     }
 
-    
+
 
     if (viewType == "week-view") {
-        if (choice == 'all') {
+        if (choice == 'all'|| choice == 'all1') {
             let weekData = {
                 "dates": days
             }
@@ -166,16 +166,16 @@ function updateTableRows(date) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
 
-                $(".slot.in.week").each(function(){
+                $(".slot.in.week").each(function () {
                     let oneSlot = this;
-                    $(oneSlot).find(".less-cell-count").each(function(){
+                    $(oneSlot).find(".less-cell-count").each(function () {
                         $(this).height($(oneSlot).find(".max-cell-count").height());
                     });
-                    
+
                 })
 
                 $('.active.dimmer').toggle();
-                
+
             });
         }
         else if (choice == "unav") {
@@ -188,15 +188,15 @@ function updateTableRows(date) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
 
-                $(".slot.in.week").each(function(){
+                $(".slot.in.week").each(function () {
                     let oneSlot = this;
-                    $(oneSlot).find(".less-cell-count").each(function(){
+                    $(oneSlot).find(".less-cell-count").each(function () {
                         $(this).height($(oneSlot).find(".max-cell-count").height());
                     });
-                    
+
                 })
                 $('.active.dimmer').toggle();
-                
+
             });
         }
         else if (choice == "av") {
@@ -209,14 +209,14 @@ function updateTableRows(date) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
 
-                $(".slot.in.week").each(function(){
+                $(".slot.in.week").each(function () {
                     let oneSlot = this;
-                    $(oneSlot).find(".less-cell-count").each(function(){
+                    $(oneSlot).find(".less-cell-count").each(function () {
                         $(this).height($(oneSlot).find(".max-cell-count").height());
                     });
                 })
                 $('.active.dimmer').toggle();
-                
+
             });
         }
         else {
@@ -230,12 +230,12 @@ function updateTableRows(date) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
 
-                $(".slot.in.week").each(function(){
+                $(".slot.in.week").each(function () {
                     let oneSlot = this;
-                    $(oneSlot).find(".less-cell-count").each(function(){
+                    $(oneSlot).find(".less-cell-count").each(function () {
                         $(this).height($(oneSlot).find(".max-cell-count").height());
                     });
-                    
+
                 })
                 $("#filter-heading-title").html(`Weekly Appointments of ${actualName}`);
 
@@ -244,7 +244,7 @@ function updateTableRows(date) {
         }
     }
     else {
-        if (choice == "all") {
+        if (choice == "all" || choice == 'all1') {
             // Some Screen flair
             $('#the-body').html("");
             $('.active.dimmer').toggle();
@@ -268,7 +268,7 @@ function updateTableRows(date) {
                 "doctor": choice
             };
 
-            
+
             // The ajax query
             $.post("/secretary/day_one", sendData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
@@ -302,7 +302,7 @@ async function initializeTHead(date) {
     let today = moment().toDate();
     var startOfWeek = moment(date).startOf('week');
     var endOfWeek = moment(date).endOf('week');
-    
+
     // gets days of week-------------------------------------------------
     var days = [];
     var day = startOfWeek;
@@ -370,7 +370,7 @@ async function initializeTHead(date) {
             initialDate: moment().toDate()
         })
 
-        
+
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
@@ -388,31 +388,31 @@ async function initializeTHead(date) {
         $('#add-multiDoctor').dropdown();
         $('#add-multiProcedure').dropdown();
 
-        $("#add-lastName").keypress(function(){
+        $("#add-lastName").keypress(function () {
             $("#add-fieldLastName").removeClass("error")
         })
 
-        $("#add-firstName").keypress(function(){
+        $("#add-firstName").keypress(function () {
             $("#add-fieldFirstName").removeClass("error")
         })
 
-        $("#add-contact").keypress(function(){
+        $("#add-contact").keypress(function () {
             $("#add-fieldContact").removeClass("error")
         })
 
-        $("#add-date_calendar").on("click", function(){
+        $("#add-date_calendar").on("click", function () {
             $("#add-fieldDateCalendar").removeClass("error")
         })
 
-        $("#add-time_calendar").on("click", function(){
+        $("#add-time_calendar").on("click", function () {
             $("#add-fieldTimeCalendar").removeClass("error")
         })
 
-        $("#add-fieldDoctors").on("click", function(){
+        $("#add-fieldDoctors").on("click", function () {
             $("#add-fieldDoctors").removeClass("error")
         })
 
-        $("#add-fieldProcedures").on("click", function(){
+        $("#add-fieldProcedures").on("click", function () {
             $("#add-fieldProcedures").removeClass("error")
         })
 
@@ -458,7 +458,7 @@ async function initializeTHead(date) {
 
 };
 
-async function addAppointment(){
+async function addAppointment() {
     let firstName = $('#add-firstName').val();
     let lastName = $('#add-lastName').val();
     let contact = $('#add-contact').val();
@@ -479,10 +479,9 @@ async function addAppointment(){
                 position: 'top left'
             });
         flag = false;
-    }else {
+    } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
-        console.log(valid);
-        if (!valid){
+        if (!valid) {
             $("#add-fieldFirstName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
@@ -505,15 +504,14 @@ async function addAppointment(){
         flag = false;
     } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
-        console.log(valid);
-        if (!valid){
+        if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Last Name should only be Alphanumeric.',
-                position: 'top left'
-            });
+                .toast({
+                    class: 'error',
+                    message: 'Last Name should only be Alphanumeric.',
+                    position: 'top left'
+                });
             flag = false;
         }
     }
@@ -540,51 +538,80 @@ async function addAppointment(){
         flag = false;
     }
 
-    if (contact != ""){
+    if (contact != "") {
         // "[+]?[\\d]"
         let regex = /^[+-]?\d+$/;
         let test = regex.test(contact);
 
-        if (!test){
+        if (!test) {
             $("#add-fieldContact").addClass("error");
             $('#add-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Invalid contact number format',
-                position: 'top left'
-            });
+                .toast({
+                    class: 'error',
+                    message: 'Invalid contact number format',
+                    position: 'top left'
+                });
 
             flag = false;
         }
     }
 
+    if (flag) {
+        let checkData = {
+            dateInput: dateInput.toString(),
+            timeInput: timeInput.toString(),
+            doctors: doctors
+        };
+
+        console.log("checking flag");
+        await $.post("/secretary/check_app_exists", checkData, function (data) {
+            
+            if (data == true){
+                $("#add-fieldDoctors").addClass("error");
+                $('#add-appointment-modal')
+                    .toast({
+                        class: 'error',
+                        message: 'Doctor already booked on date and time',
+                        position: 'top left'
+                    });
+
+                flag = false;
+            } else {
+                flag = true;
+            }
+
+        });
+    }
+
+
     // if all fields are filled
-    if (flag){
+    if (flag) {
         let ajaxData = {
             firstName: firstName,
             lastName: lastName,
             contact: contact,
-            dateInput:dateInput.toString(),
+            dateInput: dateInput.toString(),
             timeInput: timeInput.toString(),
             doctors: doctors,
             procedures: procedures,
             notes: notes
         };
 
-        await $.post("/secretary/create", ajaxData, function(data){
-            $("#add-appointment-modal").modal('toggle');
+        await $.post("/secretary/create", ajaxData, function (data) {
+
+        });
+
+        $("#add-appointment-modal").modal('toggle');
             $('#standard_calendar').calendar('set date', dateInput, true, false);
             $('#view-chooser').dropdown('set selected', "day-view");
-        
+
             initializeTHead(dateInput);
             updateTableRows(dateInput);
-            
-        });
     }
 
 }
 
-async function openDetailsModal(appointmentID){
+async function openDetailsModal(appointmentID) {
 
     $('#edit-appointment-modal').modal();
 
@@ -593,22 +620,22 @@ async function openDetailsModal(appointmentID){
     $('#edit-appointment-modal').modal('show');
 
     $('#edit-cancel-button').unbind('click');
-    $('#edit-cancel-button').on('click', function(){
+    $('#edit-cancel-button').on('click', function () {
         $('.second.modal.confirmation').modal('toggle');
         openDetailsModal(appointmentID);
     });
 
     $('#edit-continue-button').unbind('click');
-    $('#edit-continue-button').on('click', function(){
-        $.post("/secretary/delete", {appointmentID: appointmentID}, function(data){
+    $('#edit-continue-button').on('click', function () {
+        $.post("/secretary/delete", { appointmentID: appointmentID }, function (data) {
             $('.second.modal.confirmation').modal('hide');
             let date = $('#standard_calendar').calendar('get date');
             updateTableRows(date);
         });
     });
 
-    
-    let appointment = await $.post("/secretary/getAppointment", {appointmentID: appointmentID}, function(data){
+
+    let appointment = await $.post("/secretary/getAppointment", { appointmentID: appointmentID }, function (data) {
         return data;
     });
 
@@ -617,8 +644,8 @@ async function openDetailsModal(appointmentID){
     $("#edit-notes").val(appointment.notes);
     $("#edit-contact").val(appointment.patientcontact);
 
-    
-        // Initialize popup stuff
+
+    // Initialize popup stuff
     $("#edit-date_calendar").calendar({
         type: 'date',
         today: 'true',
@@ -626,7 +653,7 @@ async function openDetailsModal(appointmentID){
         initialDate: moment(appointment.date).toDate()
     })
 
-    
+
     var minDate = new Date();
     var maxDate = new Date();
     minDate.setHours(8);
@@ -658,31 +685,31 @@ async function openDetailsModal(appointmentID){
     $('#edit-multiProcedure').dropdown();
     $('#edit-multiProcedure').dropdown('set selected', appointment.process);
 
-    $("#edit-lastName").keypress(function(){
+    $("#edit-lastName").keypress(function () {
         $("#edit-fieldLastName").removeClass("error")
     })
 
-    $("#edit-firstName").keypress(function(){
+    $("#edit-firstName").keypress(function () {
         $("#edit-fieldFirstName").removeClass("error")
     })
 
-    $("#edit-contact").keypress(function(){
+    $("#edit-contact").keypress(function () {
         $("#edit-fieldContact").removeClass("error")
     })
 
-    $("#edit-date_calendar").on("click", function(){
+    $("#edit-date_calendar").on("click", function () {
         $("#edit-fieldDateCalendar").removeClass("error")
     })
 
-    $("#edit-time_calendar").on("click", function(){
+    $("#edit-time_calendar").on("click", function () {
         $("#edit-fieldTimeCalendar").removeClass("error")
     })
 
-    $("#edit-fieldDoctors").on("click", function(){
+    $("#edit-fieldDoctors").on("click", function () {
         $("#edit-fieldDoctors").removeClass("error")
     })
 
-    $("#edit-fieldProcedures").on("click", function(){
+    $("#edit-fieldProcedures").on("click", function () {
         $("#edit-fieldProcedures").removeClass("error")
     })
 
@@ -703,13 +730,35 @@ async function openDetailsModal(appointmentID){
         }
     });
 
+    
+    let doctors = $("#edit-multiDoctor").dropdown("get value");
+
     $('#edit-save-button').unbind('click');
-    $('#edit-save-button').on('click', function(){
-        editAppointment(appointmentID);
+    $('#edit-save-button').on('click', function () {
+        editAppointment(appointmentID, doctors);
     });
 }
 
-async function editAppointment(appointmentID){
+function arraysEqual(_arr1, _arr2) {
+
+    if (!Array.isArray(_arr1) || ! Array.isArray(_arr2) || _arr1.length !== _arr2.length)
+      return false;
+
+    var arr1 = _arr1.concat().sort();
+    var arr2 = _arr2.concat().sort();
+
+    for (var i = 0; i < arr1.length; i++) {
+
+        if (arr1[i] !== arr2[i])
+            return false;
+
+    }
+
+    return true;
+
+}
+
+async function editAppointment(appointmentID, initialDoctors) {
     let firstName = $('#edit-firstName').val();
     let lastName = $('#edit-lastName').val();
     let contact = $('#edit-contact').val();
@@ -730,9 +779,9 @@ async function editAppointment(appointmentID){
                 position: 'top left'
             });
         flag = false;
-    }else {
+    } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
-        if (!valid){
+        if (!valid) {
             $("#edit-fieldFirstName").addClass("error");
             $('#edit-appointment-modal')
                 .toast({
@@ -755,14 +804,14 @@ async function editAppointment(appointmentID){
         flag = false;
     } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
-        if (!valid){
+        if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Last Name should only be Alphanumeric.',
-                position: 'top left'
-            });
+                .toast({
+                    class: 'error',
+                    message: 'Last Name should only be Alphanumeric.',
+                    position: 'top left'
+                });
             flag = false;
         }
     }
@@ -789,46 +838,86 @@ async function editAppointment(appointmentID){
         flag = false;
     }
 
-    if (contact != ""){
+    if (contact != "") {
         // "[+]?[\\d]"
         let regex = /^[+-]?\d+$/;
         let test = regex.test(contact);
 
-        if (!test){
+        if (!test) {
             $("#edit-fieldContact").addClass("error");
             $('#edit-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Invalid contact number format',
-                position: 'top left'
-            });
+                .toast({
+                    class: 'error',
+                    message: 'Invalid contact number format',
+                    position: 'top left'
+                });
 
             flag = false;
         }
     }
 
+    if (flag) {
+
+        if (!arraysEqual(doctors,initialDoctors)){
+
+            var clone = doctors.slice(0);
+
+            for (var i = 0; i<initialDoctors.length; i++){
+                var index = clone.indexOf(initialDoctors[i]);
+                if (index > -1) {
+                    clone.splice(index, 1);
+                }
+            }
+
+            
+            let checkData = {
+                dateInput: dateInput.toString(),
+                timeInput: timeInput.toString(),
+                doctors: clone
+            };
+
+            await $.post("/secretary/check_app_exists", checkData, function (data) {
+                
+                if (data == true){
+                    $("#edit-fieldDoctors").addClass("error");
+                    $('#edit-appointment-modal')
+                        .toast({
+                            class: 'error',
+                            message: 'Doctor already booked on date and time',
+                            position: 'top left'
+                        });
+
+                    flag = false;
+                } else {
+                    flag = true;
+                }
+
+            });
+        }
+    }
+
     // if all fields are filled
-    if (flag){
+    if (flag) {
         let ajaxData = {
             appointmentID: appointmentID,
             firstName: firstName,
             lastName: lastName,
             contact: contact,
-            dateInput:dateInput.toString(),
+            dateInput: dateInput.toString(),
             timeInput: timeInput.toString(),
             doctors: doctors,
             procedures: procedures,
             notes: notes
         };
 
-        await $.post("/secretary/edit", ajaxData, function(data){
+        await $.post("/secretary/edit", ajaxData, function (data) {
             $("#edit-appointment-modal").modal('hide');
             $('#standard_calendar').calendar('set date', dateInput, true, false);
             $('#view-chooser').dropdown('set selected', "day-view");
-        
+
             initializeTHead(dateInput);
             updateTableRows(dateInput);
-            
+
         });
     }
 
