@@ -500,7 +500,7 @@ async function addAppointment(){
         };
 
         await $.post("/secretary/create", ajaxData, function(data){
-            $("#add-appointment-modal").modal('hide');
+            $("#add-appointment-modal").modal('toggle');
             $('#standard_calendar').calendar('set date', dateInput, true, false);
             $('#view-chooser').dropdown('set selected', "day-view");
         
@@ -508,6 +508,14 @@ async function addAppointment(){
             updateTableRows(dateInput);
             
         });
+    } else {
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing Required Fields',
+                position: 'top left',
+                compact: false
+            });
     }
 
 }
@@ -689,6 +697,14 @@ async function editAppointment(appointmentID){
             updateTableRows(dateInput);
             
         });
+    }else {
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing Required Fields',
+                position: 'top left',
+                compact: false
+            });
     }
 
 }
