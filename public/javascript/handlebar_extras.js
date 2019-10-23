@@ -56,7 +56,7 @@ Handlebars.registerHelper('weekRed', function(index) {
     }
 });
 
-Handlebars.registerHelper('hashPassword', function(password) {
+Handlebars.registerHelper('hash', function(password) {
     var hash = "";
     for(var i = 0; i < password.length; i++) {
         hash += "●";
