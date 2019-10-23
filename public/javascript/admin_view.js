@@ -96,9 +96,11 @@ $("#save-password").click((e) => {
             url: "/admin/updateAdminPassword",
             data: {
                 newPassword: $("#new-password").val()
+            },
+            success: function(value) {
+                location.reload();      
             }
         })
-        location.reload();
     }
 })
 
@@ -163,8 +165,13 @@ $("#create-user-button").click((e) => {
                 type: "secretary",
                 doctorID: ""
             },
-            success: function(data) {
-                location.reload();
+            success: function(value) {
+                if(value.message) {
+                    location.reload();
+                } else {
+                    $("#username-field-user").addClass("error");
+                    $('body').toast({message: "Username already taken"});
+                }
             }
         })
     }
@@ -225,8 +232,13 @@ $("#create-dentist-button").click(() => {
                 type: "dentist",
                 status: "Available"
             },
-            success: function(data) {
-                location.reload();
+            success: function(value) {
+                if(value.message) {
+                    location.reload();
+                } else {
+                    $("#username-field-dentist").addClass("error");
+                    $('body').toast({message: "Username already taken"});
+                }
             }
         })
     }
@@ -253,8 +265,13 @@ $("#create-procedure-button").click((e) => {
             data: {
                 name: $("#procedure-name").val()
             },
-            success: function(data) {
-                location.reload();
+            success: function(value) {
+                if(value.message) {
+                    location.reload();
+                } else {
+                    $("#procedure-field").addClass("error");
+                    $('body').toast({message: "Procedure already exist"});
+                }
             }
         })
     }
@@ -309,6 +326,19 @@ function setup() {
             $(statusList[i]).removeClass("active");
         }
     }
+
+    var password = $(".password");
+    for(var i = 0; i < password.length; i++) {
+        $(password[i]).text(getHash($(password[i]).data("id")));
+    }
+}
+
+function getHash(text) {
+    var hash = "";
+    for(var i = 0; i < text.length; i++) {
+        hash += "●";
+    }
+    return hash;
 }
 
 function change() {

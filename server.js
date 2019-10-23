@@ -18,12 +18,16 @@ mongoose.connect(MONGOLAB_URI, {
 
 app.use(urlencoder);
 app.use(session({
-    resave: true,
+    resave: false,
     name: "appointment-system",
     saveUninitialized: true, 
     secret: "secretpass"
 }))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+    res.set("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
+    next();
+})
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));

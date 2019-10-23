@@ -1,15 +1,23 @@
-var list = [];
-
 $(document).ready(() => {
-    $("#submit").click((e) => {
-        var temp = validate($("#username").val(), $("#password").val());
-        if(temp == undefined) {
-            $("#username-input").addClass("error");
-            $("#password-input").addClass("error");
-            $("#password").val("");
-            $('body').toast({message: "Invalid username or password"});
-            e.preventDefault();
-        } 
+    $("#submit").click(() => { 
+        $.ajax({
+            type: "post",
+            url: "/validateLogin",
+            data: {
+                username: $("#username").val(),
+                password: $("#password").val()
+            },
+            success: function(value) {
+                if(!value.message) {
+                    $("#username-input").addClass("error");
+                    $("#password-input").addClass("error");
+                    $("#password").val("");
+                    $('body').toast({message: "Invalid username or password"});
+                } else {
+                    window.location.href="/login"
+                }
+            }
+        })
     })
 })
 
@@ -18,13 +26,12 @@ $(document).on("keydown", () => {
     $("#password-input").removeClass("error");
 })
 
-function validate(username, password) {
-    var temp = list.find((value) => {
-        return value.username == username && value.password == password;
-    })
-    return temp;
-}
+$(document).on("keypress", (event) => {
+    if(event.keyCode == 13) {
+        $("#submit").click();
+    }
+})
 
-function loadUser(data) {
-    list = data;
+function setup() {
+    $("#form").form("clear");
 }

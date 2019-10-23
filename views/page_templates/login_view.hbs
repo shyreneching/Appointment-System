@@ -24,13 +24,13 @@
       </style>
 </head>
 
-<body onload="loadUser({{account}})">
+<body onload="setup()">
     <div class="ui middle aligned center aligned grid">
         <div class="column">
            
             <img class="ui massive image" src="Access Dental Clinic Trans.png">
 
-            <form class="ui large form" method="post" action="/login">
+            <form class="ui large form" id="form">
                 <div class="ui stacked segment">
                     <div class="field" id="username-input">
                         <div class="ui left icon input">
@@ -44,7 +44,7 @@
                             <input type="password" name="password" id="password" placeholder="Password">
                         </div>
                     </div>
-                    <button id="submit" class="ui fluid large pink submit button">Login</button>
+                    <button type="button" id="submit" class="ui fluid large pink submit button">Login</button>
                 </div>
             </form>   
         </div>

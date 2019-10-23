@@ -833,3 +833,7 @@ async function editAppointment(appointmentID){
     }
 
 }
+
+$("#logoutButton").click(function() {
+    window.location.href="/logout";
+})

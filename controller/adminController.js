@@ -40,17 +40,23 @@ router.post("/editAccount", function(req, res) {
     res.redirect("/");
 })
 
-router.post("/addAccount", function(req, res) {
-    Account.addAccount(new Account({
-        username: req.body.username,
-        password: req.body.password,
-        accountType: req.body.type,
-        doctorID: ""
-    }), (value) => {
-        res.redirect("/");
-    }, (err) => {
-        res.send(err);
-    })
+router.post("/addAccount", async function(req, res) {
+    let user = await Account.getAccountByUsername(req.body.username);
+    if(user == undefined) {
+        Account.addAccount(new Account({
+            username: req.body.username,
+            password: req.body.password,
+            accountType: req.body.type,
+            doctorID: ""
+        }), (value) => {
+            res.redirect("/");
+        }, (err) => {
+            res.send(err);
+        })
+        res.send({message: true});
+    } else {
+        res.send({message: false});
+    }
 })
 
 router.post("/deleteAccount", async function(req, res) {
@@ -71,25 +77,31 @@ router.post("/editDentist", async function(req, res) {
     }
 })
 
-router.post("/addDentist", function(req, res) {
-    Doctor.addDoctor(new Doctor({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        status: req.body.status
-    }), (value) => {
-        Account.addAccount(new Account({
-            username: req.body.username,
-            password: req.body.password,
-            accountType: req.body.type,
-            doctorID: value.id
-        }), (val) => {
-            res.redirect("/login");
+router.post("/addDentist", async function(req, res) {
+    let user = await Account.getAccountByUsername(req.body.username);
+    if(user == undefined) {
+        Doctor.addDoctor(new Doctor({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            status: req.body.status
+        }), (value) => {
+            Account.addAccount(new Account({
+                username: req.body.username,
+                password: req.body.password,
+                accountType: req.body.type,
+                doctorID: value.id
+            }), (val) => {
+                res.redirect("/login");
+            }, (err) => {
+                res.send(err);
+            })
         }, (err) => {
             res.send(err);
         })
-    }, (err) => {
-        res.send(err);
-    })
+        res.send({message: true});
+    } else {
+        res.send({message: false});
+    }
 })
 
 router.post("/editProcess", function(req, res) {
@@ -97,14 +109,20 @@ router.post("/editProcess", function(req, res) {
     res.redirect("/");
 })
 
-router.post("/addProcess", function(req, res) {
-    Process.addProcess(new Process({
+router.post("/addProcess", async function(req, res) {
+    let process = await Process.findOne({
         processname: req.body.name
-    }), (value) => {
-        res.redirect("/");
-    }, (err) => {
-        res.send(err);
-    })
+    });
+    if(process == undefined) {
+        Process.addProcess(new Process({
+            processname: req.body.name
+        }), (err) => {
+            res.send(err);
+        })
+        res.send({message: true});
+    } else {
+        res.send({message: false});
+    }
 })
 
 router.post("/deleteProcess", function(req, res) {
