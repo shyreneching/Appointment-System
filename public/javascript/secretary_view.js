@@ -396,6 +396,10 @@ async function initializeTHead(date) {
             $("#add-fieldFirstName").removeClass("error")
         })
 
+        $("#add-contact").keypress(function(){
+            $("#add-fieldContact").removeClass("error")
+        })
+
         $("#add-date_calendar").on("click", function(){
             $("#add-fieldDateCalendar").removeClass("error")
         })
@@ -466,24 +470,92 @@ async function addAppointment(){
 
     var flag = true;
 
-    if (lastName == "") {
-        $("#add-fieldLastName").addClass("error")
+    if (firstName == "") {
+        $("#add-fieldFirstName").addClass("error");
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing First Name!',
+                position: 'top left'
+            });
         flag = false;
+    }else {
+        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
+        console.log(valid);
+        if (!valid){
+            $("#add-fieldFirstName").addClass("error");
+            $('#add-appointment-modal')
+                .toast({
+                    class: 'error',
+                    message: 'First Name should only be Alphanumeric.',
+                    position: 'top left'
+                });
+            flag = false;
+        }
     }
 
-    if (firstName == "") {
-        $("#add-fieldFirstName").addClass("error")
+    if (lastName == "") {
+        $("#add-fieldLastName").addClass("error");
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing Last Name',
+                position: 'top left'
+            });
         flag = false;
+    } else {
+        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
+        console.log(valid);
+        if (!valid){
+            $("#add-fieldLastName").addClass("error");
+            $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Last Name should only be Alphanumeric.',
+                position: 'top left'
+            });
+            flag = false;
+        }
     }
 
     if (doctors === undefined || doctors.length == 0) {
-        $("#add-fieldDoctors").addClass("error")
+        $("#add-fieldDoctors").addClass("error");
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'An appointment needs at least one doctor',
+                position: 'top left'
+            });
         flag = false;
     }
 
     if (procedures === undefined || procedures.length == 0) {
-        $("#add-fieldProcedures").addClass("error")
+        $("#add-fieldProcedures").addClass("error");
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'An appointment needs at least one procedure',
+                position: 'top left'
+            });
         flag = false;
+    }
+
+    if (contact != ""){
+        // "[+]?[\\d]"
+        let regex = /^[+-]?\d+$/;
+        let test = regex.test(contact);
+
+        if (!test){
+            $("#add-fieldContact").addClass("error");
+            $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Invalid contact number format',
+                position: 'top left'
+            });
+
+            flag = false;
+        }
     }
 
     // if all fields are filled
@@ -508,23 +580,13 @@ async function addAppointment(){
             updateTableRows(dateInput);
             
         });
-    } else {
-        $('#add-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Missing Required Fields',
-                position: 'top left',
-                compact: false
-            });
     }
 
 }
 
 async function openDetailsModal(appointmentID){
 
-    $('#edit-appointment-modal').modal({
-        blurring: true,
-    });
+    $('#edit-appointment-modal').modal();
 
     //open second modal on first modal buttons
     $('.second.modal.confirmation').modal('attach events', '#edit-appointment-modal #edit-delete-button');
@@ -604,6 +666,10 @@ async function openDetailsModal(appointmentID){
         $("#edit-fieldFirstName").removeClass("error")
     })
 
+    $("#edit-contact").keypress(function(){
+        $("#edit-fieldContact").removeClass("error")
+    })
+
     $("#edit-date_calendar").on("click", function(){
         $("#edit-fieldDateCalendar").removeClass("error")
     })
@@ -633,6 +699,7 @@ async function openDetailsModal(appointmentID){
             $("#edit-fieldDoctors").removeClass("error")
             $("#edit-fieldFirstName").removeClass("error")
             $("#edit-fieldLastName").removeClass("error")
+            $("#edit-fieldContact").removeClass("error")
         }
     });
 
@@ -654,24 +721,90 @@ async function editAppointment(appointmentID){
 
     var flag = true;
 
-    if (lastName == "") {
-        $("#edit-fieldLastName").addClass("error")
+    if (firstName == "") {
+        $("#edit-fieldFirstName").addClass("error");
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing First Name!',
+                position: 'top left'
+            });
         flag = false;
+    }else {
+        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
+        if (!valid){
+            $("#edit-fieldFirstName").addClass("error");
+            $('#edit-appointment-modal')
+                .toast({
+                    class: 'error',
+                    message: 'First Name should only be Alphanumeric.',
+                    position: 'top left'
+                });
+            flag = false;
+        }
     }
 
-    if (firstName == "") {
-        $("#edit-fieldFirstName").addClass("error")
+    if (lastName == "") {
+        $("#edit-fieldLastName").addClass("error");
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing Last Name',
+                position: 'top left'
+            });
         flag = false;
+    } else {
+        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
+        if (!valid){
+            $("#edit-fieldLastName").addClass("error");
+            $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Last Name should only be Alphanumeric.',
+                position: 'top left'
+            });
+            flag = false;
+        }
     }
 
     if (doctors === undefined || doctors.length == 0) {
-        $("#edit-fieldDoctors").addClass("error")
+        $("#edit-fieldDoctors").addClass("error");
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'An appointment needs at least one doctor',
+                position: 'top left'
+            });
         flag = false;
     }
 
     if (procedures === undefined || procedures.length == 0) {
-        $("#edit-fieldProcedures").addClass("error")
+        $("#edit-fieldProcedures").addClass("error");
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'An appointment needs at least one procedure',
+                position: 'top left'
+            });
         flag = false;
+    }
+
+    if (contact != ""){
+        // "[+]?[\\d]"
+        let regex = /^[+-]?\d+$/;
+        let test = regex.test(contact);
+
+        if (!test){
+            $("#edit-fieldContact").addClass("error");
+            $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Invalid contact number format',
+                position: 'top left'
+            });
+
+            flag = false;
+        }
     }
 
     // if all fields are filled
@@ -697,14 +830,6 @@ async function editAppointment(appointmentID){
             updateTableRows(dateInput);
             
         });
-    }else {
-        $('#edit-appointment-modal')
-            .toast({
-                class: 'error',
-                message: 'Missing Required Fields',
-                position: 'top left',
-                compact: false
-            });
     }
 
 }
