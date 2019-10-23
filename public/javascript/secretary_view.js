@@ -542,8 +542,8 @@ async function openDetailsModal(appointmentID){
         return data;
     });
 
-    $("#edit-lastName").val(appointment.firstname);
-    $("#edit-firstName").val(appointment.lastname);
+    $("#edit-lastName").val(appointment.lastname);
+    $("#edit-firstName").val(appointment.firstname);
     $("#edit-notes").val(appointment.notes);
     $("#edit-contact").val(appointment.patientcontact);
 
