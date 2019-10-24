@@ -669,13 +669,12 @@ router.post("/check_app_exists", urlencoder, async (req, res) => {
             let doctorID = doctor[i];
             let appointment = await Appointment.getAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
     
-            if (appointment){
+            if (appointment.length != 0){
                 found = true;
             }
         }    
     } else {
         let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctor, formattedDate, formattedTime);
-        console.log(appointment);
     
         if (appointment){
             found = true;
