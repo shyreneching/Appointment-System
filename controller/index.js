@@ -56,15 +56,16 @@ router.get("/login", async (req, res) => {
 })
 
 router.post("/validateLogin", async (req, res) => {
-    let user = await Account.findOne({
-        username: req.body.username,
-        password: req.body.password
-    });
-    if(user == undefined) {
-        res.send({message: false});
+    let account = await Account.getAccountByUsername(req.body.username);
+    if(account == undefined) {
+        res.send({message: 0});
     } else {
-        req.session.username = user.accountType;
-        res.send({message: true});
+        if(account.password != req.body.password) {
+            res.send({message: 2});
+        } else {
+            req.session.username = account.accountType;
+            res.send({message: 1});
+        }
     }
 })
 

@@ -11,7 +11,7 @@ $(document).ready(() => {
     });
 
     $('#content').on("click", (event) => {
-        if($(event.target).text() != "") {
+        if($(event.target).text().trim() != "") {
             if(currTab == "Users") {
                 if($(event.target).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
@@ -52,12 +52,20 @@ $("#save-password").click((e) => {
     var done = true;
     if($("#current-password").val() == "") {
         $("#current-password-field").addClass("error");
-        $('body').toast({message: "Please input your current password"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input your current password"
+        });
         done = false;
     } else {
         if($("#current-password").val() != $("#current-password").data("password")) {
             $("#current-password-field").addClass("error");
-            $('body').toast({message: "Incorrect current password"});
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect current password"
+            });
             done = false;
         }   
     }
@@ -68,7 +76,11 @@ $("#save-password").click((e) => {
         if($("#confirm-new-password").val() == "") {
             $("#confirm-new-password-field").addClass("error");
         }
-        $('body').toast({message: "Please input your new password"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input your new password"
+        });
         done = false;
     } else {
         if($("#new-password").val() != $("#confirm-new-password").val()) {
@@ -76,7 +88,11 @@ $("#save-password").click((e) => {
             $("#confirm-new-password-field").addClass("error");
             $("#new-password").val("");
             $("#confirm-new-password").val("");
-            $('body').toast({message: "Password do not match"});
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Password do not match"
+            });
             done = false;
         }
     }
@@ -91,7 +107,12 @@ $("#save-password").click((e) => {
                 newPassword: $("#new-password").val()
             },
             success: function(value) {
-                   
+                $("#setting-modal").modal("hide");
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Password successfully reset"
+                });
             }
         })
     }
@@ -119,7 +140,11 @@ $("#create-user-button").click((e) => {
     var done = true;
     if($("#add-username-user").val() == "") {
         $("#username-field-user").addClass("error");
-        $('body').toast({ message: "Please input a valid username"});
+        $('body').toast({ 
+            class: "error",
+            position: "top center",
+            message: "Please input a valid username"
+        });
         done = false;
     }
     if($("#add-password-user").val() == "" || $("#confirm-password-user").val() == "") {
@@ -129,7 +154,11 @@ $("#create-user-button").click((e) => {
         if($("#confirm-password-user").val() == "") {
             $("#confirm-password-field-user").addClass("error");
         }
-        $('body').toast({ message: "Please input a valid password"});
+        $('body').toast({ 
+            class: "error",
+            position: "top center",
+            message: "Please input a valid password"
+        });
         done = false;
     } else {
         if($("#add-password-user").val() != $("#confirm-password-user").val()) {
@@ -137,7 +166,11 @@ $("#create-user-button").click((e) => {
             $("#confirm-password-field-user").addClass("error");
             $("#add-password-user").val("");
             $("#confirm-password-user").val("");
-            $('body').toast({ message: "Password do not match"});
+            $('body').toast({ 
+                class: "error",
+                position: "center",
+                message: "Password do not match"
+            });
             done = false;
         }
     }
@@ -160,10 +193,19 @@ $("#create-user-button").click((e) => {
                     $.get("/admin/adminUsers", (data) => {
                         let template = Handlebars.compile(data.htmlData);
                         $('#content').html(template(data.data));
+                        $('body').toast({
+                            class: "success",
+                            position: "top center",
+                            message: "New secretary successfully added"
+                        });
                     });
                 } else {
                     $("#username-field-user").addClass("error");
-                    $('body').toast({message: "Username already taken"});
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Username already taken"
+                    });
                 }
             }
         })
@@ -179,12 +221,20 @@ $("#create-dentist-button").click((e) => {
         if($("#add-lastname-dentist").val() == "") {
             $("#lastname-field-dentist").addClass("error");
         }
-        $('body').toast({message: "Please input a valid name"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid name"
+        });
         done = false;
     }
     if($("#add-username-dentist").val() == "") {
         $("#username-field-dentist").addClass("error");
-        $('body').toast({message: "Please input a valid username"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid username"
+        });
         done = false;
     }
     if($("#add-password-dentist").val() == "" || $("#confirm-password-dentist").val() == "") {
@@ -194,7 +244,11 @@ $("#create-dentist-button").click((e) => {
         if($("#confirm-password-dentist").val() == "") {
             $("#confirm-password-field-dentist").addClass("error");
         }
-        $('body').toast({message: "Please input a valid password"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid password"
+        });
         done = false;
     } else {
         if($("#add-password-dentist").val() != $("#confirm-password-dentist").val()) {
@@ -202,7 +256,11 @@ $("#create-dentist-button").click((e) => {
             $("#confirm-password-field-dentist").addClass("error");
             $("#add-password-dentist").val("");
             $("#confirm-password-dentist").val("");
-            $('body').toast({ message: "Password do not match"});
+            $('body').toast({ 
+                class: "error",
+                position: "top center",
+                message: "Password do not match"
+            });
             done = false;
         }
     }
@@ -227,10 +285,19 @@ $("#create-dentist-button").click((e) => {
                     $.get("/admin/adminDentist", (data) => {
                         let template = Handlebars.compile(data.htmlData);
                         $('#content').html(template(data.data));
+                        $('body').toast({
+                            class: "success",
+                            position: "top center",
+                            message: "New dentist successfully added"
+                        });
                     });
                 } else {
                     $("#username-field-dentist").addClass("error");
-                    $('body').toast({message: "Username already taken"});
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Username already taken"
+                    });
                 }
             }
         })
@@ -241,7 +308,11 @@ $("#create-procedure-button").click((e) => {
     var done = true;
     if($("#procedure-name").val() == "") {
         $("#procedure-field").addClass("error");
-        $('body').toast({message: "Please input a valid procedure name"});
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid procedure name"
+        });
         done = false;
     }
 
@@ -260,10 +331,19 @@ $("#create-procedure-button").click((e) => {
                     $.get("/admin/adminProcedure", (data) => {
                         let template = Handlebars.compile(data.htmlData);
                         $('#content').html(template(data.data));
+                        $('body').toast({
+                            class: "success",
+                            position: "top center",
+                            message: "New procedure successfully added"
+                        });
                     });
                 } else {
                     $("#procedure-field").addClass("error");
-                    $('body').toast({message: "Procedure already exist"});
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Procedure already exist"
+                    });
                 }
             }
         })
@@ -283,6 +363,11 @@ $("#delete-user-button").click(() => {
             $.get("/admin/adminUsers", (data) => {
                 let template = Handlebars.compile(data.htmlData);
                 $('#content').html(template(data.data));
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "User successfully deleted"
+                });
             });
         }
     })
@@ -300,6 +385,11 @@ $("#delete-procedure-button").click(() => {
             $.get("/admin/adminProcedure", (data) => {
                 let template = Handlebars.compile(data.htmlData);
                 $('#content').html(template(data.data));
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Procedure successfully deleted"
+                });
             });
         }
     })
