@@ -8,12 +8,24 @@ $(document).ready(() => {
                 password: $("#password").val()
             },
             success: function(value) {
-                if(!value.message) {
+                if(value.message == 0) {
+                    $("#username-input").addClass("error");
+                    $("#password").val("");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid username"
+                    });
+                } else if(value.message == 2) {
                     $("#username-input").addClass("error");
                     $("#password-input").addClass("error");
                     $("#password").val("");
-                    $('body').toast({message: "Invalid username or password"});
-                } else {
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid password"
+                    });
+                } else if(value.message == 1) {
                     window.location.href="/login"
                 }
             }
