@@ -84,14 +84,13 @@ router.post("/addDentist", async function(req, res) {
                 accountType: req.body.type,
                 doctorID: value.id
             }), (val) => {
-                res.redirect("/adminDentist");
+                res.send({message: true});
             }, (err) => {
                 res.send(err);
             })
         }, (err) => {
             res.send(err);
         })
-        res.send({message: true});
     } else {
         res.send({message: false});
     }
@@ -109,10 +108,8 @@ router.post("/addProcess", async function(req, res) {
     if(process == undefined) {
         Process.addProcess(new Process({
             processname: req.body.name
-        }, (value) => {
+        }), (value) => {
             res.send({message: true});
-        }), (err) => {
-            res.send(err);
         })
     } else {
         res.send({message: false});
