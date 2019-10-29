@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Access Dental Clinic | Admin</title>
+    <script src="javascript/jquery.js"></script>
+    <link rel="stylesheet" type="text/css"
+      href="semantic/dist/semantic.min.css">
+    <style type="text/css"> 
+        #create-user-button, #create-dentist-button, #create-procedure-button {
+          margin-top: 25px;
+        }
+    </style>
+  </head>
+
+  <body onload="setup()" style="position: flex;">
+    <div class="ui two column grid" id="container" style="padding: 0px; margin: 0px;">
+      <div class="ui vertical inverted menu column" style="width: 15%; height: 100%; position: fixed; padding: 0px; background-color: #e899ae;">
+        <div class="item center aligned" style="padding: 0px;">
+          <img class="ui massive image" id="image" src="Access Dental Clinic Trans.png">
+        </div>
+        <a class="item">
+          <div class="ui left">
+            <i class="large users icon" style="color: white;  margin-right: 10px;"></i>
+            Users
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left">
+            <i class="large user md icon" style="color: white; margin-right: 10px;"></i>
+            Dentist
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left">
+            <i class="large clipboard icon" style="color: white; margin-right: 10px;"></i>
+            Procedure
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left">
+            <i id="setting" class="large setting icon" style="color: white; margin-right: 10px;"></i>
+            Reset Password
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left">
+            <i id="logout" class="large sign out icon" style="color: white;  margin-right: 10px;"></i>
+            Logout
+          </div>
+        </a>
+        <div style="color:white; font-size: 12px; text-align: center; padding-top: 150px;">SOFENGG 2019</div>
+      </div>
+      <div id="content" class="column" style="width: 84%; position: relative; left: 15%"></div>
+    </div>
+    {{!-- modal for setting --}}
+    <div class="ui mini modal" id="setting-modal">
+      <div class="header">Edit Admin Password</div>
+        <div class="content">
+          <div class="ui form">
+            <div class="required field" id="current-password-field">
+                <label>Current Password</label>
+                <input type="password" name="currentPassword" id="current-password" data-password="{{password}}" placeholder="Current Password">
+            </div>
+            <div class="required field" id="new-password-field">
+                <label>New Password</label>
+                <input type="password" name="newPassword" id="new-password" placeholder="New Password">
+            </div>
+            <div class="required field" id="confirm-new-password-field">
+                <label>Confirm New Password</label>
+                <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
+            </div>
+            <div class="ui grid two column right aligned" id="edit-password-buttons" style="margin-top: 25px;">
+              <div class="actions column">
+                <div class="ui right floated labeled icon red button" id="save-password">
+                    CONFIRM
+                    <i class="checkmark icon"></i>
+                </div>
+              </div>
+              <div class="actions column">
+                <div class="ui right floated labeled icon button deny">
+                    CANCEL
+                    <i class="cancel icon"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+    {{!-- modal for adding user --}}
+    <div class="ui mini modal" id="add-user-modal">
+        <div class="header">New User</div>
+        <div class="content centered">
+        <div class="ui form">
+            <div class="required field" id="username-field-user">
+                <label>Username</label>
+                <input type="text" name="username" id="add-username-user" placeholder="Username">
+            </div>
+            <div class="required field" id="password-field-user">
+                <label>Password</label>
+                <input type="password" name="password" id="add-password-user" placeholder="Password">
+            </div>
+            <div class="required field" id="confirm-password-field-user">
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
+            </div>
+            <div class="ui grid">
+                <div class="actions column">
+                    <div class="ui right floated labeled icon green button very padded" id="create-user-button">
+                        CREATE
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    {{!-- modal for deleting user --}}
+    <div class="ui mini modal" id="delete-user-modal">
+    <div class="header">Delete User</div>
+    <div class="content">
+        <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+        <div class="ui grid two column right aligned" id="delete-buttons-user" style="margin-top: 25px;">
+            <div class="actions column">
+                <div class="ui right floated labeled icon red button" id="delete-user-button">
+                    CONFIRM
+                    <i class="checkmark icon"></i>
+                </div>
+            </div>
+            <div class="actions column">
+                <div class="ui right floated labeled icon button deny">
+                    CANCEL
+                    <i class="cancel icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal for adding dentist --}}
+    <div class="ui mini modal" id="add-dentist-modal">
+        <div class="header">New Dentist</div>
+        <div class="content centered">
+            <div class="ui form">
+                <div class="required field" id="firstname-field-dentist">
+                    <label>First Name</label>
+                    <input type="text" name="firstname" id="add-firstname-dentist" placeholder="First Name">
+                </div>
+                <div class="required field" id="lastname-field-dentist">
+                    <label>Last Name</label>
+                    <input type="text" name="lastname" id="add-lastname-dentist" placeholder="Last Name">
+                </div>
+                <div class="required field" id="username-field-dentist">
+                    <label>Username</label>
+                    <input type="text" name="username" id="add-username-dentist" placeholder="Username">
+                </div>
+                <div class="required field" id="password-field-dentist">
+                    <label>Password</label>
+                    <input type="password" name="password" id="add-password-dentist" placeholder="Password">
+                </div>
+                <div class="required field" id="confirm-password-field-dentist">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
+                </div>
+                <div class="ui grid">
+                    <div class="actions column">
+                    <div class="ui right floated labeled icon green button very padded" id="create-dentist-button">
+                        CREATE
+                        <i class="checkmark icon"></i>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal for adding procedure --}}
+    <div class="ui mini modal" id="procedure-modal">
+        <div class="header">New Procedure</div>
+        <div class="content">
+        <div class="ui form">
+            <div class="required field" id="procedure-field">
+                <label>Procedure Name</label>
+                <input type="text" name="procedure" id="procedure-name" placeholder="Procedure Name">
+            </div>
+        </div>
+        <div class="ui grid">
+            <div class="actions column">
+            <div class="ui right floated labeled icon green button very padded" id="create-procedure-button">
+                CREATE
+                <i class="checkmark icon"></i>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    {{!-- modal for deleting procedure --}}
+    <div class="ui mini modal" id="delete-procedure-modal">
+        <div class="header">Delete Procedure</div>
+        <div class="content">
+            <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+            <div class="ui grid two column right aligned" id="delete-buttons-procedure" style="margin-top: 25px;">
+                <div class="actions column">
+                <div class="ui right floated labeled icon red button" id="delete-procedure-button">
+                    CONFIRM
+                    <i class="checkmark icon"></i>
+                </div>
+                </div>
+                <div class="actions column">
+                <div class="ui right floated labeled icon button deny">
+                    CANCEL
+                    <i class="cancel icon"></i>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="semantic/dist/semantic.js"></script>
+    <script src="javascript/handlebars.js"></script>
+    <script src="javascript/admin_view.js"></script>
+  </body>
+</html>

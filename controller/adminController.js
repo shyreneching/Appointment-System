@@ -4,7 +4,7 @@ const moment = require('moment');
 const fs = require('fs');
 const bodyparser = require("body-parser");
 const urlencoder = bodyparser.urlencoded({
-    extended : false
+    extended : true
 });
 
 const {Appointment} = require("../model/appointment");
@@ -13,17 +13,11 @@ const {Process} = require("../model/process");
 const {Account} = require("../model/account");
 
 router.get("/", async function(req, res) {
+    let admin = await Account.getAccountByUsername("admin");
     if(req.session.username == "admin") {
-        let accounts = await Account.getAccountWithoutAdmin();
-        let admin = await Account.getAccountByUsername("admin");
-        let doctors = await Doctor.getAllDoctors();
-        let processes = await Process.getAllProcesses();
-        res.render("page_templates/admin_view.hbs", {
-            user: accounts,
-            dentist: doctors, 
-            procedure: processes,
+        res.render("page_templates/admin-view.hbs", {
             password: admin.password
-        })
+        });
     } else {
         res.redirect("/login");
     }
@@ -37,7 +31,7 @@ router.post("/updateAdminPassword", async function(req, res) {
 
 router.post("/editAccount", function(req, res) {
     Account.updateAccount(req.body.accountID, req.body.account);
-    res.redirect("/");
+    res.redirect("/adminUsers");
 })
 
 router.post("/addAccount", async function(req, res) {
@@ -49,11 +43,10 @@ router.post("/addAccount", async function(req, res) {
             accountType: req.body.type,
             doctorID: ""
         }), (value) => {
-            res.redirect("/");
+            res.send({message: true});
         }, (err) => {
             res.send(err);
         })
-        res.send({message: true});
     } else {
         res.send({message: false});
     }
@@ -61,17 +54,17 @@ router.post("/addAccount", async function(req, res) {
 
 router.post("/deleteAccount", async function(req, res) {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
-    Account.delete(req.body.accountID);
     if(account.accountType == "dentist") {
         Doctor.delete(account.doctorID);
-    }
-    res.redirect("/");
+    } 
+    Account.delete(req.body.accountID);
+    res.send({message: true});
 })
 
 router.post("/editDentist", async function(req, res) {
     if(req.body.change == "status") {
         Doctor.updateDoctorStatus(req.body.doctorID, req.body.status);
-        res.redirect("/");
+        res.redirect("/adminDentist");
     } else if(req.body.change == "edit") {
 
     }
@@ -91,7 +84,7 @@ router.post("/addDentist", async function(req, res) {
                 accountType: req.body.type,
                 doctorID: value.id
             }), (val) => {
-                res.redirect("/login");
+                res.redirect("/adminDentist");
             }, (err) => {
                 res.send(err);
             })
@@ -106,7 +99,7 @@ router.post("/addDentist", async function(req, res) {
 
 router.post("/editProcess", function(req, res) {
     Process.updateProcess(req.body.processID, req.body.process);
-    res.redirect("/");
+    res.redirect("/adminProcedure");
 })
 
 router.post("/addProcess", async function(req, res) {
@@ -116,10 +109,11 @@ router.post("/addProcess", async function(req, res) {
     if(process == undefined) {
         Process.addProcess(new Process({
             processname: req.body.name
+        }, (value) => {
+            res.send({message: true});
         }), (err) => {
             res.send(err);
         })
-        res.send({message: true});
     } else {
         res.send({message: false});
     }
@@ -127,7 +121,44 @@ router.post("/addProcess", async function(req, res) {
 
 router.post("/deleteProcess", function(req, res) {
     Process.delete(req.body.processID);
-    res.redirect("/");
+    res.send({message: true});
+})
+
+router.get("/adminUsers", urlencoder, async (req, res) => {
+    let accounts = await Account.getAccountWithoutAdmin();
+    let template = fs.readFileSync('./views/module_templates/admin-users.hbs', 'utf-8');
+    let sendData = {
+        user: accounts
+    }
+    res.send({
+        htmlData: template,
+        data: sendData
+    })
+    
+})
+
+router.get("/adminDentist", urlencoder, async (req, res) => {
+    let doctors = await Doctor.getAllDoctors();
+    let template = fs.readFileSync('./views/module_templates/admin-dentist.hbs', 'utf-8');
+    let sendData = {
+        dentist: doctors
+    }
+    res.send({
+        htmlData: template,
+        data: sendData
+    })
+})
+
+router.get("/adminProcedure", urlencoder, async (req, res) => {
+    let processes = await Process.getAllProcesses();
+    let template = fs.readFileSync('./views/module_templates/admin-procedure.hbs', 'utf-8');
+    let sendData = {
+        procedure: processes
+    }
+    res.send({
+        htmlData: template,
+        data: sendData
+    })
 })
 
 module.exports = router;
