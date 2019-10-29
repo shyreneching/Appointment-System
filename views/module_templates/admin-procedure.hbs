@@ -1,0 +1,23 @@
+{{!-- procedure tab --}}
+<table class="ui striped table" style="table-layout: fixed;">
+<thead>
+    <tr>
+    <th style="background-color: #b8b6b6;">Name</th>
+    <th class="center aligned" style="background-color: #b8b6b6;"> </th>
+    </tr>
+</thead>
+<tbody class="fixed sticky">
+    {{#each procedure}}
+    <tr>
+    <td>{{processname}}</td>
+    <td class="center aligned">
+        <button class="ui button" data-id="{{_id}}">Edit</button>
+        <button class="negative ui button" data-id="{{_id}}" data-name="{{processname}}">Delete</button>
+    </td>
+    </tr>
+    {{/each}}
+    <tr>
+        <i class="ui large plus square outline icon link" id="add-procedure-button" style="margin-top: 15px;"></i>
+    </tr>
+</tbody>
+</table>

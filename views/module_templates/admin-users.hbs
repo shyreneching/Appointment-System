@@ -1,0 +1,29 @@
+{{!-- user tab --}}
+<table class="ui striped table" style="table-layout: fixed;">
+    <thead>
+        <tr>
+        <th style="background-color: #b8b6b6;">Username</th>
+        {{!-- <th>Password</th> --}}
+        <th style="background-color: #b8b6b6;">Account Type</th>
+        <th style="background-color: #b8b6b6;">Last Login</th>
+        <th class="center aligned" style="background-color: #b8b6b6;"> </th>
+        </tr>
+    </thead>
+    <tbody class="fixed">
+        {{#each user}}
+        <tr>
+        <td>{{username}}</td>
+        {{!-- <td class="password" data-id="{{password}}"></td> --}}
+        <td>{{accountType}}</td>
+        <td>data</td>
+        <td class="center aligned">
+            <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
+            <button class="negative ui button" data-id="{{_id}}" data-username="{{username}}">Delete</button>
+        </td>
+        </tr>
+        {{/each}}
+        <tr>
+            <i class="ui large user plus icon link" id="add-user-button" style="margin-top: 15px;"></i>
+        </tr>
+    </tbody>
+</table>
