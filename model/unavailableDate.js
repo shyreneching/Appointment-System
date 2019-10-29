@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 var unavailableDateSchema = new Schema({
-    momentTo: String,
-    stringTo: String,
-    momentFrom: String,
-    momentTo: String,
+    momentDate1: String,
+    stringDate1: String,
+    momentDate2: String,
+    stringDate2: String,
     doctor: {
         type: Schema.Types.ObjectId,
         ref: "Doctor"
@@ -26,10 +26,10 @@ unavailableDateSchema.statics.updateDoctor = async function(unavailableDateID, u
     return await this.updateOne({
         _id: unavailableDateID
     }, {
-        momentTo,
-        stringTo,
-        momentFrom,
-        momentTo
+        momentDate1,
+        stringDate1,
+        momentDate2,
+        stringDate2
     }, {
         new: true
     }); 
