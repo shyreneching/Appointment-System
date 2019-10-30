@@ -12,7 +12,7 @@ const {Doctor} = require("../model/doctor");
 const {Process} = require("../model/process");
 const {Account} = require("../model/account");
 
-router.get("/", async function(req, res) {
+router.get("/", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
     if(req.session.username == "admin") {
         res.render("page_templates/admin-view.hbs", {
@@ -23,25 +23,34 @@ router.get("/", async function(req, res) {
     }
 })
 
-router.post("/updateAdminPassword", async function(req, res) {
-    let admin = await Account.getAccountByUsername("admin");
-    Account.updateAdminPassword(admin.id, req.body.newPassword);
-    res.redirect("/");
+router.post("/updateAccountPassword", async (req, res) => {
+    let account = await Account.getAccountByUsername(req.body.username);
+    if(req.body.username == "admin") {
+        Account.updatePassword(account.id, req.body.newPassword);
+    } else {
+        if(account == undefined) {
+            res.send({message: false});
+        } else {
+            Account.updatePassword(account.id, req.body.newPassword);
+            res.send({message: true});
+        }
+    }
 })
 
-router.post("/editAccount", function(req, res) {
-    Account.updateAccount(req.body.accountID, req.body.account);
-    res.redirect("/adminUsers");
+router.post("/editAccount", (req, res) => {
+    Account.updateAccount(req.body.accountID, req.body.accountUsername, req.body.accountPassword);
+    res.send(true);
 })
 
-router.post("/addAccount", async function(req, res) {
+router.post("/addAccount", async (req, res) => {
     let user = await Account.getAccountByUsername(req.body.username);
     if(user == undefined) {
         Account.addAccount(new Account({
             username: req.body.username,
             password: req.body.password,
             accountType: req.body.type,
-            doctorID: ""
+            doctorID: "",
+            lastLogin: ""
         }), (value) => {
             res.send({message: true});
         }, (err) => {
@@ -52,7 +61,7 @@ router.post("/addAccount", async function(req, res) {
     }
 })
 
-router.post("/deleteAccount", async function(req, res) {
+router.post("/deleteAccount", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
     if(account.accountType == "dentist") {
         Doctor.delete(account.doctorID);
@@ -61,16 +70,14 @@ router.post("/deleteAccount", async function(req, res) {
     res.send({message: true});
 })
 
-router.post("/editDentist", async function(req, res) {
-    if(req.body.change == "status") {
-        Doctor.updateDoctorStatus(req.body.doctorID, req.body.status);
-        res.redirect("/adminDentist");
-    } else if(req.body.change == "edit") {
-
-    }
+router.post("/editDentist", async (req, res) => {
+    let account = await Account.findOne({_id: req.body.accountID});
+    Account.updatePassword(account.id, req.body.password);
+    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
+    res.send(true);
 })
 
-router.post("/addDentist", async function(req, res) {
+router.post("/addDentist", async (req, res) => {
     let user = await Account.getAccountByUsername(req.body.username);
     if(user == undefined) {
         Doctor.addDoctor(new Doctor({
@@ -96,12 +103,17 @@ router.post("/addDentist", async function(req, res) {
     }
 })
 
-router.post("/editProcess", function(req, res) {
-    Process.updateProcess(req.body.processID, req.body.process);
-    res.redirect("/adminProcedure");
+router.post("/editProcess", async (req, res) => {
+    let process = await Process.findOne({processname: req.body.name});
+    if(process == undefined || process._id == req.body.procedureID) {
+        Process.updateProcess(req.body.procedureID, req.body.name);
+        res.send({message: true});
+    } else {
+        res.send({message: false});
+    }
 })
 
-router.post("/addProcess", async function(req, res) {
+router.post("/addProcess", async (req, res) => {
     let process = await Process.findOne({
         processname: req.body.name
     });
@@ -116,9 +128,21 @@ router.post("/addProcess", async function(req, res) {
     }
 })
 
-router.post("/deleteProcess", function(req, res) {
+router.post("/deleteProcess", (req, res) => {
     Process.delete(req.body.processID);
     res.send({message: true});
+})
+
+router.post("/getUser", async (req, res) => {
+    let user = await Account.findOne({username: req.body.username});
+    let doctor;
+    if(user.doctorID != "") {
+        doctor = await Doctor.getDoctorByID(user.doctorID);
+    }
+    res.send({
+        user,
+        doctor
+    });
 })
 
 router.get("/adminUsers", urlencoder, async (req, res) => {

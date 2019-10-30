@@ -13,9 +13,8 @@
         {{#each user}}
         <tr>
         <td>{{username}}</td>
-        {{!-- <td class="password" data-id="{{password}}"></td> --}}
         <td>{{accountType}}</td>
-        <td>data</td>
+        <td>{{lastLogin}}</td>
         <td class="center aligned">
             <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
             <button class="negative ui button" data-id="{{_id}}" data-username="{{username}}">Delete</button>
@@ -23,7 +22,7 @@
         </tr>
         {{/each}}
         <tr>
-            <div class="ui icon button" data-tooltip="Add New User" data-position="bottom center" id="add-user-button" style="padding-top: 15px;">
+            <div class="ui icon button" data-tooltip="Add New Secretary" data-position="bottom center" id="add-user-button" style="padding-top: 15px;">
                 <i class="large user plus icon" id="add-user-button"></i>
             </div>
         </tr>

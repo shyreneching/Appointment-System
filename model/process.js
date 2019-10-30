@@ -19,7 +19,7 @@ processSchema.statics.delete = async function(processID){
     });
 }
 
-processSchema.methods.updateProcess = async function(processID, updated){
+processSchema.statics.updateProcess = async function(processID, processname){
     return await this.updateOne({
         _id: processID
     }, {

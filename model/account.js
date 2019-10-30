@@ -5,7 +5,8 @@ var accountSchema = new Schema({
     username: String,
     password: String, 
     accountType: String,
-    doctorID: String
+    doctorID: String,
+    lastLogin: String
 })
 
 accountSchema.statics.addAccount = function(account, callback){
@@ -34,19 +35,26 @@ accountSchema.statics.delete = async function(accountID){
     });
 }
 
-accountSchema.statics.updateAccount = async function(accountID, updated){
+accountSchema.statics.updateAccount = async function(accountID, username, password){
     return await this.updateOne({
         _id: accountID
     }, {
         username,
-        password,
-        accountType
+        password
     }, {
         new: true
     }); 
 };
 
-accountSchema.statics.updateAdminPassword = async function(accountID, password) {
+accountSchema.statics.updateLogin = async function(accountID, lastLogin) {
+    return await this.updateOne({
+        _id: accountID
+    }, { $set: {
+        lastLogin
+    }})
+}
+
+accountSchema.statics.updatePassword = async function(accountID, password) {
     return await this.updateOne({
         _id: accountID
     }, { $set: {

@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
             username: "admin",
             password: initial.input,
             accountType: "admin",
-            doctorID: ""
+            doctorID: "",
+            lastLogin: ""
         }), (value) => {
             res.redirect("/login");
         }, (err) => {
@@ -64,6 +65,7 @@ router.post("/validateLogin", async (req, res) => {
             res.send({message: 2});
         } else {
             req.session.username = account.accountType;
+            Account.updateLogin(account.id, req.body.date);
             res.send({message: 1});
         }
     }

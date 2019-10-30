@@ -10,7 +10,6 @@
     <link rel="stylesheet" type="text/css"
         href="semantic/dist/semantic.min.css">
     <script src="semantic/dist/semantic.min.js"></script>
-    <script src="javascript/login_view.js"></script>
     <style type="text/css"> 
         body > .grid {
           height: 100%;
@@ -27,9 +26,7 @@
 <body onload="setup()">
     <div class="ui middle aligned center aligned grid">
         <div class="column">
-           
             <img class="ui massive image" src="Access Dental Clinic Trans.png">
-
             <form class="ui large form" id="form">
                 <div class="ui stacked segment">
                     <div class="field" id="username-input">
@@ -44,11 +41,47 @@
                             <input type="password" name="password" id="password" placeholder="Password">
                         </div>
                     </div>
+                    <div class="ui button" id="forgot" style="padding-bottom: 15px; text-decoration: underline; background-color: transparent">Forgot password?</div>
                     <button type="button" id="submit" class="ui fluid large pink submit button">Login</button>
                 </div>
             </form>   
         </div>
     </div>
+    {{!-- modal for resetting password --}}
+    <div class="ui mini modal" id="forgot-modal">
+        <div class="header">Reset Password</div>
+        <div class="content">
+            <div class="ui form">
+                <div class="required field" id="reset-username-field">
+                    <label>Username</label>
+                    <input type="text" name="username" id="reset-username" placeholder="Username">
+                </div>
+                <div class="required field" id="reset-password-field">
+                    <label>Password</label>
+                    <input type="password" name="password" id="reset-password" placeholder="Password">
+                </div>
+                <div class="required field" id="reset-confirm-password-field">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="reset-confirm-password" placeholder="Password">
+                </div>
+            </div>
+            <div class="ui grid two column" id="reset-buttons" style="margin-top: 10px;">
+                <div class="actions column" style="margin-left:-5px; margin-right: 5px;">
+                    <div class="ui right aligned floated labeled icon red button" id="reset-button">
+                        CONFIRM
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+                <div class="actions column">
+                    <div class="ui right aligned floated labeled icon button deny">
+                        CANCEL
+                        <i class="cancel icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="javascript/login_view.js"></script>
 </body>
 
 </html>
