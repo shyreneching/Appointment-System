@@ -3,19 +3,12 @@ const Schema = mongoose.Schema;
 
 var doctorSchema = new Schema({
     firstname: String,
-    lastname: String,
-    status: String
+    lastname: String
 })
 
 doctorSchema.statics.getDoctorByID = async function(doctorID){
     return await this.findOne({
         _id: doctorID
-    }); 
-};
-
-doctorSchema.statics.getAvailableDoctor = async function(){
-    return await this.find({
-        status: "Available"
     }); 
 };
 
@@ -33,25 +26,16 @@ doctorSchema.statics.delete = async function(doctorID){
     });
 }
 
-doctorSchema.statics.updateDoctor = async function(doctorID, updated){
+doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname){
     return await this.updateOne({
         _id: doctorID
     }, {
         firstname,
-        lastname,
-        status
+        lastname
     }, {
         new: true
     }); 
 };
-
-doctorSchema.statics.updateDoctorStatus = async function(doctorID, status) {
-    return await this.updateOne({
-        _id: doctorID
-    }, { $set: {
-        status,
-    }})
-}
 
 var Doctor = mongoose.model("Doctor", doctorSchema)
 
