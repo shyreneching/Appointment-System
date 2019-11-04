@@ -70,6 +70,15 @@ router.post("/deleteAccount", async (req, res) => {
     res.send({message: true});
 })
 
+router.post("/validateUsername", async (req, res) => {
+    let account = await Account.getAccountByUsername(req.body.username);
+    if(account == undefined) {
+        res.send({message: false});
+    } else {
+        res.send({message: true});
+    }
+})
+
 router.post("/editDentist", async (req, res) => {
     let account = await Account.findOne({_id: req.body.accountID});
     Account.updatePassword(account.id, req.body.password);

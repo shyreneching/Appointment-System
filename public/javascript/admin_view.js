@@ -2,25 +2,71 @@ var accountID, procedureID, accountUsername;
 var defaultButton, currTab;
 
 $(document).ready(() => {
-    // $(".ui .toggle").on("click", change);
+
     $(".ui .item").on("click", switchPage);
 
+    // load the list of users
     $.get("/admin/adminUsers", (data) => {
         let template = Handlebars.compile(data.htmlData);
         $('#content').html(template(data.data));
     });
 
+    // validation if username exist
+    $("#add-username-user").focusout(() => {
+        $.ajax({
+            type: "post",
+            url: "/admin/validateUsername",
+            data:  {
+                username: $("#add-username-user").val()
+            },
+            success: (value) => {
+                if(value.message) {
+                    $("#username-field-user").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Username already taken"
+                    });
+                }
+            }
+        })
+    })
+    $("#add-username-dentist").focusout(() => {
+        $.ajax({
+            type: "post",
+            url: "/admin/validateUsername",
+            data:  {
+                username: $("#add-username-dentist").val()
+            },
+            success: (value) => {
+                if(value.message) {
+                    $("#username-field-dentist").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Username already taken"
+                    });
+                }
+            }
+        })
+    })
+
+    // function to access the loaded view
     $('#content').on("click", (event) => {
         if($(event.target).text().trim() != "") {
-            if(currTab == "Users") {
+            if(currTab == "Users") {    // accessing elements in users tab
                 if($(event.target).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
+                    // setting temporary value
                     accountID = $(event.target).data("id");
                     accountUsername = $(event.target).data("username");
                 } else if($(event.target).text() == "Edit") {
+                    // setting temporary value
                     accountID = $(event.target).data("id");
                     accountUsername = $(event.target).data("username");
+
+                    // getting the user object to be edited
                     $.ajax({
                         type: "post",
                         url: "admin/getUser",
@@ -42,11 +88,11 @@ $(document).ready(() => {
                         }
                     })
                 }
-            } else if(currTab == "Dentist") {
+            } else if(currTab == "Dentist") {   // accessing elements in dentist tab
                 if($(event.target).text() == "Edit") {
                     
                 }
-            } else if(currTab == "Procedure") {
+            } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(event.target).text() == "Delete") {
                     $("#delete-procedure-modal").modal("show");
                     $("#modal-text-delete-procedure").text($(event.target).data("name"));
@@ -54,9 +100,12 @@ $(document).ready(() => {
                     $("#edit-procedure-modal").modal("show");
                     $("#old-procedure-name").text($(event.target).data("name"));
                 }
+                
+                // setting temporary value
                 procedureID = $(event.target).data("id");
             }
         } else {
+            // functions for adding users, dentist, and procedure
             if(event.target.id == "add-user-button") {
                 $("#add-user-modal").modal("show");
             } else if(event.target.id == "add-dentist-button") {
@@ -125,6 +174,8 @@ $("#setting").click(() => {
 // RESETING ADMIN PASSWORD
 $("#save-password").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#current-password").val() == "") {
         $("#current-password-field").addClass("error");
         $('body').toast({
@@ -229,8 +280,11 @@ $("#edit-procedure-modal").modal({
     }
 })
 
+// ADDING SECRETARY/USER
 $("#create-user-button").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#add-username-user").val() == "") {
         $("#username-field-user").addClass("error");
         $('body').toast({ 
@@ -303,8 +357,11 @@ $("#create-user-button").click(() => {
     } 
 })
 
+// ADDING DENTIST
 $("#create-dentist-button").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#add-firstname-dentist").val() == "" || $("#add-lastname-dentist").val() == "") {
         if($("#add-firstname-dentist").val() == "") {
             $("#firstname-field-dentist").addClass("error");
@@ -393,8 +450,11 @@ $("#create-dentist-button").click(() => {
     }
 })
 
+// ADDING PROCEDURE
 $("#create-procedure-button").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#procedure-name").val() == "") {
         $("#procedure-field").addClass("error");
         $('body').toast({
@@ -437,8 +497,11 @@ $("#create-procedure-button").click(() => {
     }
 })
 
+// EDITING SECRETARY/USER
 $("#edit-user-button").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#edit-password-user").val() == "" || $("#edit-confirm-password-user").val() == "") {
         if($("#edit-password-user").val() == "") {
             $("#edit-password-field-user").addClass("error");
@@ -487,8 +550,11 @@ $("#edit-user-button").click(() => {
     }
 })
 
+// EDITING DENTIST
 $("#edit-dentist-button").click(() => {
    var done = true;
+
+    // ERROR CHECKING
     if($("#edit-firstname-dentist").val() == "" || $("#edit-lastname-dentist").val() == "") {
         if($("#edit-firstname-dentist").val() == "") {
             $("#edit-firstname-field-dentist").addClass("error");
@@ -553,8 +619,11 @@ $("#edit-dentist-button").click(() => {
     }
 })
 
+// EDITING PROCEDURE
 $("#edit-procedure-button").click(() => {
     var done = true;
+
+    // ERROR CHECKING
     if($("#edit-procedure-name") == "") {
         $("#edit-procedure-field").addClass("error");
         $('body').toast({
@@ -598,6 +667,7 @@ $("#edit-procedure-button").click(() => {
     }
 })
 
+// DELETING USER
 $("#delete-user-button").click(() => {
     $.ajax({
         type: "post",
@@ -621,6 +691,7 @@ $("#delete-user-button").click(() => {
     })
 })
 
+// DELETING PROCEDURE
 $("#delete-procedure-button").click(() => {
     $.ajax({
         type: "post",
@@ -643,6 +714,7 @@ $("#delete-procedure-button").click(() => {
     })
 })
 
+// LOGOUT
 $("#logout").click(() => {
     window.location.href="/logout";
 })
@@ -661,6 +733,7 @@ function setup() {
     $(".ui .item:contains('Users')").css({'background-color':'#cc1445'});
 }
 
+// SWITCH TAB
 function switchPage() {
     let page = $(this).text().trim();
     if(page == "Users") {
