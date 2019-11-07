@@ -1,30 +1,17 @@
 {{!-- user tab --}}
-<table class="ui striped table" style="table-layout: fixed;">
-    <thead>
-        <tr>
-        <th style="background-color: #b8b6b6;">Username</th>
-        {{!-- <th>Password</th> --}}
-        <th style="background-color: #b8b6b6;">Account Type</th>
-        <th style="background-color: #b8b6b6;">Last Login</th>
-        <th class="center aligned" style="background-color: #b8b6b6;"> </th>
-        </tr>
-    </thead>
-    <tbody class="fixed">
-        {{#each user}}
-        <tr>
-        <td>{{username}}</td>
-        <td>{{accountType}}</td>
-        <td>{{lastLogin}}</td>
-        <td class="center aligned">
-            <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
-            <button class="negative ui button" data-id="{{_id}}" data-username="{{username}}">Delete</button>
-        </td>
-        </tr>
-        {{/each}}
-        <tr>
-            <div class="ui icon button" data-tooltip="Add New Secretary" data-position="bottom center" id="add-user-button" style="padding-top: 15px;">
-                <i class="large user plus icon" id="add-user-button"></i>
-            </div>
-        </tr>
-    </tbody>
-</table>
+<div class="ui left aligned item">
+    <div class="ui large icon" data-tooltip="Add New Secretary" data-position="bottom center" id="add-user-button" style="background-color: transparent; cursor: pointer">
+        <i class="large user plus icon" id="add-user-button"></i>
+    </div>
+</div>
+<div class="ui right aligned item">
+    <div class="ui selection very long dropdown" id="filter-dropdown">
+        <div class="default text">ALL</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item active" data-value="all">ALL</div>
+            <div class="item" data-value="secretary">SECRETARY</div>
+            <div class="item" data-value="dentist">DENTIST</div>
+        </div>
+    </div>
+</div>

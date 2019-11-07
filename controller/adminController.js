@@ -7,7 +7,6 @@ const urlencoder = bodyparser.urlencoded({
     extended : true
 });
 
-const {Appointment} = require("../model/appointment");
 const {Doctor} = require("../model/doctor");
 const {Process} = require("../model/process");
 const {Account} = require("../model/account");
@@ -26,19 +25,20 @@ router.get("/", async (req, res) => {
 router.post("/updateAccountPassword", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.username);
     if(req.body.username == "admin") {
-        Account.updatePassword(account.id, req.body.newPassword);
+        Account.updateAccount(account.id, req.body.newPassword);
+        res.send({message: true});
     } else {
         if(account == undefined) {
             res.send({message: false});
         } else {
-            Account.updatePassword(account.id, req.body.newPassword);
+            Account.updateAccount(account.id, req.body.newPassword);
             res.send({message: true});
         }
     }
 })
 
 router.post("/editAccount", (req, res) => {
-    Account.updateAccount(req.body.accountID, req.body.accountUsername, req.body.accountPassword);
+    Account.updateAccount(req.body.accountID, req.body.accountPassword);
     res.send(true);
 })
 
@@ -81,7 +81,7 @@ router.post("/validateUsername", async (req, res) => {
 
 router.post("/editDentist", async (req, res) => {
     let account = await Account.findOne({_id: req.body.accountID});
-    Account.updatePassword(account.id, req.body.password);
+    Account.updateAccount(account.id, req.body.password);
     Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
     res.send(true);
 })
@@ -154,14 +154,37 @@ router.post("/getUser", async (req, res) => {
     });
 })
 
+router.post("/filterUser", async (req, res) => {
+    let account;
+    if(req.body.userType == "all") {
+        account = await Account.getAccountWithoutAdmin();
+    } else if (req.body.userType == "secretary") {
+        account = await Account.getSecretary();
+    } else if(req.body.userType == "dentist") {
+        account = await Account.getDentist();
+    }
+    let table = fs.readFileSync('./views/module_templates/admin-users-table.hbs', 'utf-8');
+    let sendData = {
+        user: account
+    }
+    res.send({
+        htmlData: table,
+        data: sendData
+    })
+})
+
 router.get("/adminUsers", urlencoder, async (req, res) => {
     let accounts = await Account.getAccountWithoutAdmin();
-    let template = fs.readFileSync('./views/module_templates/admin-users.hbs', 'utf-8');
+    let header = fs.readFileSync('./views/module_templates/admin-users.hbs', 'utf-8');
+    let table = fs.readFileSync('./views/module_templates/admin-users-table.hbs', 'utf-8');
     let sendData = {
         user: accounts
     }
     res.send({
-        htmlData: template,
+        htmlData: {
+            header,
+            table
+        },
         data: sendData
     })
     
@@ -169,24 +192,32 @@ router.get("/adminUsers", urlencoder, async (req, res) => {
 
 router.get("/adminDentist", urlencoder, async (req, res) => {
     let doctors = await Doctor.getAllDoctors();
-    let template = fs.readFileSync('./views/module_templates/admin-dentist.hbs', 'utf-8');
+    let header = fs.readFileSync('./views/module_templates/admin-dentist.hbs', 'utf-8');
+    let table = fs.readFileSync('./views/module_templates/admin-dentist-table.hbs', 'utf-8');
     let sendData = {
         dentist: doctors
     }
     res.send({
-        htmlData: template,
+        htmlData: {
+            header,
+            table
+        },
         data: sendData
     })
 })
 
 router.get("/adminProcedure", urlencoder, async (req, res) => {
     let processes = await Process.getAllProcesses();
-    let template = fs.readFileSync('./views/module_templates/admin-procedure.hbs', 'utf-8');
+    let header = fs.readFileSync('./views/module_templates/admin-procedure.hbs', 'utf-8');
+    let table = fs.readFileSync('./views/module_templates/admin-procedure-table.hbs', 'utf-8');
     let sendData = {
         procedure: processes
     }
     res.send({
-        htmlData: template,
+        htmlData: {
+            header,
+            table
+        },
         data: sendData
     })
 })

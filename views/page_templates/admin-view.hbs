@@ -8,11 +8,6 @@
     <script src="javascript/jquery.js"></script>
     <link rel="stylesheet" type="text/css"
       href="semantic/dist/semantic.min.css">
-    <style type="text/css"> 
-        #create-user-button, #create-dentist-button, #create-procedure-button, #edit-procedure-button {
-          margin-top: 25px;
-        }
-    </style>
   </head>
 
   <body onload="setup()" style="position: flex;">
@@ -53,7 +48,15 @@
         </a>
         <div style="color:white; font-size: 12px; text-align: center; padding-top: 150px;">SOFENGG 2019</div>
       </div>
-      <div id="content" class="column" style="width: 84%; position: relative; left: 15%"></div>
+      <div class="column" style="width: 84%; position: relative; left: 15%">
+        {{!-- <div id="header" class="ui borderless menu">
+
+        </div> --}}
+        <table class="ui striped table" style="table-layout: fixed;" id="table">
+            
+        </table>
+      </div>
+
     </div>
     {{!-- modal for setting --}}
     <div class="ui mini modal" id="setting-modal">
@@ -259,7 +262,7 @@
             </div>
         </div>
         <div class="ui grid">
-            <div class="actions column">
+            <div class="actions column" style="padding-top: 30px">
               <div class="ui right floated labeled icon green button very padded" id="create-procedure-button">
                   CREATE
                   <i class="checkmark icon"></i>
@@ -314,6 +317,8 @@
           </div>
       </div>
     </div>
+    <script src="javascript/jquery-data-table.js"></script>
+    <script src="javascript/jquery-data-table-semanticui.js"></script>
     <script src="semantic/dist/semantic.js"></script>
     <script src="javascript/handlebars.js"></script>
     <script src="javascript/admin_view.js"></script>

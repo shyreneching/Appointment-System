@@ -1,0 +1,18 @@
+<thead>
+    <tr>
+        <th style="background-color: #b8b6b6;">First Name</th>
+        <th style="background-color: #b8b6b6;">Last Name</th>
+        <th class="center aligned" style="background-color: #b8b6b6;"> </th>
+    </tr>
+</thead>
+<tbody class="fixed sticky">
+    {{#each dentist}}
+        <tr>
+            <td>{{firstname}}</td>
+            <td>{{lastname}}</td>
+            <td class="center aligned">
+                <button class="ui button" data-id="{{_id}}">Edit</button>
+            </td>
+        </tr>
+    {{/each}}
+</tbody>

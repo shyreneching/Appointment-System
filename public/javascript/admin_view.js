@@ -1,14 +1,13 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab;
+var defaultButton, currTab, userType, dropdown;
 
 $(document).ready(() => {
 
-    $(".ui .item").on("click", switchPage);
+    $(".ui .item").on("click", switchPage);    
 
     // load the list of users
     $.get("/admin/adminUsers", (data) => {
-        let template = Handlebars.compile(data.htmlData);
-        $('#content').html(template(data.data));
+        updatePage(data);
     });
 
     // validation if username exist
@@ -51,20 +50,38 @@ $(document).ready(() => {
         })
     })
 
-    // function to access the loaded view
-    $('#content').on("click", (event) => {
-        if($(event.target).text().trim() != "") {
+    // function to access the loaded header
+    $("#header").on("click", (event) => {
+        var temp = event.target;
+        if(temp.id == "filter-dropdown") {
+            userType = $(temp).dropdown('get value');
+            $(temp).dropdown('set selected', userType);
+        } 
+        // functions for adding users, dentist, and procedure
+        if(temp.id == "add-user-button") {
+            $("#add-user-modal").modal("show");
+        } else if(temp.id == "add-dentist-button") {
+            $("#add-dentist-modal").modal("show");                
+        } else if(temp.id == "add-procedure-button") {
+            $("#procedure-modal").modal("show");
+        } 
+    })
+
+    // function to access the loaded table
+    $('#table').on("click", (event) => {
+        var temp = event.target;
+        if($(temp).text().trim() != "" && temp.id != "filter-dropdown") {
             if(currTab == "Users") {    // accessing elements in users tab
-                if($(event.target).text() == "Delete") {
+                if($(temp).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
                     // setting temporary value
-                    accountID = $(event.target).data("id");
-                    accountUsername = $(event.target).data("username");
+                    accountID = $(temp).data("id");
+                    accountUsername = $(temp).data("username");
                 } else if($(event.target).text() == "Edit") {
                     // setting temporary value
-                    accountID = $(event.target).data("id");
-                    accountUsername = $(event.target).data("username");
+                    accountID = $(temp).data("id");
+                    accountUsername = $(temp).data("username");
 
                     // getting the user object to be edited
                     $.ajax({
@@ -89,31 +106,22 @@ $(document).ready(() => {
                     })
                 }
             } else if(currTab == "Dentist") {   // accessing elements in dentist tab
-                if($(event.target).text() == "Edit") {
+                if($(temp).text() == "Edit") {
                     
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
-                if($(event.target).text() == "Delete") {
+                if($(temp).text() == "Delete") {
                     $("#delete-procedure-modal").modal("show");
-                    $("#modal-text-delete-procedure").text($(event.target).data("name"));
-                } else if($(event.target).text() == "Edit") {
+                    $("#modal-text-delete-procedure").text($(temp).data("name"));
+                } else if($(temp).text() == "Edit") {
                     $("#edit-procedure-modal").modal("show");
-                    $("#old-procedure-name").text($(event.target).data("name"));
+                    $("#old-procedure-name").text($(temp).data("name"));
                 }
                 
                 // setting temporary value
-                procedureID = $(event.target).data("id");
+                procedureID = $(temp).data("id");
             }
-        } else {
-            // functions for adding users, dentist, and procedure
-            if(event.target.id == "add-user-button") {
-                $("#add-user-modal").modal("show");
-            } else if(event.target.id == "add-dentist-button") {
-                $("#add-dentist-modal").modal("show");                
-            } else if(event.target.id == "add-procedure-button") {
-                $("#procedure-modal").modal("show");
-            }
-        }
+        } 
     })
 })
 
@@ -336,8 +344,7 @@ $("#create-user-button").click(() => {
                 if(value.message) {
                     $("#add-user-modal").modal("hide");
                     $.get("/admin/adminUsers", (data) => {
-                        let template = Handlebars.compile(data.htmlData);
-                        $('#content').html(template(data.data));
+                        updateTable(data);
                         $('body').toast({
                             class: "success",
                             position: "top center",
@@ -429,8 +436,7 @@ $("#create-dentist-button").click(() => {
                 if(value.message) {
                     $("#add-dentist-modal").modal("hide");
                     $.get("/admin/adminDentist", (data) => {
-                        let template = Handlebars.compile(data.htmlData);
-                        $('#content').html(template(data.data));
+                        updateTable(data);
                         $('body').toast({
                             class: "success",
                             position: "top center",
@@ -476,8 +482,7 @@ $("#create-procedure-button").click(() => {
                 if(value.message) {
                     $("#procedure-modal").modal("hide");
                     $.get("/admin/adminProcedure", (data) => {
-                        let template = Handlebars.compile(data.htmlData);
-                        $('#content').html(template(data.data));
+                        updateTable(data);
                         $('body').toast({
                             class: "success",
                             position: "top center",
@@ -646,8 +651,7 @@ $("#edit-procedure-button").click(() => {
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
                     $.get("/admin/adminProcedure", (data) => {
-                        let template = Handlebars.compile(data.htmlData);
-                        $('#content').html(template(data.data));
+                        updateTable(data);
                         $('body').toast({
                             class: "success",
                             position: "top center",
@@ -679,8 +683,7 @@ $("#delete-user-button").click(() => {
         success: (value) => {
             $("#delete-user-modal").modal("hide");
             $.get("/admin/adminUsers", (data) => {
-                let template = Handlebars.compile(data.htmlData);
-                $('#content').html(template(data.data));
+                updateTable(data);
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -702,8 +705,7 @@ $("#delete-procedure-button").click(() => {
         success: (value) => {
             $("#delete-procedure-modal").modal("hide");
             $.get("/admin/adminProcedure", (data) => {
-                let template = Handlebars.compile(data.htmlData);
-                $('#content').html(template(data.data));
+                updateTable(data);
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -743,8 +745,8 @@ function switchPage() {
         $(this).addClass("active");
         currTab = "Users";
         $.get("/admin/adminUsers", (data) => {
-            let template = Handlebars.compile(data.htmlData);
-            $('#content').html(template(data.data)); 
+            $("#table").DataTable().destroy();
+            updatePage(data);
         });
     } else if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
@@ -753,8 +755,8 @@ function switchPage() {
         $(this).css({'background-color':'#cc1445'});
         currTab = "Dentist";
         $.get("/admin/adminDentist", (data) => {
-            let template = Handlebars.compile(data.htmlData);
-            $('#content').html(template(data.data)); 
+            $("#table").DataTable().destroy();
+            updatePage(data);
         });
     } else if(page == "Procedure") {
         $(".ui .item").css({'background-color':''});
@@ -763,8 +765,8 @@ function switchPage() {
         $(this).css({'background-color':'#cc1445'});
         currTab = "Procedure";
         $.get("/admin/adminProcedure", (data) => {
-            let template = Handlebars.compile(data.htmlData);
-            $('#content').html(template(data.data)); 
+            $("#table").DataTable().destroy();
+            updatePage(data);
         });
     } else if(page == "Reset Password") {
         $("#setting-modal").modal("show");
@@ -773,32 +775,23 @@ function switchPage() {
     }
 }
 
-// Switching the status of dentist
-// function change() {
-//     var status = $(this).text().trim(); 
-//     if(status == 'Available') {
-//         $(this).removeClass("active");
-//         $(this).text("Unavailable");
-//         $.ajax({
-//             type: "post",
-//             url: "/admin/editDentist",
-//             data: {
-//                 change: "status",
-//                 doctorID: $(this).data("id"),
-//                 status: "Unavailable"
-//             }
-//         })
-//     } else if(status == 'Unavailable') {
-//         $(this).addClass("active");
-//         $(this).text("Available");
-//         $.ajax({
-//             type: "post",
-//             url: "/admin/editDentist",
-//             data: {
-//                 change: "status",
-//                 doctorID: $(this).data("id"),
-//                 status: "Available"
-//             }
-//         })
-//     }
-// }
+function updatePage(data) {
+    let header = Handlebars.compile(data.htmlData.header);
+    let table = Handlebars.compile(data.htmlData.table);
+    $("#header").html(header);
+    $("#table").html(table(data.data));
+    $("#table").DataTable({
+        scrollY: 450,
+        scrollCollapse: true
+    });
+}
+
+function updateTable(data) {
+    $("#table").DataTable().destroy();
+    let table = Handlebars.compile(data.htmlData.table);
+    $("#table").html(table(data.data));
+    $("#table").DataTable({
+        scrollY: 450,
+        scrollCollapse: true
+    });
+}

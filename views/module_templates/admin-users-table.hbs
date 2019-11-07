@@ -1,0 +1,21 @@
+<thead>
+    <tr>
+        <th style="background-color: #b8b6b6; cursor: pointer">Username</th>
+        <th style="background-color: #b8b6b6; cursor: pointer">Account Type</th>
+        <th style="background-color: #b8b6b6; cursor: pointer">Last Login</th>
+        <th class="center aligned" style="background-color: #b8b6b6;"> </th>
+    </tr>
+</thead>
+<tbody class="fixed">
+    {{#each user}}
+        <tr>
+            <td>{{username}}</td>
+            <td>{{accountType}}</td>
+            <td>{{lastLogin}}</td>
+            <td class="center aligned">
+                <button class="ui button" data-id="{{_id}}" data-username="{{username}}">Edit</button>
+                <button class="negative ui button" data-id="{{_id}}" data-username="{{username}}">Delete</button>
+            </td>
+        </tr>
+    {{/each}}
+</tbody>
