@@ -22,7 +22,7 @@ unavailableDateSchema.statics.delete = async function(unavailableDateID){
     });
 }
 
-unavailableDateSchema.statics.updateDoctor = async function(unavailableDateID, updated){
+unavailableDateSchema.statics.updateUnavailableDate = async function(unavailableDateID, updated){
     return await this.updateOne({
         _id: unavailableDateID
     }, {
@@ -33,6 +33,12 @@ unavailableDateSchema.statics.updateDoctor = async function(unavailableDateID, u
     }, {
         new: true
     }); 
+};
+
+appointmentSchema.methods.populateDoctor = async function(){
+    return await Appointment.findOne({
+        _id: this._id
+    }).populate("doctor");
 };
 
 var UnavailableDate = mongoose.model("UnavailableDate", unavailableDateSchema);

@@ -35,10 +35,11 @@ accountSchema.statics.delete = async function(accountID){
     });
 }
 
-accountSchema.statics.updateAccount = async function(accountID, password){
+accountSchema.statics.updateAccount = async function(accountID, username, password){
     return await this.updateOne({
         _id: accountID
     }, {
+        username,
         password
     }, {
         new: true
@@ -53,16 +54,12 @@ accountSchema.statics.updateLogin = async function(accountID, lastLogin) {
     }})
 }
 
-accountSchema.statics.getSecretary = async function() {
-    return await this.find({
-        accountType: "secretary"
-    })
-}
-
-accountSchema.statics.getDentist = async function() {
-    return await this.find({
-        accountType: "dentist"
-    })
+accountSchema.statics.updatePassword = async function(accountID, password) {
+    return await this.updateOne({
+        _id: accountID
+    }, { $set: {
+        password
+    }})
 }
 
 var Account = mongoose.model("account", accountSchema)

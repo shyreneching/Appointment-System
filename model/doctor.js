@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 
 var doctorSchema = new Schema({
     firstname: String,
-    lastname: String
+    lastname: String,
+    schedule: {
+        type: Schema.Types.ObjectId,
+        ref: "Schedule"
+    }
 })
 
 doctorSchema.statics.getDoctorByID = async function(doctorID){
@@ -17,7 +21,7 @@ doctorSchema.statics.addDoctor = function(doctor, callback){
 };
 
 doctorSchema.statics.getAllDoctors = async function(){
-    return await this.find();
+    return await this.find({}).sort({'lastname': 1});
 }
 
 doctorSchema.statics.delete = async function(doctorID){
@@ -35,6 +39,22 @@ doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname
     }, {
         new: true
     }); 
+};
+
+doctorSchema.statics.updateDoctorSchedule = async function(doctorID, schedule){
+    return await this.updateOne({
+        _id: doctorID
+    }, {
+        schedule
+    }, {
+        new: true
+    }); 
+};
+
+doctorSchema.methods.populateSchedule = async function(){
+    return await Appointment.findOne({
+        _id: this._id
+    }).populate("schedule");
 };
 
 var Doctor = mongoose.model("Doctor", doctorSchema)

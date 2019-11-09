@@ -10,7 +10,7 @@ processSchema.statics.addProcess = function(process, callback){
 };
 
 processSchema.statics.getAllProcesses = async function(){
-    return await this.find();
+    return await this.find({}).sort({'processname': 1});
 }
 
 processSchema.statics.delete = async function(processID){
