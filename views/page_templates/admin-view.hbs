@@ -10,12 +10,17 @@
       href="semantic/dist/semantic.min.css">
   </head>
 
-  <body onload="setup()" style="position: flex;">
+  <body onload="setup()" style="display: flex;">
     <div class="ui two column grid" id="container" style="padding: 0px; margin: 0px;">
-      <div class="ui vertical inverted menu column" style="width: 15%; height: 100%; position: fixed; padding: 0px; background-color: #e899ae;">
+      <div class="ui vertical inverted menu sidebar visible column" style="width: 15%; height: 100%; border-radius: 0px; padding: 0px; background-color: #e899ae;">
         <div class="item center aligned" style="padding: 0px;">
           <img class="ui massive image" id="image" src="Access Dental Clinic Trans.png">
         </div>
+        <a class="item">
+          <div class="fluid circular ui button" style="background-color: #cc1445; color: white; text-alignment: center" id="add">
+            CREATE
+          </div>
+        </a>
         <a class="item">
           <div class="ui left">
             <i class="large users icon" style="color: white;  margin-right: 10px;"></i>
@@ -46,17 +51,40 @@
             Logout
           </div>
         </a>
-        <div style="color:white; font-size: 12px; text-align: center; padding-top: 150px;">SOFENGG 2019</div>
       </div>
-      <div class="column" style="width: 84%; position: relative; left: 15%">
-        {{!-- <div id="header" class="ui borderless menu">
+      <div class="column" style="width: 85%;">
+        <table class="ui striped table" id="table">
 
-        </div> --}}
-        <table class="ui striped table" style="table-layout: fixed;" id="table">
-            
         </table>
       </div>
 
+    </div>
+    {{!-- modal for create --}}
+    <div class="ui small modal" id="create-modal">
+      <i class="close icon deny"></i>
+      
+      <div class="actions">
+        <div class="ui three column divided center aligned grid">
+          <div class="column">
+            <div class="ui button" id="add-sec-button" style="background-color: transparent; text-align: center">
+              <i class="large user plus icon"></i><br><br>  
+              New Secretary
+            </div>
+          </div>
+          <div class="column">
+            <div class="ui button" id="add-dentist-button" style="background-color: transparent; text-align: center">
+              <i class="large user md icon"></i><br><br>
+              New Dentist
+            </div>
+          </div>
+          <div class="column">
+            <div class="ui button" id="add-procedure-button" style="background-color: transparent; text-align: center">
+              <i class="large clipboard icon"></i><br><br>
+              New Procedure
+            </div>
+          </div>
+        </div>    
+      </div>
     </div>
     {{!-- modal for setting --}}
     <div class="ui mini modal" id="setting-modal">
@@ -76,20 +104,16 @@
               <label>Confirm New Password</label>
               <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
           </div>
-          <div class="ui grid two column right aligned" id="edit-password-buttons" style="margin-top: 25px;">
-            <div class="actions column">
-              <div class="ui right floated labeled icon red button" id="save-password">
-                  CONFIRM
-                  <i class="checkmark icon"></i>
-              </div>
-            </div>
-            <div class="actions column">
-              <div class="ui right floated labeled icon button deny">
-                  CANCEL
-                  <i class="cancel icon"></i>
-              </div>
-            </div>
-          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon red button" id="save-password" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
+            CANCEL
+            <i class="cancel icon"></i>
         </div>
       </div>
     </div>  
@@ -113,14 +137,12 @@
                 <label>Confirm Password</label>
                 <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
             </div>
-            <div class="ui grid">
-                <div class="actions column">
-                    <div class="ui right floated labeled icon green button very padded" id="create-user-button">
-                        CREATE
-                        <i class="checkmark icon"></i>
-                    </div>
-                </div>
-            </div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="create-user-button" style="margin-bottom: 15px;">
+            CREATE
+            <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
@@ -142,15 +164,13 @@
                   <label>Confirm Password</label>
                   <input type="password" name="confirmPassword" id="edit-confirm-password-user" placeholder="Confirm Password">
               </div>
-              <div class="ui grid">
-                  <div class="actions column">
-                      <div class="ui right floated labeled icon green button very padded" id="edit-user-button">
-                          SAVE CHANGES
-                          <i class="checkmark icon"></i>
-                      </div>
-                  </div>
-              </div>
           </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="edit-user-button" style="margin-bottom: 15px">
+            SAVE CHANGES
+            <i class="checkmark icon"></i>
+        </div>
       </div>
     </div>
     {{!-- modal for deleting user --}}
@@ -158,20 +178,16 @@
       <div class="header">Delete User</div>
       <div class="content">
           <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
-          <div class="ui grid two column right aligned" id="delete-buttons-user" style="margin-top: 25px;">
-              <div class="actions column">
-                  <div class="ui right floated labeled icon red button" id="delete-user-button">
-                      CONFIRM
-                      <i class="checkmark icon"></i>
-                  </div>
-              </div>
-              <div class="actions column">
-                  <div class="ui right floated labeled icon button deny">
-                      CANCEL
-                      <i class="cancel icon"></i>
-                  </div>
-              </div>
-          </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon red button" id="delete-user-button" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
+            CANCEL
+            <i class="cancel icon"></i>
+        </div>
       </div>
     </div>
     {{!-- modal for adding dentist --}}
@@ -202,15 +218,13 @@
                   <label>Confirm Password</label>
                   <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
               </div>
-              <div class="ui grid">
-                  <div class="actions column">
-                    <div class="ui right floated labeled icon green button very padded" id="create-dentist-button">
-                        CREATE
-                        <i class="checkmark icon"></i>
-                    </div>
-                  </div>
-              </div>
           </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="create-dentist-button" style="margin-bottom: 15px;">
+            CREATE
+            <i class="checkmark icon"></i>
+        </div>
       </div>
     </div>
     {{!-- modal for editing dentist --}}
@@ -239,15 +253,13 @@
                   <label>Confirm Password</label>
                   <input type="password" name="confirmPassword" id="edit-confirm-password-dentist" placeholder="Confirm Password">
               </div>
-              <div class="ui grid">
-                  <div class="actions column">
-                    <div class="ui right floated labeled icon green button very padded" id="edit-dentist-button">
-                        SAVE CHANGES
-                        <i class="checkmark icon"></i>
-                    </div>
-                  </div>
-              </div>
           </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="edit-dentist-button" style="margin-bottom: 15px;">
+            SAVE CHANGES
+            <i class="checkmark icon"></i>
+        </div>
       </div>
     </div>
     {{!-- modal for adding procedure --}}
@@ -261,13 +273,11 @@
                 <input type="text" name="procedure" id="procedure-name" placeholder="Procedure Name">
             </div>
         </div>
-        <div class="ui grid">
-            <div class="actions column" style="padding-top: 30px">
-              <div class="ui right floated labeled icon green button very padded" id="create-procedure-button">
-                  CREATE
-                  <i class="checkmark icon"></i>
-              </div>
-            </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="create-procedure-button" style="margin-bottom: 15px;">
+            CREATE
+            <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
@@ -286,13 +296,11 @@
                 <input type="text" name="procedure" id="edit-procedure-name" placeholder="Procedure Name">
             </div>
         </div>
-        <div class="ui grid">
-            <div class="actions column">
-              <div class="ui right floated labeled icon green button very padded" id="edit-procedure-button">
-                  SAVE CHANGES
-                  <i class="checkmark icon"></i>
-              </div>
-            </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="edit-procedure-button" style="margin-bottom: 15px;">
+            SAVE CHANGES
+            <i class="checkmark icon"></i>
         </div>
       </div>
     </div>
@@ -301,20 +309,16 @@
       <div class="header">Delete Procedure</div>
       <div class="content">
           <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
-          <div class="ui grid two column right aligned" id="delete-buttons-procedure" style="margin-top: 25px;">
-              <div class="actions column">
-              <div class="ui right floated labeled icon red button" id="delete-procedure-button">
-                  CONFIRM
-                  <i class="checkmark icon"></i>
-              </div>
-              </div>
-              <div class="actions column">
-              <div class="ui right floated labeled icon button deny">
-                  CANCEL
-                  <i class="cancel icon"></i>
-              </div>
-              </div>
-          </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon red button" id="delete-procedure-button" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
+            CANCEL
+            <i class="cancel icon"></i>
+        </div>
       </div>
     </div>
     <script src="javascript/jquery-data-table.js"></script>

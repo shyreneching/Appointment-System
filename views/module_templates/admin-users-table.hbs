@@ -1,12 +1,12 @@
 <thead>
     <tr>
-        <th style="background-color: #b8b6b6; cursor: pointer">Username</th>
-        <th style="background-color: #b8b6b6; cursor: pointer">Account Type</th>
-        <th style="background-color: #b8b6b6; cursor: pointer">Last Login</th>
-        <th class="center aligned" style="background-color: #b8b6b6;"> </th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%">Username</th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%">Account Type</th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%">Last Login</th>
+        <th class="center aligned" style="background-color: #b8b6b6; width: 25%"> </th>
     </tr>
 </thead>
-<tbody class="fixed">
+<tbody class="fixed sticky">
     {{#each user}}
         <tr>
             <td>{{username}}</td>
@@ -18,4 +18,4 @@
             </td>
         </tr>
     {{/each}}
-</tbody>
+</tbody>    
