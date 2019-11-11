@@ -175,14 +175,12 @@ router.post("/filterUser", async (req, res) => {
 
 router.get("/adminUsers", urlencoder, async (req, res) => {
     let accounts = await Account.getAccountWithoutAdmin();
-    let header = fs.readFileSync('./views/module_templates/admin-users.hbs', 'utf-8');
     let table = fs.readFileSync('./views/module_templates/admin-users-table.hbs', 'utf-8');
     let sendData = {
         user: accounts
     }
     res.send({
         htmlData: {
-            header,
             table
         },
         data: sendData
@@ -192,14 +190,12 @@ router.get("/adminUsers", urlencoder, async (req, res) => {
 
 router.get("/adminDentist", urlencoder, async (req, res) => {
     let doctors = await Doctor.getAllDoctors();
-    let header = fs.readFileSync('./views/module_templates/admin-dentist.hbs', 'utf-8');
     let table = fs.readFileSync('./views/module_templates/admin-dentist-table.hbs', 'utf-8');
     let sendData = {
         dentist: doctors
     }
     res.send({
         htmlData: {
-            header,
             table
         },
         data: sendData
@@ -208,14 +204,12 @@ router.get("/adminDentist", urlencoder, async (req, res) => {
 
 router.get("/adminProcedure", urlencoder, async (req, res) => {
     let processes = await Process.getAllProcesses();
-    let header = fs.readFileSync('./views/module_templates/admin-procedure.hbs', 'utf-8');
     let table = fs.readFileSync('./views/module_templates/admin-procedure-table.hbs', 'utf-8');
     let sendData = {
         procedure: processes
     }
     res.send({
         htmlData: {
-            header,
             table
         },
         data: sendData

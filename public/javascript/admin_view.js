@@ -7,7 +7,7 @@ $(document).ready(() => {
 
     // load the list of users
     $.get("/admin/adminUsers", (data) => {
-        updatePage(data);
+        updateTable(data);
     });
 
     // validation if username exist
@@ -241,6 +241,7 @@ $("#save-password").click(() => {
             },
             success: (value) => {
                 $("#setting-modal").modal("hide");
+                $("#setting-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -252,23 +253,39 @@ $("#save-password").click(() => {
 })
 
 // INITIALIZE FORMS
-$("#add-user-modal").modal({
-    onShow: function() {
-        $('#add-user-modal').form("clear");
-    }
+$("#add").click(() => {
+    $("#create-modal").modal("show");
 })
 
-$("#add-dentist-modal").modal({
-    onShow: function() {
-        $('#add-dentist-modal').form("clear");
-    }
+$("#add-sec-button").click(() => {
+    $("#add-user-modal").modal('show');
 })
 
-$("#procedure-modal").modal({
-    onShow: function() {
-        $("#procedure-modal").form("clear");
-    }
-});
+$("#add-dentist-button").click(() => {  
+    $("#add-dentist-modal").modal('show');
+})
+
+$("#add-procedure-button").click(() => {
+    $("#procedure-modal").modal('show');
+})
+
+// $("#add-user-modal").modal({
+//     onShow: function() {
+//         $('#add-user-modal').form("clear");
+//     }
+// })
+
+// $("#add-dentist-modal").modal({
+//     onShow: function() {
+//         $('#add-dentist-modal').form("clear");
+//     }
+// })
+
+// $("#procedure-modal").modal({
+//     onShow: function() {
+//         $("#procedure-modal").form("clear");
+//     }
+// });
 
 $("#edit-user-modal").modal({
     onShow: function() {
@@ -343,6 +360,7 @@ $("#create-user-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#add-user-modal").modal("hide");
+                    $('#add-user-modal').form("clear");
                     $.get("/admin/adminUsers", (data) => {
                         updateTable(data);
                         $('body').toast({
@@ -435,6 +453,7 @@ $("#create-dentist-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#add-dentist-modal").modal("hide");
+                    $('#add-dentist-modal').form("clear");
                     $.get("/admin/adminDentist", (data) => {
                         updateTable(data);
                         $('body').toast({
@@ -481,6 +500,7 @@ $("#create-procedure-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#procedure-modal").modal("hide");
+                    $('#procedure-modal').form("clear");
                     $.get("/admin/adminProcedure", (data) => {
                         updateTable(data);
                         $('body').toast({
@@ -545,6 +565,7 @@ $("#edit-user-button").click(() => {
             },
             success: (value) => {
                 $("#edit-user-modal").modal("hide");
+                $("#edit-user-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -614,6 +635,7 @@ $("#edit-dentist-button").click(() => {
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");
+                $("#edit-dentist-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -650,6 +672,7 @@ $("#edit-procedure-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
+                    $("#edit-procedure-modal").form("clear");
                     $.get("/admin/adminProcedure", (data) => {
                         updateTable(data);
                         $('body').toast({
@@ -746,7 +769,7 @@ function switchPage() {
         currTab = "Users";
         $.get("/admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
@@ -756,7 +779,7 @@ function switchPage() {
         currTab = "Dentist";
         $.get("/admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Procedure") {
         $(".ui .item").css({'background-color':''});
@@ -766,7 +789,7 @@ function switchPage() {
         currTab = "Procedure";
         $.get("/admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Reset Password") {
         $("#setting-modal").modal("show");
@@ -775,23 +798,13 @@ function switchPage() {
     }
 }
 
-function updatePage(data) {
-    let header = Handlebars.compile(data.htmlData.header);
-    let table = Handlebars.compile(data.htmlData.table);
-    $("#header").html(header);
-    $("#table").html(table(data.data));
-    $("#table").DataTable({
-        scrollY: 450,
-        scrollCollapse: true
-    });
-}
-
 function updateTable(data) {
-    $("#table").DataTable().destroy();
     let table = Handlebars.compile(data.htmlData.table);
     $("#table").html(table(data.data));
+    // $("#table").DataTable()
     $("#table").DataTable({
         scrollY: 450,
-        scrollCollapse: true
+        scrollCollapse: true,
+        responsive: true
     });
 }
