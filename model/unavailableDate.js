@@ -35,7 +35,15 @@ unavailableDateSchema.statics.updateUnavailableDate = async function(unavailable
     }); 
 };
 
-appointmentSchema.methods.populateDoctor = async function(){
+unavailableDateSchema.statics.getDoctorUnavailableDates = async function(doctorID){
+    return await this.find({
+        doctor:{
+            "$in": [doctorID]
+        }        
+    });
+};
+
+unavailableDateSchema.methods.populateDoctor = async function(){
     return await Appointment.findOne({
         _id: this._id
     }).populate("doctor");

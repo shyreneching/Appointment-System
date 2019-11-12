@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+//If no schedule for the day array = none
 var scheduleSchema = new Schema({
     sunday: Array,
     monday: Array,
