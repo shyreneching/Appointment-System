@@ -62,15 +62,11 @@ $(document).keypress((event) => {
     }
 })
 
-// INITIALIZE MODALS
-$("#setting").click(() => {
-    $("#setting-modal").modal("show");
-})
-
+// MODALS
 $("#adding-schedule-modal").modal({
     onHidden: () => {
         $(".ui .button").removeClass("active");
-        $(".ui .checkbox").removeClass("checked");
+        $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
             display: 'none'
         })

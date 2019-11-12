@@ -2,9 +2,6 @@ var accountID, procedureID, accountUsername;
 var defaultButton, currTab, userType;
 
 $(document).ready(() => {
-    // switch page between users, dentist, and procedure
-    $(".ui .item").on("click", switchPage);    
-
     // validation if username exist
     $("#add-username-user").focusout(() => {
         $.ajax({
@@ -53,6 +50,7 @@ $(document).ready(() => {
                 if($(temp).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
+
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
@@ -104,29 +102,6 @@ $(document).ready(() => {
             }
         } 
     })
-})
-
-// RESETTING ERRORS
-$(document).on("keydown", () => {
-    $("#username-field-user").removeClass("error");
-    $("#password-field-user").removeClass("error");
-    $("#confirm-password-field-user").removeClass("error");
-    $("#firstname-field-dentist").removeClass("error");
-    $("#lastname-field-dentist").removeClass("error");
-    $("#username-field-dentist").removeClass("error");
-    $("#password-field-dentist").removeClass("error");
-    $("#confirm-password-field-dentist").removeClass("error");
-    $("#procedure-field").removeClass("error");
-    $("#current-password-field").removeClass("error");
-    $("#new-password-field").removeClass("error");
-    $("#confirm-new-password-field").removeClass("error");
-    $("#edit-password-field-user").removeClass("error");
-    $("#edit-confirm-password-field-user").removeClass("error");
-    $("#edit-firstname-field-dentist").removeClass("error");
-    $("#edit-lastname-field-dentist").removeClass("error");
-    $("#edit-password-field-dentist").removeClass("error");
-    $("#edit-confirm-password-field-dentist").removeClass("error");
-    $("#edit-procedure-field").removeClass("error");
 })
 
 // RESETING ADMIN PASSWORD
@@ -642,11 +617,6 @@ $("#delete-procedure-button").click(() => {
     })
 })
 
-// LOGOUT
-$("#logout").click(() => {
-    window.location.href="/logout";
-})
-
 // Initialization
 function setup() {
     var statusList = $(".ui .toggle");
@@ -700,7 +670,7 @@ function switchPage() {
             updateTable(data);
         });
     } else if(page == "Reset Password") {
-        $("#setting-modal").modal("show");
+        $("#reset-password-modal").modal("show");
     } else if(page == "Logout") {        
         window.location.href="/logout";
     }
