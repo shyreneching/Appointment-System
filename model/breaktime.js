@@ -46,6 +46,10 @@ breakTimeSchema.statics.updateBreakTime = async function(breakTimeID, breakTime)
     }); 
 };
 
+breakTimeSchema.statics.findLast = async function(){
+    return await this.find({}).sort({_id:-1}).limit(1);
+};
+
 var BreakTime= mongoose.model("BreakTime", breakTimeSchema)
 
 module.exports = {
