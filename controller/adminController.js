@@ -334,14 +334,13 @@ router.get("/getSchedule", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
-    
+    let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
+
     let sendData = {
         docSched
     }
     res.send({
-        htmlData: {
-            
-        },
+        htmlData: table,
         data: sendData
     })
     
