@@ -55,6 +55,16 @@ doctorSchema.statics.updateDoctorSchedule = async function(doctorID, schedule){
     }); 
 };
 
+doctorSchema.statics.updateDoctorBreakTime = async function(doctorID, breakTime){
+    return await this.updateOne({
+        _id: doctorID
+    }, {
+        breakTime
+    }, {
+        new: true
+    }); 
+};
+
 doctorSchema.methods.populateSchedule = async function(){
     return await Doctor.findOne({
         _id: this._id

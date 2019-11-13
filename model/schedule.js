@@ -45,6 +45,10 @@ scheduleSchema.statics.updateSchedule = async function(scheduleID, schedule){
     }); 
 };
 
+scheduleSchema.statics.findLast = async function(){
+    return await this.find({}).sort({_id:-1}).limit(1);
+};
+
 var Schedule= mongoose.model("Schedule", scheduleSchema)
 
 module.exports = {
