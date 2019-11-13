@@ -330,4 +330,22 @@ router.get("/addSchedule", urlencoder, async (req, res) => {
     Doctor.updateDoctorSchedule(doctor._id, sched._id); 
 })
 
+router.get("/getSchedule", urlencoder, async (req, res) => {
+    let doctorID = req.body.doctorID;
+    let doctor = await Doctor.getDoctorByID(doctorID);
+    let docSched = await Schedule.getScheduleByID(doctor.schedule);
+    
+    let sendData = {
+        docSched
+    }
+    res.send({
+        htmlData: {
+            
+        },
+        data: sendData
+    })
+    
+
+})
+
 module.exports = router;
