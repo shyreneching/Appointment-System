@@ -1,15 +1,7 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab, userType, dropdown;
+var defaultButton, currTab, userType;
 
 $(document).ready(() => {
-
-    $(".ui .item").on("click", switchPage);    
-
-    // load the list of users
-    $.get("/admin/adminUsers", (data) => {
-        updateTable(data);
-    });
-
     // validation if username exist
     $("#add-username-user").focusout(() => {
         $.ajax({
@@ -50,23 +42,6 @@ $(document).ready(() => {
         })
     })
 
-    // function to access the loaded header
-    $("#header").on("click", (event) => {
-        var temp = event.target;
-        if(temp.id == "filter-dropdown") {
-            userType = $(temp).dropdown('get value');
-            $(temp).dropdown('set selected', userType);
-        } 
-        // functions for adding users, dentist, and procedure
-        if(temp.id == "add-user-button") {
-            $("#add-user-modal").modal("show");
-        } else if(temp.id == "add-dentist-button") {
-            $("#add-dentist-modal").modal("show");                
-        } else if(temp.id == "add-procedure-button") {
-            $("#procedure-modal").modal("show");
-        } 
-    })
-
     // function to access the loaded table
     $('#table').on("click", (event) => {
         var temp = event.target;
@@ -75,6 +50,7 @@ $(document).ready(() => {
                 if($(temp).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
+
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
@@ -106,7 +82,10 @@ $(document).ready(() => {
                     })
                 }
             } else if(currTab == "Dentist") {   // accessing elements in dentist tab
-                if($(temp).text() == "Edit") {
+                if($(temp).text() == "Add Schedule") {
+                    $("#adding-schedule-modal").modal("show");    
+                    $("#doctor-name").text("Dr. " + $(temp).data("firstname") + " " + $(temp).data("lastname"));
+                } else if($(temp).text() == "Edit Schedule") {
                     
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
@@ -123,60 +102,6 @@ $(document).ready(() => {
             }
         } 
     })
-})
-
-// RESETTING ERRORS
-$(document).on("keydown", () => {
-    $("#username-field-user").removeClass("error");
-    $("#password-field-user").removeClass("error");
-    $("#confirm-password-field-user").removeClass("error");
-    $("#firstname-field-dentist").removeClass("error");
-    $("#lastname-field-dentist").removeClass("error");
-    $("#username-field-dentist").removeClass("error");
-    $("#password-field-dentist").removeClass("error");
-    $("#confirm-password-field-dentist").removeClass("error");
-    $("#procedure-field").removeClass("error");
-    $("#current-password-field").removeClass("error");
-    $("#new-password-field").removeClass("error");
-    $("#confirm-new-password-field").removeClass("error");
-    $("#edit-password-field-user").removeClass("error");
-    $("#edit-confirm-password-field-user").removeClass("error");
-    $("#edit-firstname-field-dentist").removeClass("error");
-    $("#edit-lastname-field-dentist").removeClass("error");
-    $("#edit-password-field-dentist").removeClass("error");
-    $("#edit-confirm-password-field-dentist").removeClass("error");
-    $("#edit-procedure-field").removeClass("error");
-})
-
-// Setting default button on modal when ENTER key is pressed
-$(document).keypress((event) => {
-    if(event.keyCode == 13) {
-        if($("#setting-modal")[0].className.includes("active")) {
-            $("#save-password").click();
-        } else if($("#add-user-modal")[0].className.includes("active")) {
-            $("#create-user-button").click();
-        } else if($("#add-dentist-modal")[0].className.includes("active")) {
-            $("#create-dentist-button").click();
-        } else if($("#procedure-modal")[0].className.includes("active")) {
-            $("#create-procedure-button").click();
-        } else if($("#delete-procedure-modal")[0].className.includes("active")) {
-            $("#delete-procedure-button").click();
-        } else if($("#delete-user-modal")[0].className.includes("active")) {
-            $("#delete-user-button").click();
-        } else if($("#edit-user-modal")[0].className.includes("active")) {
-            $("#edit-user-button").click();
-        } else if($("#edit-dentist-modal")[0].className.includes("active")) {
-            $("#edit-dentist-button").click();
-        } else if($("#edit-procedure-modal")[0].className.includes("active")) {
-            $("#edit-procedure-button").click();
-        }
-    }
-})
-
-
-// INTIALIZING MODAL FOR RESETTING ADMIN PASSWORD
-$("#setting").click(() => {
-    $("#setting-modal").modal("show");
 })
 
 // RESETING ADMIN PASSWORD
@@ -252,59 +177,6 @@ $("#save-password").click(() => {
     } 
 })
 
-// INITIALIZE FORMS
-$("#add").click(() => {
-    $("#create-modal").modal("show");
-})
-
-$("#add-sec-button").click(() => {
-    $("#add-user-modal").modal('show');
-})
-
-$("#add-dentist-button").click(() => {  
-    $("#add-dentist-modal").modal('show');
-})
-
-$("#add-procedure-button").click(() => {
-    $("#procedure-modal").modal('show');
-})
-
-// $("#add-user-modal").modal({
-//     onShow: function() {
-//         $('#add-user-modal').form("clear");
-//     }
-// })
-
-// $("#add-dentist-modal").modal({
-//     onShow: function() {
-//         $('#add-dentist-modal').form("clear");
-//     }
-// })
-
-// $("#procedure-modal").modal({
-//     onShow: function() {
-//         $("#procedure-modal").form("clear");
-//     }
-// });
-
-$("#edit-user-modal").modal({
-    onShow: function() {
-        $("#edit-user-modal").form("clear");
-    }
-})
-
-$("#edit-dentist-modal").modal({
-    onShow: function() {
-        $("#edit-dentist-modal").form("clear");
-    }
-})
-
-$("#edit-procedure-modal").modal({
-    onShow: function() {
-        $("#edit-procedure-modal").form("clear");
-    }
-})
-
 // ADDING SECRETARY/USER
 $("#create-user-button").click(() => {
     var done = true;
@@ -362,6 +234,7 @@ $("#create-user-button").click(() => {
                     $("#add-user-modal").modal("hide");
                     $('#add-user-modal').form("clear");
                     $.get("/admin/adminUsers", (data) => {
+                        $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
                             class: "success",
@@ -455,6 +328,7 @@ $("#create-dentist-button").click(() => {
                     $("#add-dentist-modal").modal("hide");
                     $('#add-dentist-modal').form("clear");
                     $.get("/admin/adminDentist", (data) => {
+                        $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
                             class: "success",
@@ -502,6 +376,7 @@ $("#create-procedure-button").click(() => {
                     $("#procedure-modal").modal("hide");
                     $('#procedure-modal').form("clear");
                     $.get("/admin/adminProcedure", (data) => {
+                        $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
                             class: "success",
@@ -674,6 +549,7 @@ $("#edit-procedure-button").click(() => {
                     $("#edit-procedure-modal").modal("hide");
                     $("#edit-procedure-modal").form("clear");
                     $.get("/admin/adminProcedure", (data) => {
+                        $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
                             class: "success",
@@ -706,6 +582,7 @@ $("#delete-user-button").click(() => {
         success: (value) => {
             $("#delete-user-modal").modal("hide");
             $.get("/admin/adminUsers", (data) => {
+                $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
                     class: "success",
@@ -728,6 +605,7 @@ $("#delete-procedure-button").click(() => {
         success: (value) => {
             $("#delete-procedure-modal").modal("hide");
             $.get("/admin/adminProcedure", (data) => {
+                $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
                     class: "success",
@@ -739,11 +617,6 @@ $("#delete-procedure-button").click(() => {
     })
 })
 
-// LOGOUT
-$("#logout").click(() => {
-    window.location.href="/logout";
-})
-
 // Initialization
 function setup() {
     var statusList = $(".ui .toggle");
@@ -752,6 +625,11 @@ function setup() {
             $(statusList[i]).removeClass("active");
         }
     }
+
+    // load the list of users
+    $.get("/admin/adminUsers", (data) => {
+        updateTable(data);
+    });
 
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
@@ -792,16 +670,16 @@ function switchPage() {
             updateTable(data);
         });
     } else if(page == "Reset Password") {
-        $("#setting-modal").modal("show");
+        $("#reset-password-modal").modal("show");
     } else if(page == "Logout") {        
         window.location.href="/logout";
     }
 }
 
+// Reload table content
 function updateTable(data) {
     let table = Handlebars.compile(data.htmlData.table);
     $("#table").html(table(data.data));
-    // $("#table").DataTable()
     $("#table").DataTable({
         scrollY: 450,
         scrollCollapse: true,
