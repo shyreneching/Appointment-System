@@ -10,6 +10,9 @@ const urlencoder = bodyparser.urlencoded({
 const {Doctor} = require("../model/doctor");
 const {Process} = require("../model/process");
 const {Account} = require("../model/account");
+const {Schedule} = require("../model/schedule");
+const {BreakTime} = require("../model/breaktime");
+const {UnavailableDate} = require("../model/unavailableDate");
 
 router.get("/", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
@@ -214,6 +217,117 @@ router.get("/adminProcedure", urlencoder, async (req, res) => {
         },
         data: sendData
     })
+})
+
+
+router.get("/addSchedule", urlencoder, async (req, res) => {
+
+    let doctor = req.body.doctorID;
+
+    let time =['08:00:00', '18:00:00'];
+
+    let defaultschedule = new Schedule({
+        sunday: null,
+        monday: time,
+        tuesday: time,
+        wednesday: time,
+        thursday: time,
+        friday: time,
+        saturday: time
+    })
+
+    let mondayBreak= null;
+    let tuesdayBreak = null;
+    let wednesdayBreak = null;
+    let thursdayBreak = null;
+    let fridayBreak = null;
+    let saturdayBreak = null;
+
+    if(true /*not default time*/){
+    
+        if(true /*monday does not have break*/){
+            let monday= req.body["monday[]"];
+        }else{
+            let monday =  req.body["monday[]"]; // whole bracket
+            mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
+        }
+
+        if(true /*tuesday does not have break*/){
+            let tuesday = req.body["tuesday[]"];
+        }else{
+            let tuesday = req.body["tuesday[]"]; // whole bracket
+            tuesdayBreak = req.body["tuesdaydifference[]"];
+        }
+
+        if(true /*wednesday does not have break*/){
+            let wednesday = req.body["wednesday[]"];
+        }else{
+            let wednesday = req.body["wednesday[]"]; // whole bracket
+            wednesdayBreak = req.body["wednesdaydifference[]"];
+        }
+
+        if(true /*thursday does not have break*/){
+            let thursday = req.body["thursday[]"];
+        }else{
+            let thursday = req.body["thursday[]"]; // whole bracket
+            thursdayBreak = req.body["thursdaydifference[]"];
+        }
+
+        if(true /*friday does not have break*/){
+            let friday = req.body["friday[]"];
+        }else{
+            let friday = req.body["friday[]"]; // whole bracket
+            fridayBreak = req.body["fridaydifference[]"];
+        }
+
+        if(true /*saturday does not have break*/){
+            let saturday = req.body["saturday[]"]; 
+        }else{
+            let saturday =  req.body["saturday[]"]; // whole bracket
+            saturdayBreak = req.body["saturdaydifference[]"];
+        }
+        
+        let defaultschedule = new Schedule({
+            sunday: null,
+            monday,
+            tuesday,
+            wednesday,
+            thursday,
+            friday,
+            saturday
+        })
+    }
+
+    let breaktime = new Schedule({
+        sunday: null,
+        monday: mondayBreak,
+        tuesday: tuesdayBreak,
+        wednesday: wednesdayBreak,
+        thursday: thursdayBreak,
+        friday: fridayBreak,
+        saturday: saturdayBreak
+    })
+
+    BreakTime.addBreakTime(breaktime, function(breaktime){
+    }, (error)=>{
+        res.send(error);
+    })
+    let breaksched = BreakTime.findLast();
+    Doctor.updateDoctorBreakTime(doctor._id, breaksched._id);
+
+
+    Schedule.addschedule(defaultschedule, function(defaultschedule){
+        if (defaultschedule){
+            res.redirect("/adminDentist");
+        } else {
+            res.redirect("/");
+        }
+        
+    }, (error)=>{
+        res.send(error);
+    })
+    let sched  = Schedule.findLast();
+    Doctor.updateDoctorSchedule(doctor._id, sched._id); 
 })
 
 module.exports = router;
