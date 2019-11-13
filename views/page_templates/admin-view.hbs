@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{!-- <!DOCTYPE html> --}}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -7,46 +7,56 @@
     <title>Access Dental Clinic | Admin</title>
     <link rel="stylesheet" type="text/css"
       href="semantic/dist/semantic.min.css">
+    <style>
+      .ui.modal > .header {
+        background-color: #cc1445 !important;
+        color: white !important;
+      }
+      table th {
+        background-color: #cc1445 !important;
+        color: white !important;
+      }
+    </style>
   </head>
 
   <body onload="setup()" style="display: flex;">
     <div class="ui two column grid" id="container" style="padding: 0px; margin: 0px;">
-      <div class="ui vertical inverted menu sidebar visible column" style="width: 15%; height: 100%; border-radius: 0px; padding: 0px; background-color: #e899ae;">
+      <div class="ui vertical borderless menu sidebar visible column" style="width: 15%; height: 100%; border: 0px none; padding: 0px; background-color: #f5f5f5; box-shadow: 2px 2px 2px 2px #f1f1f1;">
         <div class="item center aligned" style="padding: 0px;">
           <img class="ui massive image" id="image" src="Access Dental Clinic Trans.png">
         </div>
-        <a class="item">
-          <div class="fluid circular ui button" style="background-color: #cc1445; color: white; text-alignment: center" id="add">
+        <div class="ui center aligned basic segment" style="padding: 0px">
+          <div class="circular ui button" style="background-color: #ebebeb; color: black; text-align: center;" id="add">
             CREATE
           </div>
-        </a>
+        </div>
         <a class="item">
-          <div class="ui left">
-            <i class="large users icon" style="color: white;  margin-right: 10px;"></i>
+          <div class="ui left" style=" font-weight: bold">
+            <i class="large users icon" style="color: black; margin-right: 10px"></i>
             Users
           </div>
         </a>
         <a class="item">
-          <div class="ui left">
-            <i class="large user md icon" style="color: white; margin-right: 10px;"></i>
+          <div class="ui left" style=" font-weight: bold">
+            <i class="large user md icon" style="color: black; margin-right: 10px"></i>
             Dentist
           </div>
         </a>
         <a class="item">
-          <div class="ui left">
-            <i class="large clipboard icon" style="color: white; margin-right: 10px;"></i>
+          <div class="ui left" style=" font-weight: bold">
+            <i class="large clipboard icon" style="color: black; margin-right: 10px"></i>
             Procedure
           </div>
         </a>
         <a class="item">
-          <div class="ui left">
-            <i id="reset-password" class="large setting icon" style="color: white; margin-right: 10px;"></i>
+          <div class="ui left" style=" font-weight: bold">
+            <i id="reset-password" class="large setting icon" style="color: black; margin-right: 10px"></i>
             Reset Password
           </div>
         </a>
         <a class="item">
-          <div class="ui left">
-            <i id="logout" class="large sign out icon" style="color: white;  margin-right: 10px;"></i>
+          <div class="ui left" style=" font-weight: bold">
+            <i id="logout" class="large sign out icon" style="color: black;  margin-right: 10px;"></i>
             Logout
           </div>
         </a>
@@ -56,7 +66,6 @@
 
         </table>
       </div>
-
     </div>
 
     {{!-- modal for create --}}
@@ -73,6 +82,8 @@
               New Secretary
             </div>
           </div>
+          {{!-- background-color: #cc1445 !important;
+        color: white !important; --}}
           <div class="column">
             <div class="ui button" id="add-dentist-button" style="text-align: center">
               <div class="segment">
@@ -277,37 +288,39 @@
 
     {{!-- multiple modal for adding and editing dentist schedule --}}
     <div class="ui coupled modal">
-      {{!-- modal for adding dentist schedule --}}
+      {{!-- modal for adding/editing dentist schedule --}}
       <div class="ui small modal" id="adding-schedule-modal">
         <i class="close icon deny"></i>
-        <div class="header">New Schedule</div>
+        <div class="header" id="adding-schedule-header"></div>
         <div class="content">
           <div class="ui center aligned basic segment">
             <i class="huge user md icon"></i><br>
-            <span id="doctor-name" style="font-weight: bold; font-size: 30px"></span>
+            <span id="doctor-name" style="font-weight: bold; font-size: 25px"></span>
             <div class="ui horizontal divider"> ● </div>
-            <div class="ui three column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
-              <div class="ui checkbox" style="margin-top: 10px;" id="mon-custom-field">
-                <input type="checkbox" name="mon" id="mon-custom">
-                <label for="mon-custom" style="cursor: pointer">Customized Working Hours</label>
-              </div>
+            <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
               <div class="ui checkbox" style="margin-top: 10px;" id="mon-daily-field">
                 <input type="checkbox" name="mon" id="mon-daily">
                 <label for="mon-daily" style="cursor: pointer">Repeat Daily</label>
               </div>
               <div class="ui checkbox" style="margin-top: 10px;" id="mon-repeat-field">
                 <input type="checkbox" name="mon" id="mon-repeat">
-                <label for="mon-repeat" style="cursor: pointer">Customized Repeat</label>
+                <label for="mon-repeat" style="cursor: pointer">Customized Occurence</label>
               </div>
             </div>
-            <h4 style="padding: 10px;">Working Hours</h4>
-            <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
+            <div class="ui checkbox" style="padding-top: 20px;" id="mon-custom-field">
+              <input type="checkbox" name="mon" id="mon-custom">
+              <label for="mon-custom" style="cursor: pointer">Customized Working Hours</label>
+            </div>
+            <h3>Working Hours</h3>
+            <span style="font-weight: bold; color: white" id="first-schedule">First Session</span>
+            <div class="ui two column center aligned grid" style="padding-top: 20px;">
               <div class="ui calendar" id="mon-start">
                 <div class="ui input left icon">
                   <i class="time icon"></i>
                   <input type="text" placeholder="Start Time">
                 </div>
               </div>
+              <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
               <div class="ui calendar" id="mon-end">
                 <div class="ui input left icon">
                   <i class="time icon"></i>
@@ -318,13 +331,15 @@
             <div class="ui accordion">
               <div class="title active"></div>
               <div class="content" id="mon-custom-schedule" name="mon">
-                <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 20px">
+                <span style="font-weight: bold;" id="second-schedule">Second Session</span>
+                <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
                   <div class="ui calendar" id="mon-start-add">
                     <div class="ui input left icon">
                       <i class="time icon"></i>
                       <input type="text" placeholder="Start Time">
                     </div>
                   </div>
+                  <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
                   <div class="ui calendar" id="mon-end-add">
                     <div class="ui input left icon">
                       <i class="time icon"></i>
@@ -340,7 +355,7 @@
                 <div class="ui one wide column center aligned grid" style="font-weight: bold; padding-bottom: 10px">
                   Repeat on
                 </div>
-                <div class="ui six column center aligned grid" style="padding-bottom: 20px;">
+                <div class="ui six column center aligned grid">
                   <button class="circular ui toggle button" name="mon">M</button>
                   <button class="circular ui toggle button" name="tue">T</button>
                   <button class="circular ui toggle button" name="wed">W</button>
@@ -354,19 +369,39 @@
         </div>
         <div class="actions">
           <div class="ui right floated labeled icon green button very padded" id="add-schedule-button" style="margin-bottom: 15px;">
-              ADD
+              FINISH
               <i class="checkmark icon"></i>
           </div>
         </div>
       </div>
 
-      {{!-- modal for editing dentist schedule --}}
-      <div class="ui modal" id="editing-schedule-modal">
-
+      {{!-- modal for showing dentist schedule --}}
+      <div class="ui tiny modal" id="schedule-modal">
+        <i class="close icon deny"></i>
+        <div class="header">Schedule</div>
+        <div class="scrolling content">
+          <div class="ui grid" style="padding: 10px;">
+            <div class="ui two column row" style="padding: 0px">
+              <div class="column">
+                <i class="big user md icon"></i>
+                <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
+              </div>
+              <div class="column right aligned">
+                <button class="ui green button" id="add-schedule">Add</button>
+              </div>
+            </div>
+            <table class="ui stripped fixed table">
+              <tbody id="table-schedule">
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="actions"></div>
       </div>
 
       {{!-- modal for confirmation --}}
-      <div class="ui mini modal" id="confirmatio-modal">
+      <div class="ui mini modal" id="confirmation-modal">
 
       </div>
     </div>

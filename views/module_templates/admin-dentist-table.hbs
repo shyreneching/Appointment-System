@@ -2,7 +2,7 @@
     <tr>
         <th style="background-color: #b8b6b6; cursor: pointer; width: 30%">First Name</th>
         <th style="background-color: #b8b6b6; cursor: pointer; width: 30%">Last Name</th>
-        <th class="center aligned" style="background-color: #b8b6b6; width: 40%"> </th>
+        <th class="center aligned" style="background-color: #b8b6b6; width: 40%">Schedule</th>
     </tr>
 </thead>
 <tbody class="fixed sticky">
@@ -11,8 +11,8 @@
             <td>{{firstname}}</td>
             <td>{{lastname}}</td>
             <td class="center aligned">
-                <button class="ui green button" data-id="{{_id}}" data-firstName="{{firstname}}" data-lastname="{{lastname}}">Add Schedule</button>
-                <button class="ui button" data-id="{{_id}}">Edit Schedule</button>
+                <button class="ui green button" data-id="{{_id}}" data-firstName="{{firstname}}" data-lastname="{{lastname}}">Add</button>
+                <button class="ui green button" data-id="{{_id}}" data-firstName="{{firstname}}" data-lastname="{{lastname}}">View</button>
             </td>
         </tr>
     {{/each}}

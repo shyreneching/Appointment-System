@@ -1,4 +1,11 @@
+var accor_show;
+
 $(document).ready(() => {
+    $(".ui .calendar").calendar({
+        type: "time",   
+        minTimeGap: 30
+    })
+
     // switch selected day in adding/editing dentist schedule
     $(".ui .button").on('click', (event) => {
         var temp = $(event.target)[0];
@@ -22,9 +29,17 @@ $(document).ready(() => {
             }
         } else {
             if(id == "mon-custom") {
-                $("body").find("#" + id + "-schedule").slideToggle("slow");
+                accor_show = !accor_show;
+                if(accor_show) {
+                    $("#first-schedule").css({'color': 'black'});
+                } 
+                $("body").find("#" + id + "-schedule").slideToggle(500, () => {
+                    if(!accor_show) {
+                        $("#first-schedule").css({'color': 'white'});
+                    }
+                });
             } else if(id == "mon-repeat") {
-                $("body").find("#" + id + "-content").slideToggle("slow");
+                $("body").find("#" + id + "-content").slideToggle(500);
                 if($(event.target)[0].checked && !$("#mon-daily")[0].checked) {
                     $("#mon-daily-field").addClass("disabled");
                     $("#mon-daily").attr("disabled","disabled");
@@ -40,7 +55,7 @@ $(document).ready(() => {
 // Setting default button on modal when ENTER key is pressed
 $(document).keypress((event) => {
     if(event.keyCode == 13) {
-        if($("#setting-modal")[0].className.includes("active")) {
+        if($("#reset-password-modal")[0].className.includes("active")) {
             $("#save-password").click();
         } else if($("#add-user-modal")[0].className.includes("active")) {
             $("#create-user-button").click();
@@ -64,17 +79,33 @@ $(document).keypress((event) => {
 
 // MODALS
 $("#adding-schedule-modal").modal({
+    onShow: () => {
+        accor_show = false;
+    },
     onHidden: () => {
         $(".ui .button").removeClass("active");
         $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
             display: 'none'
         })
+        accor_show = false;
+        $("#schedule-modal").data("id", $("#adding-schedule-modal").data("id"));
+        $("#schedule-modal").data("firstname", $("#adding-schedule-modal").data("firstname"));
+        $("#schedule-modal").data("lastname", $("#adding-schedule-modal").data("lastname"));
+        $("#schedule-modal").modal("show");
+        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
     }
 })
 
 $("#add").click(() => {
     $("#create-modal").modal("show");
+})
+
+$("#add-schedule").click(() => {
+    $("#schedule-modal").modal("deny");
+    $("#adding-schedule-modal").modal("show");
+    $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+    $("#adding-schedule-header").text("Add Schedule");
 })
 
 $("#add-sec-button").click(() => {
