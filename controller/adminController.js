@@ -103,7 +103,10 @@ router.post("/addDentist", async (req, res) => {
                 accountType: req.body.type,
                 doctorID: value.id
             }), (val) => {
-                res.send({message: true});
+                res.send({
+                    message: true,
+                    doctor: value
+                });
             }, (err) => {
                 res.send(err);
             })
@@ -219,11 +222,11 @@ router.get("/adminProcedure", urlencoder, async (req, res) => {
     })
 })
 
-router.get("/addSchedule", urlencoder, async (req, res) => {
+router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
 
-    let time =['08:00:00', '18:00:00'];
+    let time = ['08:00:00', '18:00:00'];
 
     let defaultschedule = new Schedule({
         sunday: null,
@@ -242,51 +245,52 @@ router.get("/addSchedule", urlencoder, async (req, res) => {
     let fridayBreak = null;
     let saturdayBreak = null;
 
-    if(true /*not default time*/){
-    
-        if(true /*monday does not have break*/){
-            let monday= req.body["monday[]"];
+    if(req.body.defaultTime == 'false'){
+        let monday, tuesday, wednesday, thursday, friday, saturday;
+
+        if(req.body.mB == 'false'){
+            monday= req.body["monday[]"];
         }else{
-            let monday =  req.body["monday[]"]; // whole bracket
+            monday =  req.body["monday[]"]; // whole bracket
             mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
         }
 
-        if(true /*tuesday does not have break*/){
-            let tuesday = req.body["tuesday[]"];
+        if(req.body.tB == 'false'){
+            tuesday = req.body["tuesday[]"];
         }else{
-            let tuesday = req.body["tuesday[]"]; // whole bracket
+            tuesday = req.body["tuesday[]"]; // whole bracket
             tuesdayBreak = req.body["tuesdaydifference[]"];
         }
 
-        if(true /*wednesday does not have break*/){
-            let wednesday = req.body["wednesday[]"];
+        if(req.body.wB == 'false'){
+            wednesday = req.body["wednesday[]"];
         }else{
-            let wednesday = req.body["wednesday[]"]; // whole bracket
+            wednesday = req.body["wednesday[]"]; // whole bracket
             wednesdayBreak = req.body["wednesdaydifference[]"];
         }
 
-        if(true /*thursday does not have break*/){
-            let thursday = req.body["thursday[]"];
+        if(req.body.hB == 'false'){
+            thursday = req.body["thursday[]"];
         }else{
-            let thursday = req.body["thursday[]"]; // whole bracket
+            thursday = req.body["thursday[]"]; // whole bracket
             thursdayBreak = req.body["thursdaydifference[]"];
         }
 
-        if(true /*friday does not have break*/){
-            let friday = req.body["friday[]"];
+        if(req.body.fB == 'false'){
+            friday = req.body["friday[]"];
         }else{
-            let friday = req.body["friday[]"]; // whole bracket
+            friday = req.body["friday[]"]; // whole bracket
             fridayBreak = req.body["fridaydifference[]"];
         }
 
-        if(true /*saturday does not have break*/){
-            let saturday = req.body["saturday[]"]; 
+        if(req.body.sB == 'false'){
+            saturday = req.body["saturday[]"]; 
         }else{
-            let saturday =  req.body["saturday[]"]; // whole bracket
+            saturday =  req.body["saturday[]"]; // whole bracket
             saturdayBreak = req.body["saturdaydifference[]"];
         }
         
-        let defaultschedule = new Schedule({
+        defaultschedule = new Schedule({
             sunday: null,
             monday,
             tuesday,
@@ -307,29 +311,21 @@ router.get("/addSchedule", urlencoder, async (req, res) => {
         saturday: saturdayBreak
     })
 
-    BreakTime.addBreakTime(breaktime, function(breaktime){
+    BreakTime.addBreakTime(breaktime, function(val){
+        Doctor.updateDoctorBreakTime(doctorID, val._id);
     }, (error)=>{
         res.send(error);
     })
-    let breaksched = BreakTime.findLast();
-    Doctor.updateDoctorBreakTime(doctorID, breaksched._id);
 
-
-    Schedule.addschedule(defaultschedule, function(defaultschedule){
-        if (defaultschedule){
-            res.redirect("/adminDentist");
-        } else {
-            res.redirect("/");
-        }
-        
+    Schedule.addschedule(defaultschedule, function(value){
+        Doctor.updateDoctorSchedule(doctorID, value._id);    
+        res.send(true);
     }, (error)=>{
         res.send(error);
     })
-    let sched  = Schedule.findLast();
-    Doctor.updateDoctorSchedule(doctorID, sched._id); 
 })
 
-router.get("/editSchedule", urlencoder, async (req, res) => {
+router.post("/editSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
@@ -409,21 +405,60 @@ router.get("/editSchedule", urlencoder, async (req, res) => {
     Schedule.updateSchedule(doctor.schedule, schedule);
 })
 
-router.get("/getSchedule", urlencoder, async (req, res) => {
+router.post("/getSchedule", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
+    
+    let array = [];
+    if(docSched != undefined) {
+        array = getObject(docSched);
+    }
 
     let sendData = {
-        docSched
+        sched: array
     }
     res.send({
         htmlData: table,
         data: sendData
     })
-    
-
 })
+
+var weekday = ["M","T","W","H","F","S"];
+
+function getObject(object) {
+    let array = [];
+    array.push(object.monday);
+    array.push(object.tuesday);
+    array.push(object.wednesday);
+    array.push(object.thursday);
+    array.push(object.friday);
+    array.push(object.saturday);
+    
+    let timeList = [];
+    let objectTimeList = [];
+
+    var ctr = 0;
+    while(ctr < array.length) {
+        var time = array[ctr][0] + " - " + array[ctr][1];
+        if(timeList.includes(time)) {
+            var obj = objectTimeList.filter((value) => {
+                return value.time == time;
+            });
+            obj[0]['name'] = obj[0].name + weekday[ctr];
+        } else {
+            if(!time.includes("undefined")) {
+                timeList.push(time);
+                objectTimeList.push(new Object({
+                    name: weekday[ctr],
+                    time: time
+                }));
+            }
+        }
+        ctr++;
+    }
+    return objectTimeList;
+}
 
 module.exports = router;

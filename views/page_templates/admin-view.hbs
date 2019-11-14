@@ -298,52 +298,52 @@
             <span id="doctor-name" style="font-weight: bold; font-size: 25px"></span>
             <div class="ui horizontal divider"> ● </div>
             <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
-              <div class="ui checkbox" style="margin-top: 10px;" id="mon-daily-field">
-                <input type="checkbox" name="mon" id="mon-daily">
-                <label for="mon-daily" style="cursor: pointer">Repeat Daily</label>
+              <div class="ui checkbox" style="margin-top: 10px;" id="daily-field">
+                <input type="checkbox" name="mon" id="daily">
+                <label for="daily" style="cursor: pointer">Repeat Daily</label>
               </div>
-              <div class="ui checkbox" style="margin-top: 10px;" id="mon-repeat-field">
-                <input type="checkbox" name="mon" id="mon-repeat">
-                <label for="mon-repeat" style="cursor: pointer">Customized Occurence</label>
+              <div class="ui checkbox" style="margin-top: 10px;" id="repeat-field">
+                <input type="checkbox" name="mon" id="repeat">
+                <label for="repeat" style="cursor: pointer">Customized Occurence</label>
               </div>
             </div>
-            <div class="ui checkbox" style="padding-top: 20px;" id="mon-custom-field">
-              <input type="checkbox" name="mon" id="mon-custom">
-              <label for="mon-custom" style="cursor: pointer">Customized Working Hours</label>
+            <div class="ui checkbox" style="padding-top: 20px;" id="custom-field">
+              <input type="checkbox" name="mon" id="custom">
+              <label for="custom" style="cursor: pointer">Customized Working Hours</label>
             </div>
             <h3>Working Hours</h3>
             <span style="font-weight: bold; color: white" id="first-schedule">First Session</span>
             <div class="ui two column center aligned grid" style="padding-top: 20px;">
-              <div class="ui calendar" id="mon-start">
+              <div class="ui calendar" id="start-field">
                 <div class="ui input left icon">
                   <i class="time icon"></i>
-                  <input type="text" placeholder="Start Time">
+                  <input type="text" placeholder="Start Time" id="start">
                 </div>
               </div>
               <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-              <div class="ui calendar" id="mon-end">
+              <div class="ui calendar" id="end-field">
                 <div class="ui input left icon">
                   <i class="time icon"></i>
-                  <input type="text" placeholder="End Time">
+                  <input type="text" placeholder="End Time" id="end">
                 </div>
               </div>
             </div>
             <div class="ui accordion">
               <div class="title active"></div>
-              <div class="content" id="mon-custom-schedule" name="mon">
+              <div class="content" id="custom-schedule">
                 <span style="font-weight: bold;" id="second-schedule">Second Session</span>
                 <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
-                  <div class="ui calendar" id="mon-start-add">
+                  <div class="ui calendar" id="start-add-field">
                     <div class="ui input left icon">
                       <i class="time icon"></i>
-                      <input type="text" placeholder="Start Time">
+                      <input type="text" placeholder="Start Time" id="start-add">
                     </div>
                   </div>
                   <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-                  <div class="ui calendar" id="mon-end-add">
+                  <div class="ui calendar" id="end-add-field">
                     <div class="ui input left icon">
                       <i class="time icon"></i>
-                      <input type="text" placeholder="End Time">
+                      <input type="text" placeholder="End Time" id="end-add">
                     </div>
                   </div>
                 </div>
@@ -351,7 +351,7 @@
             </div>
             <div class="ui accordion">
               <div class="title active"></div>
-              <div class="content" id="mon-repeat-content" name="mon">
+              <div class="content" id="repeat-content">
                 <div class="ui one wide column center aligned grid" style="font-weight: bold; padding-bottom: 10px">
                   Repeat on
                 </div>
@@ -381,14 +381,12 @@
         <div class="header">Schedule</div>
         <div class="scrolling content">
           <div class="ui grid" style="padding: 10px;">
-            <div class="ui two column row" style="padding: 0px">
-              <div class="column">
-                <i class="big user md icon"></i>
-                <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
-              </div>
-              <div class="column right aligned">
-                <button class="ui green button" id="add-schedule">Add</button>
-              </div>
+            <div class="thirteen wide column" style="padding: 0px">
+              <i class="big user md icon"></i>
+              <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
+            </div>
+            <div class="three wide column right aligned" style="padding: 0px">
+              <button class="ui green button" id="add-schedule">Add</button>
             </div>
             <table class="ui stripped fixed table">
               <tbody id="table-schedule">

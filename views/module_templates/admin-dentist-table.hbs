@@ -7,12 +7,12 @@
 </thead>
 <tbody class="fixed sticky">
     {{#each dentist}}
-        <tr class="top aligned">
+        <tr>
             <td>{{firstname}}</td>
             <td>{{lastname}}</td>
             <td class="center aligned">
-                <button class="ui green button" data-id="{{_id}}" data-firstName="{{firstname}}" data-lastname="{{lastname}}">Add</button>
-                <button class="ui green button" data-id="{{_id}}" data-firstName="{{firstname}}" data-lastname="{{lastname}}">View</button>
+                <button class="ui green button" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}">Add</button>
+                <button class="ui green button" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}">View</button>
             </td>
         </tr>
     {{/each}}

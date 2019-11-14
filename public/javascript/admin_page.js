@@ -24,6 +24,8 @@ $(document).on("keydown", () => {
     $("#edit-password-field-dentist").removeClass("error");
     $("#edit-confirm-password-field-dentist").removeClass("error");
     $("#edit-procedure-field").removeClass("error");
+    $("#start-add-field").removeClass("error");
+    $("#end-add-field").removeClass("error");
 })
 
 // LOGOUT

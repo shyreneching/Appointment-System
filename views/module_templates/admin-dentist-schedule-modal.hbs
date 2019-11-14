@@ -1,10 +1,10 @@
 {{#each sched}}
-    <tr class="top aligned">
-        <td></td>
-        <td></td>
+    <tr>
+        <td>{{name}}</td>
+        <td>{{time}}</td>
         <td class="center aligned">
-            <i class="large edit icon link" style="margin-right: 15px"></i>
-            <i class="large trash icon link"></i>
+            <i class="large edit icon link" style="margin-right: 15px" data-id="{{_id}}" data-name="{{name}}" data-time="{{time}}" id="edit-schedule"></i>
+            <i class="large trash icon link" data-id="{{_id}}" data-name="{{name}}" data-time="{{time}}" id="delete-schedule"></i>
         </td>
     </tr>
 {{/each}}
