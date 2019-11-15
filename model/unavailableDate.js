@@ -12,6 +12,12 @@ var unavailableDateSchema = new Schema({
     }
 });
 
+unavailableDateSchema.statics.getUnavailableDateByID = async function(unavailableDateID){
+    return await this.findOne({
+        _id: unavailableDateID
+    }); 
+};
+
 unavailableDateSchema.statics.addUnavailableDate = function(unavailableDate, callback){
     unavailableDate.save().then(callback);
 };
