@@ -810,7 +810,7 @@ router.get("/getAvailable", async (req, res) => {
 })
 
 // get unavailable time of the doctor given doctorID and date
-router.get("/getAvailable", async (req, res) => {
+router.get("/getUnavailable", async (req, res) => {
 
     let timeSlotsArray = ["8:00 AM", "8:30 AM",
         "9:00 AM", "9:30 AM",
