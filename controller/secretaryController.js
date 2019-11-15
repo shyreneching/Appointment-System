@@ -898,7 +898,7 @@ router.get("/getUnavailable", async (req, res) => {
 
     // if it is not working day then sends the whole timeslot array
     if(!moment(formattedDate).isWorkingDay()){
-        let data = timeSlotsArray;
+        dataArray = timeSlotsArray;
     } else {
         for (var i = 0; i < timeSlotsArray.length; i++){
             let timeSlot = timeSlotsArray[i];
