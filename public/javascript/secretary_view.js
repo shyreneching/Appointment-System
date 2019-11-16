@@ -81,6 +81,8 @@ $(document).ready(function () {
         }
     });
 
+    
+
     // Initialize Table header
     initializeTHead(moment().toDate());
 
@@ -127,6 +129,8 @@ $(document).ready(function () {
     $('#add-save-button').on('click', function () {
         addAppointment();
     });
+
+    initializeShortcutsMain();
 
 });
 
@@ -361,13 +365,15 @@ async function initializeTHead(date) {
 
     //Initializes Add button-------------------------------------------
     $("#add-button").on("click", function () {
+        $(document).unbind('keydown')
         $('#add-appointment-modal').modal('toggle');
         // Initialize popup stuff
         $("#add-date_calendar").calendar({
             type: 'date',
             today: 'true',
             disabledDaysOfWeek: [0],
-            initialDate: moment().toDate()
+            initialDate: moment().toDate(),
+            
         })
 
 
@@ -429,6 +435,9 @@ async function initializeTHead(date) {
                 $("#add-fieldDoctors").removeClass("error")
                 $("#add-fieldFirstName").removeClass("error")
                 $("#add-fieldLastName").removeClass("error")
+                //rebinding keydown
+                initializeShortcutsMain();
+                
             }
         });
     });
@@ -468,7 +477,7 @@ async function addAppointment() {
     let procedures = $("#add-multiProcedure").dropdown("get value");
     let notes = $("#add-notes").val();
 
-    var flag = true;
+    var isValid = true;
 
     if (firstName == "") {
         $("#add-fieldFirstName").addClass("error");
@@ -478,7 +487,7 @@ async function addAppointment() {
                 message: 'Missing First Name!',
                 position: 'top left'
             });
-        flag = false;
+        isValid = false;
     } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
         if (!valid) {
@@ -489,7 +498,7 @@ async function addAppointment() {
                     message: 'First Name should only be Alphanumeric.',
                     position: 'top left'
                 });
-            flag = false;
+            isValid = false;
         }
     }
 
@@ -501,7 +510,7 @@ async function addAppointment() {
                 message: 'Missing Last Name',
                 position: 'top left'
             });
-        flag = false;
+        isValid = false;
     } else {
         var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
         if (!valid) {
@@ -512,7 +521,7 @@ async function addAppointment() {
                     message: 'Last Name should only be Alphanumeric.',
                     position: 'top left'
                 });
-            flag = false;
+            isValid = false;
         }
     }
 
@@ -524,7 +533,7 @@ async function addAppointment() {
                 message: 'An appointment needs at least one doctor',
                 position: 'top left'
             });
-        flag = false;
+        isValid = false;
     }
 
     if (procedures === undefined || procedures.length == 0) {
@@ -535,7 +544,7 @@ async function addAppointment() {
                 message: 'An appointment needs at least one procedure',
                 position: 'top left'
             });
-        flag = false;
+        isValid = false;
     }
 
     if (contact != "") {
@@ -552,11 +561,11 @@ async function addAppointment() {
                     position: 'top left'
                 });
 
-            flag = false;
+            isValid = false;
         }
     }
 
-    if (flag) {
+    if (isValid) {
         let checkData = {
             dateInput: dateInput.toString(),
             timeInput: timeInput.toString(),
@@ -575,9 +584,9 @@ async function addAppointment() {
                         position: 'top left'
                     });
 
-                flag = false;
+                isValid = false;
             } else {
-                flag = true;
+                isValid = true;
             }
 
         });
@@ -585,7 +594,7 @@ async function addAppointment() {
 
 
     // if all fields are filled
-    if (flag) {
+    if (isValid) {
         let ajaxData = {
             firstName: firstName,
             lastName: lastName,
@@ -727,6 +736,7 @@ async function openDetailsModal(appointmentID) {
             $("#edit-fieldFirstName").removeClass("error")
             $("#edit-fieldLastName").removeClass("error")
             $("#edit-fieldContact").removeClass("error")
+           
         }
     });
 
@@ -922,6 +932,38 @@ async function editAppointment(appointmentID, initialDoctors) {
     }
 
 }
+
+
+function initializeShortcutsMain(){
+    $(document).on('keydown',function(e) {
+        var LEFT = 37,
+            RIGHT = 39,
+            SPACE = 32,
+            ENTER = 13
+        switch(e.keyCode){
+            case LEFT:
+                $('#prev-button').trigger('click')
+                break;
+            case RIGHT:
+                $('#next-button').trigger('click')
+                break;
+            case SPACE:
+                $('#today').trigger('click')
+                break;
+            case ENTER:
+                $("#add-button").trigger('click');
+                break;
+        }
+
+    });
+}
+
+function initializeShortcutsAddModal(){
+     $("#add-appointment-modal").on("keydown", function(e){
+       
+     })
+}
+
 
 $("#logoutButton").click(function() {
     window.location.href="/logout";

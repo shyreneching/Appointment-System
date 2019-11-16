@@ -301,8 +301,7 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
         })
     }
 
-    let breaktime = new Schedule({
-        sunday: null,
+    let breaktime = new BreakTime({
         monday: mondayBreak,
         tuesday: tuesdayBreak,
         wednesday: wednesdayBreak,
@@ -390,8 +389,7 @@ router.post("/editSchedule", urlencoder, async (req, res) => {
         saturday
     })
 
-    let breaktime = new Schedule({
-        sunday: null,
+    let breaktime = new BreakTime({
         monday: mondayBreak,
         tuesday: tuesdayBreak,
         wednesday: wednesdayBreak,
@@ -409,11 +407,12 @@ router.post("/getSchedule", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
+    let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
 
     let array = [];
     if(docSched != undefined) {
-        array = modifySchedule(docSched);
+        array = getObject(docSched, breaktime);
     }
 
     let sendData = {
@@ -426,7 +425,9 @@ router.post("/getSchedule", urlencoder, async (req, res) => {
     })
 })
 
-function modifySchedule(object) {
+var weekday = ["M","T","W","H","F","S"];
+
+function getObject(object, breakTime) {
     let array = [];
     array.push(object.monday);
     array.push(object.tuesday);
@@ -479,5 +480,64 @@ function modifySchedule(object) {
 
     return objectTimeList;
 }
+
+router.post("/addUnavailableDates", urlencoder, async (req, res) => {
+    let doctorID = req.body.doctorID;
+
+    var start = new Date(req.body.startdate);
+    let startformattedDate = moment(start).format("YYYY-MM-DD");
+    var end = new Date(req.body.enddate);
+    let endformattedDate = moment(end).format("YYYY-MM-DD");
+   
+    let unavailableDate = new UnavailableDate({
+        momentDate1: req.body.startdate,
+        stringDate1: startformattedDate,
+        momentDate2: req.body.enddate,
+        stringDate2: endformattedDate,
+        doctor: doctorID
+    })
+
+    UnavailableDate.addUnavailableDate(unavailableDate, function(val){
+    }, (error)=>{
+        res.send(error);
+    })
+    
+})
+
+router.post("/getUnavailableDates", urlencoder, async (req, res) => {
+    let doctorID = req.body.doctorID;
+    let data = UnavailableDate.getDoctorUnavailableDates(doctorID);
+    
+    res.send({
+        htmlData: table,
+        data: data
+    })   
+})
+
+router.post("/deleteUnavailableDates", urlencoder, async (req, res) => {
+    UnavailableDate.delete(req.body.unavailableDateID);
+    res.send({message: true});  
+})
+
+router.post("/editUnavailableDates", urlencoder, async (req, res) => {
+    let unavailableDateID = req.body.unavailableDateID;
+
+    var start = new Date(req.body.startdate);
+    let startformattedDate = moment(start).format("YYYY-MM-DD");
+    var end = new Date(req.body.enddate);
+    let endformattedDate = moment(end).format("YYYY-MM-DD");
+   
+    let unavailableDate = new UnavailableDate({
+        momentDate1: req.body.startdate,
+        stringDate1: startformattedDate,
+        momentDate2: req.body.enddate,
+        stringDate2: endformattedDate,
+        doctor: UnavailableDate.getUnavailableDateByID(unavailableDateID).doctor
+    })
+
+    UnavailableDate.updateUnavailableDate(unavailableDateID, unavailableDate);
+})
+
+
 
 module.exports = router;
