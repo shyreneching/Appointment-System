@@ -7,6 +7,10 @@ var doctorSchema = new Schema({
     schedule: {
         type: Schema.Types.ObjectId,
         ref: "Schedule"
+    },
+    breakTime: {
+        type: Schema.Types.ObjectId,
+        ref: "BreakTime"
     }
 })
 
@@ -51,10 +55,26 @@ doctorSchema.statics.updateDoctorSchedule = async function(doctorID, schedule){
     }); 
 };
 
+doctorSchema.statics.updateDoctorBreakTime = async function(doctorID, breakTime){
+    return await this.updateOne({
+        _id: doctorID
+    }, {
+        breakTime
+    }, {
+        new: true
+    }); 
+};
+
 doctorSchema.methods.populateSchedule = async function(){
-    return await Appointment.findOne({
+    return await Doctor.findOne({
         _id: this._id
     }).populate("schedule");
+};
+
+doctorSchema.methods.populateBreakTime = async function(){
+    return await Doctor.findOne({
+        _id: this._id
+    }).populate("breakTime");
 };
 
 var Doctor = mongoose.model("Doctor", doctorSchema)

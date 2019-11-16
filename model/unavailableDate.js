@@ -12,6 +12,12 @@ var unavailableDateSchema = new Schema({
     }
 });
 
+unavailableDateSchema.statics.getUnavailableDateByID = async function(unavailableDateID){
+    return await this.findOne({
+        _id: unavailableDateID
+    }); 
+};
+
 unavailableDateSchema.statics.addUnavailableDate = function(unavailableDate, callback){
     unavailableDate.save().then(callback);
 };
@@ -35,7 +41,15 @@ unavailableDateSchema.statics.updateUnavailableDate = async function(unavailable
     }); 
 };
 
-appointmentSchema.methods.populateDoctor = async function(){
+unavailableDateSchema.statics.getDoctorUnavailableDates = async function(doctorID){
+    return await this.find({
+        doctor:{
+            "$in": [doctorID]
+        }        
+    });
+};
+
+unavailableDateSchema.methods.populateDoctor = async function(){
     return await Appointment.findOne({
         _id: this._id
     }).populate("doctor");

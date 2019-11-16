@@ -1,15 +1,7 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab, userType, dropdown;
+var defaultButton, currTab, userType, days = [];
 
 $(document).ready(() => {
-
-    $(".ui .item").on("click", switchPage);    
-
-    // load the list of users
-    $.get("/admin/adminUsers", (data) => {
-        updatePage(data);
-    });
-
     // validation if username exist
     $("#add-username-user").focusout(() => {
         $.ajax({
@@ -50,21 +42,18 @@ $(document).ready(() => {
         })
     })
 
-    // function to access the loaded header
-    $("#header").on("click", (event) => {
-        var temp = event.target;
-        if(temp.id == "filter-dropdown") {
-            userType = $(temp).dropdown('get value');
-            $(temp).dropdown('set selected', userType);
-        } 
-        // functions for adding users, dentist, and procedure
-        if(temp.id == "add-user-button") {
-            $("#add-user-modal").modal("show");
-        } else if(temp.id == "add-dentist-button") {
-            $("#add-dentist-modal").modal("show");                
-        } else if(temp.id == "add-procedure-button") {
-            $("#procedure-modal").modal("show");
-        } 
+    // switch selected day in adding/editing dentist schedule
+    $(".ui .button").on('click', (event) => {
+        var temp = $(event.target)[0];
+        if(temp.className.includes("active")) {
+            $(temp).removeClass("active");
+            days = days.filter((value) => {
+                return value != temp.name;
+            })
+        } else {
+            $(temp).addClass("active");
+            days.push(temp.name);
+        }
     })
 
     // function to access the loaded table
@@ -75,6 +64,7 @@ $(document).ready(() => {
                 if($(temp).text() == "Delete") {
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
+
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
@@ -106,8 +96,19 @@ $(document).ready(() => {
                     })
                 }
             } else if(currTab == "Dentist") {   // accessing elements in dentist tab
-                if($(temp).text() == "Edit") {
-                    
+                if($(temp).text() == "Add") {
+                    $("#adding-schedule-modal").data("id", $(temp).data("id"));
+                    $("#adding-schedule-modal").data("firstname", $(temp).data("firstname"));
+                    $("#adding-schedule-modal").data("lastname", $(temp).data("lastname"));
+                    $("#adding-schedule-modal").modal("show");    
+                    $("#doctor-name").text("Dr. " + $(temp).data("firstname") + " " + $(temp).data("lastname"));
+                    $("#adding-schedule-header").text("Add Schedule");
+                } else if($(temp).text() == "View") {
+                    $("#schedule-modal").data("id", $(temp).data("id"));
+                    $("#schedule-modal").data("firstname", $(temp).data("firstname"));
+                    $("#schedule-modal").data("lastname", $(temp).data("lastname"));
+                    $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));                    
+                    setDataTable();
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(temp).text() == "Delete") {
@@ -123,60 +124,6 @@ $(document).ready(() => {
             }
         } 
     })
-})
-
-// RESETTING ERRORS
-$(document).on("keydown", () => {
-    $("#username-field-user").removeClass("error");
-    $("#password-field-user").removeClass("error");
-    $("#confirm-password-field-user").removeClass("error");
-    $("#firstname-field-dentist").removeClass("error");
-    $("#lastname-field-dentist").removeClass("error");
-    $("#username-field-dentist").removeClass("error");
-    $("#password-field-dentist").removeClass("error");
-    $("#confirm-password-field-dentist").removeClass("error");
-    $("#procedure-field").removeClass("error");
-    $("#current-password-field").removeClass("error");
-    $("#new-password-field").removeClass("error");
-    $("#confirm-new-password-field").removeClass("error");
-    $("#edit-password-field-user").removeClass("error");
-    $("#edit-confirm-password-field-user").removeClass("error");
-    $("#edit-firstname-field-dentist").removeClass("error");
-    $("#edit-lastname-field-dentist").removeClass("error");
-    $("#edit-password-field-dentist").removeClass("error");
-    $("#edit-confirm-password-field-dentist").removeClass("error");
-    $("#edit-procedure-field").removeClass("error");
-})
-
-// Setting default button on modal when ENTER key is pressed
-$(document).keypress((event) => {
-    if(event.keyCode == 13) {
-        if($("#setting-modal")[0].className.includes("active")) {
-            $("#save-password").click();
-        } else if($("#add-user-modal")[0].className.includes("active")) {
-            $("#create-user-button").click();
-        } else if($("#add-dentist-modal")[0].className.includes("active")) {
-            $("#create-dentist-button").click();
-        } else if($("#procedure-modal")[0].className.includes("active")) {
-            $("#create-procedure-button").click();
-        } else if($("#delete-procedure-modal")[0].className.includes("active")) {
-            $("#delete-procedure-button").click();
-        } else if($("#delete-user-modal")[0].className.includes("active")) {
-            $("#delete-user-button").click();
-        } else if($("#edit-user-modal")[0].className.includes("active")) {
-            $("#edit-user-button").click();
-        } else if($("#edit-dentist-modal")[0].className.includes("active")) {
-            $("#edit-dentist-button").click();
-        } else if($("#edit-procedure-modal")[0].className.includes("active")) {
-            $("#edit-procedure-button").click();
-        }
-    }
-})
-
-
-// INTIALIZING MODAL FOR RESETTING ADMIN PASSWORD
-$("#setting").click(() => {
-    $("#setting-modal").modal("show");
 })
 
 // RESETING ADMIN PASSWORD
@@ -241,6 +188,7 @@ $("#save-password").click(() => {
             },
             success: (value) => {
                 $("#setting-modal").modal("hide");
+                $("#setting-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -249,43 +197,6 @@ $("#save-password").click(() => {
             }
         })
     } 
-})
-
-// INITIALIZE FORMS
-$("#add-user-modal").modal({
-    onShow: function() {
-        $('#add-user-modal').form("clear");
-    }
-})
-
-$("#add-dentist-modal").modal({
-    onShow: function() {
-        $('#add-dentist-modal').form("clear");
-    }
-})
-
-$("#procedure-modal").modal({
-    onShow: function() {
-        $("#procedure-modal").form("clear");
-    }
-});
-
-$("#edit-user-modal").modal({
-    onShow: function() {
-        $("#edit-user-modal").form("clear");
-    }
-})
-
-$("#edit-dentist-modal").modal({
-    onShow: function() {
-        $("#edit-dentist-modal").form("clear");
-    }
-})
-
-$("#edit-procedure-modal").modal({
-    onShow: function() {
-        $("#edit-procedure-modal").form("clear");
-    }
 })
 
 // ADDING SECRETARY/USER
@@ -343,13 +254,22 @@ $("#create-user-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#add-user-modal").modal("hide");
-                    $.get("/admin/adminUsers", (data) => {
-                        updateTable(data);
-                        $('body').toast({
-                            class: "success",
-                            position: "top center",
-                            message: "New secretary successfully added"
+                    $('#add-user-modal').form("clear");
+                    if(currTab == "Users") {
+                        $.get("/admin/adminUsers", (data) => {
+                            $("#table").DataTable().destroy();
+                            updateTable(data);
                         });
+                    } else if(currTab == "Dentist") {
+                        $.get("/admin/adminDentist", (data) => {
+                            $("#table").DataTable().destroy();
+                            updateTable(data);
+                        });
+                    }
+                    $('body').toast({
+                        class: "success",
+                        position: "top center",
+                        message: "New secretary successfully added"
                     });
                 } else {
                     $("#username-field-user").addClass("error");
@@ -435,14 +355,29 @@ $("#create-dentist-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#add-dentist-modal").modal("hide");
-                    $.get("/admin/adminDentist", (data) => {
-                        updateTable(data);
-                        $('body').toast({
-                            class: "success",
-                            position: "top center",
-                            message: "New dentist successfully added"
+                    $('#add-dentist-modal').form("clear");
+                    if(currTab == "Dentist") {
+                        $.get("/admin/adminDentist", (data) => {
+                            $("#table").DataTable().destroy();
+                            updateTable(data);
                         });
+                    } else if(currTab == "Users") {
+                        $.get("/admin/adminUsers", (data) => {
+                            $("#table").DataTable().destroy();
+                            updateTable(data);
+                        });
+                    }
+                    $('body').toast({
+                        class: "success",
+                        position: "top center",
+                        message: "New dentist successfully added"
                     });
+                    $("#adding-schedule-modal").data("id", value.doctor._id);
+                    $("#adding-schedule-modal").data("firstname", value.doctor.firstname);
+                    $("#adding-schedule-modal").data("lastname", value.doctor.lastname);
+                    $("#doctor-name").text("Dr. " + value.doctor.firstname + " " + value.doctor.lastname);
+                    $("#adding-schedule-header").text("Add Schedule");
+                    $("#adding-schedule-modal").modal("show");
                 } else {
                     $("#username-field-dentist").addClass("error");
                     $('body').toast({
@@ -481,13 +416,17 @@ $("#create-procedure-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#procedure-modal").modal("hide");
-                    $.get("/admin/adminProcedure", (data) => {
-                        updateTable(data);
-                        $('body').toast({
-                            class: "success",
-                            position: "top center",
-                            message: "New procedure successfully added"
+                    $('#procedure-modal').form("clear");
+                    if(currTab == "Procedure") {
+                        $.get("/admin/adminProcedure", (data) => {
+                            $("#table").DataTable().destroy();
+                            updateTable(data); 
                         });
+                    }
+                    $('body').toast({
+                        class: "success",
+                        position: "top center",
+                        message: "New procedure successfully added"
                     });
                 } else {
                     $("#procedure-field").addClass("error");
@@ -545,6 +484,7 @@ $("#edit-user-button").click(() => {
             },
             success: (value) => {
                 $("#edit-user-modal").modal("hide");
+                $("#edit-user-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -614,6 +554,7 @@ $("#edit-dentist-button").click(() => {
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");
+                $("#edit-dentist-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -650,7 +591,9 @@ $("#edit-procedure-button").click(() => {
             success: (value) => {
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
+                    $("#edit-procedure-modal").form("clear");
                     $.get("/admin/adminProcedure", (data) => {
+                        $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
                             class: "success",
@@ -683,6 +626,7 @@ $("#delete-user-button").click(() => {
         success: (value) => {
             $("#delete-user-modal").modal("hide");
             $.get("/admin/adminUsers", (data) => {
+                $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
                     class: "success",
@@ -705,6 +649,7 @@ $("#delete-procedure-button").click(() => {
         success: (value) => {
             $("#delete-procedure-modal").modal("hide");
             $.get("/admin/adminProcedure", (data) => {
+                $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
                     class: "success",
@@ -716,9 +661,175 @@ $("#delete-procedure-button").click(() => {
     })
 })
 
-// LOGOUT
-$("#logout").click(() => {
-    window.location.href="/logout";
+// ADDING DENTIST SCHEDULE
+$("#add-schedule-button").click(() => {
+    let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
+    let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
+    let defaultTime = true, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+    // ERROR CHECKING
+    var done = true;
+    if(!$("#daily")[0].checked && !$("#repeat")[0].checked) {
+        $("#daily-field").addClass("error");
+        $("#report-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please chooose an occurence"
+        });
+        done = false;
+    } 
+    if($("#start").val() == "" && $("#end").val() == "") {
+        $("#start-field").addClass("error");
+        $("#end-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid time"
+        })
+        done = false;
+    }
+    if($("#custom")[0].checked && ($("#start-add").val() == "" && $("#end-add").val() == "") && done) {
+        $("#start-add-field").addClass("error");
+        $("#end-add-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid time"
+        })
+        done = false;
+    }
+
+    if(done) {
+        defaultTime = false;
+        if($("#daily")[0].checked) {
+            mon.push($("#start").val());    mon.push($("#end").val());
+            tue.push($("#start").val());    tue.push($("#end").val());
+            wed.push($("#start").val());    wed.push($("#end").val());
+            thu.push($("#start").val());    thu.push($("#end").val());
+            fri.push($("#start").val());    fri.push($("#end").val());
+            sat.push($("#start").val());    sat.push($("#end").val());
+            
+            if($("#custom")[0].checked) {
+                monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
+                tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
+                wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
+                thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
+                fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
+                satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+            }
+        } else if($("#repeat")[0].checked) {
+            for(var i = 0; i < days.length; i++) {
+                if(days[i] == "mon") {
+                    mon.push($("#start").val());    mon.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
+                        mB = true;
+                    }
+                } else if(days[i] == "tue") {
+                    tue.push($("#start").val());    tue.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
+                        tB = true;
+                    }
+                } else if(days[i] == "wed") {
+                    wed.push($("#start").val());    wed.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
+                        wB = true;
+                    }
+                } else if(days[i] == "thu") {
+                    thu.push($("#start").val());    thu.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
+                        hB = true;
+                    }
+                } else if(days[i] == "fri") {
+                    fri.push($("#start").val());    fri.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
+                        fB = true;
+                    }
+                } else if(days[i] == "sat") {
+                    sat.push($("#start").val());    sat.push($("#end").val());
+                    if($("#custom")[0].checked) {
+                        satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+                        sB = true;
+                    }
+                }
+            }
+        }
+        $.ajax({
+            type: "post",
+            url: 'admin/addSchedule',
+            data: {
+                'monday[]': mon,
+                'tuesday[]': tue,
+                'wednesday[]': wed,
+                'thursday[]': thu,
+                'friday[]': fri,
+                'saturday[]': sat,
+                'mondaydifference[]': monbreak,
+                'tuesdaydifference[]': tuebreak,
+                'wednesdaydifference[]': wedbreak,
+                'thursdaydifference[]': thubreak,
+                'fridaydifference[]': fribreak,
+                'saturdaydifference[]': satbreak,
+                doctorID: $("#adding-schedule-modal").data("id"),
+                mB,
+                tB,
+                wB,
+                hB,
+                fB,
+                sB,
+                defaultTime
+            },
+            success: (value) => {
+                if(value) {
+                    $("body").toast({
+                        class: "success",
+                        position: "top center",
+                        message: "Dentist schedule successfully added"
+                    })
+                    $("#adding-schedule-modal").modal("hide");
+                }
+            }
+        })
+    }
+})
+
+$("#schedule-modal").click((event) => {
+    var temp = event.target;
+    if($(temp)[0].id == "edit-schedule") {
+        $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
+        $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+        $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+        $("#adding-schedule-modal").modal("show");    
+        $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        $("#adding-schedule-header").text("Edit Schedule");
+
+        
+    }
+})
+
+// Setup of adding/editing modal
+$("#adding-schedule-modal").modal({
+    onShow: () => {
+        accor_show = false;
+    },
+    onHidden: () => {
+        $(".ui .button").removeClass("active");
+        $(".ui .checkbox").checkbox('uncheck');
+        $(".accordion .content").css({
+            display: 'none'
+        })
+        $("input").val("");
+        accor_show = false;
+        $("#schedule-modal").data("id", $("#adding-schedule-modal").data("id"));
+        $("#schedule-modal").data("firstname", $("#adding-schedule-modal").data("firstname"));
+        $("#schedule-modal").data("lastname", $("#adding-schedule-modal").data("lastname"));
+        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        setDataTable();
+    }
 })
 
 // Initialization
@@ -730,9 +841,14 @@ function setup() {
         }
     }
 
+    // load the list of users
+    $.get("/admin/adminUsers", (data) => {
+        updateTable(data);
+    });
+
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
-    $(".ui .item:contains('Users')").css({'background-color':'#cc1445'});
+    $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
 }
 
 // SWITCH TAB
@@ -741,57 +857,63 @@ function switchPage() {
     if(page == "Users") {
         $(".ui .item").removeClass("active");
         $(".ui .item").css({'background-color':''});
-        $(this).css({'background-color':'#cc1445'});
+        $(this).css({'background-color':'#ebebeb'});
         $(this).addClass("active");
         currTab = "Users";
         $.get("/admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
-        $(this).css({'background-color':'#cc1445'});
+        $(this).css({'background-color':'#ebebeb'});
         currTab = "Dentist";
         $.get("/admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Procedure") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
-        $(this).css({'background-color':'#cc1445'});
+        $(this).css({'background-color':'#ebebeb'});
         currTab = "Procedure";
         $.get("/admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
-            updatePage(data);
+            updateTable(data);
         });
     } else if(page == "Reset Password") {
-        $("#setting-modal").modal("show");
+        $("#reset-password-modal").modal("show");
     } else if(page == "Logout") {        
         window.location.href="/logout";
     }
 }
 
-function updatePage(data) {
-    let header = Handlebars.compile(data.htmlData.header);
+// Reload table content
+function updateTable(data) {
     let table = Handlebars.compile(data.htmlData.table);
-    $("#header").html(header);
     $("#table").html(table(data.data));
     $("#table").DataTable({
         scrollY: 450,
-        scrollCollapse: true
+        scrollCollapse: true,
+        responsive: true
     });
 }
 
-function updateTable(data) {
-    $("#table").DataTable().destroy();
-    let table = Handlebars.compile(data.htmlData.table);
-    $("#table").html(table(data.data));
-    $("#table").DataTable({
-        scrollY: 450,
-        scrollCollapse: true
-    });
+// Set data to table in modal
+function setDataTable() {
+    $.ajax({
+        type: 'post',
+        url: 'admin/getSchedule',
+        data: {
+            doctorID: $("#schedule-modal").data("id")
+        },
+        success: (value) => {
+            let table = Handlebars.compile(value.htmlData);
+            $("#table-schedule").html(table(value.data));
+            $("#schedule-modal").modal("show");
+        }
+    })
 }

@@ -35,11 +35,10 @@ accountSchema.statics.delete = async function(accountID){
     });
 }
 
-accountSchema.statics.updateAccount = async function(accountID, username, password){
+accountSchema.statics.updateAccount = async function(accountID, password){
     return await this.updateOne({
         _id: accountID
     }, {
-        username,
         password
     }, {
         new: true

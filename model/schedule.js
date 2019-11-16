@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+//If no schedule for the day array = none
 var scheduleSchema = new Schema({
     sunday: Array,
     monday: Array,
@@ -42,6 +43,10 @@ scheduleSchema.statics.updateSchedule = async function(scheduleID, schedule){
     }, {
         new: true
     }); 
+};
+
+scheduleSchema.statics.findLast = async function(){
+    return await this.find({}).sort({_id:-1}).limit(1);
 };
 
 var Schedule= mongoose.model("Schedule", scheduleSchema)
