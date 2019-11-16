@@ -1,5 +1,5 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab, userType, days = [];
+var defaultButton, currTab, userType, days = [], passwordChecker;
 
 $(document).ready(() => {
     // validation if username exist
@@ -40,6 +40,97 @@ $(document).ready(() => {
                 }
             }
         })
+    })
+    // validate password format
+    $("#new-password").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#new-password").val().match(check)) {
+            $("#new-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#new-password").val().length < 8) {
+            $("#new-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#new-password").val().length > 32) {
+            $("#new-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
+    })
+    $("#add-password-user").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#add-password-user").val().match(check)) {
+            $("#password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#add-password-user").val().length < 8) {
+            $("#password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#add-password-user").val().length > 32) {
+            $("#password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
+    })
+    $("#add-password-dentist").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#add-password-dentist").val().match(check)) {
+            $("#password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#add-password-dentist").val().length < 8) {
+            $("#password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#add-password-dentist").val().length > 32) {
+            $("#password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
     })
 
     // switch selected day in adding/editing dentist schedule
@@ -178,7 +269,7 @@ $("#save-password").click(() => {
         }
     }
 
-    if(done) {
+    if(done && passwordChecker) {
         $.ajax({
             type: "post",
             url: "/admin/updateAccountPassword",
@@ -196,7 +287,14 @@ $("#save-password").click(() => {
                 });
             }
         })
-    } 
+    } else {
+        $("#new-password-field").addClass("error");
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Incorrect password format"
+        });
+    }
 })
 
 // ADDING SECRETARY/USER
@@ -241,7 +339,7 @@ $("#create-user-button").click(() => {
         }
     }
 
-    if(done) {
+    if(done && passwordChecker) {
         $.ajax({
             type: "post",
             url: "/admin/addAccount",
@@ -281,7 +379,14 @@ $("#create-user-button").click(() => {
                 }
             }
         })
-    } 
+    } else {
+        $("#password-field-user").addClass("error");
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Incorrect password format"
+        });
+    }
 })
 
 // ADDING DENTIST
@@ -340,7 +445,7 @@ $("#create-dentist-button").click(() => {
         }
     }
 
-    if(done) {
+    if(done && passwordChecker) {
         $.ajax({
             type: "post",
             url: "/admin/addDentist",
@@ -388,6 +493,13 @@ $("#create-dentist-button").click(() => {
                 }
             }
         })
+    } else {
+        $("#password-field-dentist").addClass("error");
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Incorrect password format"
+        });
     }
 })
 
@@ -663,9 +775,7 @@ $("#delete-procedure-button").click(() => {
 
 // ADDING DENTIST SCHEDULE
 $("#add-schedule-button").click(() => {
-    let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
-    let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
-    let defaultTime = true, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+
     // ERROR CHECKING
     var done = true;
     if(!$("#daily")[0].checked && !$("#repeat")[0].checked) {
@@ -700,122 +810,25 @@ $("#add-schedule-button").click(() => {
     }
 
     if(done) {
-        defaultTime = false;
-        if($("#daily")[0].checked) {
-            mon.push($("#start").val());    mon.push($("#end").val());
-            tue.push($("#start").val());    tue.push($("#end").val());
-            wed.push($("#start").val());    wed.push($("#end").val());
-            thu.push($("#start").val());    thu.push($("#end").val());
-            fri.push($("#start").val());    fri.push($("#end").val());
-            sat.push($("#start").val());    sat.push($("#end").val());
-            
-            if($("#custom")[0].checked) {
-                monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
-                tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
-                wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
-                thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
-                fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
-                satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
-            } else {
-                monbreak.push("");    monbreak.push("");
-                tuebreak.push("");    tuebreak.push("");
-                wedbreak.push("");    wedbreak.push("");
-                thubreak.push("");    thubreak.push("");
-                fribreak.push("");    fribreak.push("");
-                satbreak.push("");    satbreak.push("");
-            }
-        } else if($("#repeat")[0].checked) {
-            for(var i = 0; i < days.length; i++) {
-                if(days[i] == "mon") {
-                    mon.push($("#start").val());    mon.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
-                        mB = true;
-                    } else {
-                        monbreak.push("");    monbreak.push("");            
-                    }
-                } else if(days[i] == "tue") {
-                    tue.push($("#start").val());    tue.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
-                        tB = true;
-                    } else {
-                        tuebreak.push("");    tuebreak.push("");
-                    }
-                } else if(days[i] == "wed") {
-                    wed.push($("#start").val());    wed.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
-                        wB = true;
-                    } else {
-                        wedbreak.push("");    wedbreak.push("");
-                    }
-                } else if(days[i] == "thu") {
-                    thu.push($("#start").val());    thu.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
-                        hB = true;
-                    } else {
-                        thubreak.push("");    thubreak.push("");
-                    }
-                } else if(days[i] == "fri") {
-                    fri.push($("#start").val());    fri.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
-                        fB = true;
-                    } else {
-                        fribreak.push("");    fribreak.push("");
-                    }
-                } else if(days[i] == "sat") {
-                    sat.push($("#start").val());    sat.push($("#end").val());
-                    if($("#custom")[0].checked) {
-                        satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
-                        sB = true;
-                    } else {
-                        satbreak.push("");    satbreak.push("");
-                    }
-                }
-            }
-        }
+        // checking if a doctor has a schedule or not
         $.ajax({
             type: "post",
-            url: 'admin/addSchedule',
+            url: "admin/getDoctorSchedule",
             data: {
-                'monday[]': mon,
-                'tuesday[]': tue,
-                'wednesday[]': wed,
-                'thursday[]': thu,
-                'friday[]': fri,
-                'saturday[]': sat,
-                'mondaydifference[]': monbreak,
-                'tuesdaydifference[]': tuebreak,
-                'wednesdaydifference[]': wedbreak,
-                'thursdaydifference[]': thubreak,
-                'fridaydifference[]': fribreak,
-                'saturdaydifference[]': satbreak,
-                doctorID: $("#adding-schedule-modal").data("id"),
-                mB,
-                tB,
-                wB,
-                hB,
-                fB,
-                sB,
-                defaultTime
+                doctorID: $("#adding-schedule-modal").data("id")
             },
             success: (value) => {
-                if(value) {
-                    $("body").toast({
-                        class: "success",
-                        position: "top center",
-                        message: "Dentist schedule successfully added"
-                    })
-                    $("#adding-schedule-modal").modal("hide");
+                if(value.docSched != undefined) {
+                    updateSchedule(value.docSched, value.breakTime);
+                } else {
+                    addSchedule();
                 }
             }
         })
     }
 })
 
+// EDITING DENTIST SCHEDULE
 $("#edit-schedule").click(() => {
     $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
     $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
@@ -825,6 +838,150 @@ $("#edit-schedule").click(() => {
     $("#adding-schedule-header").text("Edit Schedule");
 
     
+})
+
+// Checking for conflict
+function checkConflict(schedule, breaktime) {
+
+}
+
+// Adding schedule function
+function addSchedule() {
+    let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
+    let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
+    let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+    
+    if($("#daily")[0].checked) {
+        mon.push($("#start").val());    mon.push($("#end").val());
+        tue.push($("#start").val());    tue.push($("#end").val());
+        wed.push($("#start").val());    wed.push($("#end").val());
+        thu.push($("#start").val());    thu.push($("#end").val());
+        fri.push($("#start").val());    fri.push($("#end").val());
+        sat.push($("#start").val());    sat.push($("#end").val());
+        
+        if($("#custom")[0].checked) {
+            monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
+            tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
+            wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
+            thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
+            fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
+            satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+        } else {
+            monbreak.push("");    monbreak.push("");
+            tuebreak.push("");    tuebreak.push("");
+            wedbreak.push("");    wedbreak.push("");
+            thubreak.push("");    thubreak.push("");
+            fribreak.push("");    fribreak.push("");
+            satbreak.push("");    satbreak.push("");
+        }
+    } else if($("#repeat")[0].checked) {
+        for(var i = 0; i < days.length; i++) {
+            if(days[i] == "mon") {
+                mon.push($("#start").val());    mon.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
+                    mB = true;
+                } else {
+                    monbreak.push("");    monbreak.push("");            
+                }
+            } else if(days[i] == "tue") {
+                tue.push($("#start").val());    tue.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
+                    tB = true;
+                } else {
+                    tuebreak.push("");    tuebreak.push("");
+                }
+            } else if(days[i] == "wed") {
+                wed.push($("#start").val());    wed.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
+                    wB = true;
+                } else {
+                    wedbreak.push("");    wedbreak.push("");
+                }
+            } else if(days[i] == "thu") {
+                thu.push($("#start").val());    thu.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
+                    hB = true;
+                } else {
+                    thubreak.push("");    thubreak.push("");
+                }
+            } else if(days[i] == "fri") {
+                fri.push($("#start").val());    fri.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
+                    fB = true;
+                } else {
+                    fribreak.push("");    fribreak.push("");
+                }
+            } else if(days[i] == "sat") {
+                sat.push($("#start").val());    sat.push($("#end").val());
+                if($("#custom")[0].checked) {
+                    satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+                    sB = true;
+                } else {
+                    satbreak.push("");    satbreak.push("");
+                }
+            }
+        }
+    }
+    $.ajax({
+        type: "post",
+        url: 'admin/addSchedule',
+        data: {
+            'monday[]': mon,
+            'tuesday[]': tue,
+            'wednesday[]': wed,
+            'thursday[]': thu,
+            'friday[]': fri,
+            'saturday[]': sat,
+            'mondaydifference[]': monbreak,
+            'tuesdaydifference[]': tuebreak,
+            'wednesdaydifference[]': wedbreak,
+            'thursdaydifference[]': thubreak,
+            'fridaydifference[]': fribreak,
+            'saturdaydifference[]': satbreak,
+            doctorID: $("#adding-schedule-modal").data("id"),
+            mB,
+            tB,
+            wB,
+            hB,
+            fB,
+            sB,
+            defaultTime
+        },
+        success: (value) => {
+            if(value) {
+                $("body").toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Dentist schedule successfully added"
+                })
+                $("#adding-schedule-modal").modal("hide");
+            } 
+        }
+    })
+}
+
+// Updating schedule function
+function updateSchedule(schedule, breaktime) {
+
+}
+
+// Setup for adding user modal
+$("#add-user-modal").modal({
+    onShow: function() {
+        passwordChecker = true;
+    }
+})
+
+// Setup for reset admin password
+$("#reset-password-modal").modal({
+    onShow: function() {
+        passwordChecker = true;   
+    }
 })
 
 // Setup of adding/editing modal
@@ -850,13 +1007,6 @@ $("#adding-schedule-modal").modal({
 
 // Initialization
 function setup() {
-    var statusList = $(".ui .toggle");
-    for(var i = 0; i < statusList.length; i++) {
-        if($(statusList[i]).text().trim() == "Unavailable") {
-            $(statusList[i]).removeClass("active");
-        }
-    }
-
     // load the list of users
     $.get("/admin/adminUsers", (data) => {
         updateTable(data);

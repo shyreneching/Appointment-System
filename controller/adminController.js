@@ -226,7 +226,7 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
 
-    let time = ['08:00:00', '18:00:00'];
+    let time = ['8:00 AM', '6:00 PM'];
 
     let defaultschedule = new Schedule({
         sunday: null,
@@ -238,12 +238,12 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
         saturday: time
     })
 
-    let mondayBreak= null;
-    let tuesdayBreak = null;
-    let wednesdayBreak = null;
-    let thursdayBreak = null;
-    let fridayBreak = null;
-    let saturdayBreak = null;
+    let mondayBreak= ["",""];
+    let tuesdayBreak = ["",""];
+    let wednesdayBreak = ["",""];
+    let thursdayBreak = ["",""];
+    let fridayBreak = ["",""];
+    let saturdayBreak = ["",""];
 
     if(req.body.defaultTime == 'false'){
         let monday, tuesday, wednesday, thursday, friday, saturday;
@@ -403,6 +403,17 @@ router.post("/editSchedule", urlencoder, async (req, res) => {
     Schedule.updateSchedule(doctor.schedule, schedule);
 })
 
+router.post("/getDoctorSchedule", async (req, res) => {
+    let doctor = await Doctor.getDoctorByID(req.body.doctorID);
+    let docSched = await Schedule.getScheduleByID(doctor.schedule);
+    let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
+
+    res.send({
+        docSched,
+        breaktime
+    })
+})
+
 router.post("/getSchedule", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
@@ -410,74 +421,81 @@ router.post("/getSchedule", urlencoder, async (req, res) => {
     let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
 
-    let array = [];
+    let array = [], docID;
     if(docSched != undefined) {
         array = getObject(docSched, breaktime);
+        docID = docSched._id;
+    } else {
+        docID = "";
     }
 
     let sendData = {
-        sched: array
+        sched: array,
+        schedID: docID
     }
     res.send({
         htmlData: table,
         data: sendData,
-        scheduleID: docSched._id
     })
 })
-
-var weekday = ["M","T","W","H","F","S"];
 
 function getObject(object, breakTime) {
     let array = [];
     array.push(object.monday);
+    array.push(breakTime.monday);
     array.push(object.tuesday);
+    array.push(breakTime.tuesday);
     array.push(object.wednesday);
+    array.push(breakTime.wednesday);
     array.push(object.thursday);
+    array.push(breakTime.thursday);
     array.push(object.friday);
+    array.push(breakTime.friday);
     array.push(object.saturday);
+    array.push(breakTime.saturday);
 
     let objectTimeList = [];
     objectTimeList.push(new Object({
         name: "Monday",
-        time: [
-            {range: array[0][0] + " - " + array[0][1]}
-        ]
+        time: []
     }));
     objectTimeList.push(new Object({
         name: "Tuesday",
-        time: [
-            {range: array[1][0] + " - " + array[1][1]},
-            {range: array[1][0] + " - " + array[1][1]}
-        ]
+        time: []
     }));
     objectTimeList.push(new Object({
         name: "Wednesday",
-        time: [
-            {range: array[2][0] + " - " + array[2][1]},
-            {range: array[2][0] + " - " + array[2][1]}
-        ]
+        time: []
     }));
     objectTimeList.push(new Object({
         name: "Thursday",
-        time: [
-            {range: array[3][0] + " - " + array[3][1]},
-            {range: array[3][0] + " - " + array[3][1]}
-        ]
+        time: []
     }));
     objectTimeList.push(new Object({
         name: "Friday",
-        time: [
-            {range: array[4][0] + " - " + array[4][1]}
-        ]
+        time: []
     }));
     objectTimeList.push(new Object({
         name: "Saturday",
-        time: [
-            {range: array[5][0] + " - " + array[5][1]},
-            {range: array[5][0] + " - " + array[5][1]}
-        ]
+        time: []
     }));
 
+    var ctr = 0;
+    while(ctr < array.length) {
+        var temp = array[ctr][0] + " - " + array[ctr][1];
+        if(!temp.includes("undefined") && temp != " - ") {
+            objectTimeList[Math.floor(ctr/2)].time.push({
+                range: temp
+            })
+        } else {
+            if(ctr % 2 == 0) {
+                objectTimeList[Math.floor(ctr/2)].time.push({
+                    range: "-"
+                })
+            }
+        }
+        ctr++;
+    }
     return objectTimeList;
 }
 

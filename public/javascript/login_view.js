@@ -1,4 +1,37 @@
+var passwordChecker;
+
 $(document).ready(() => {
+    $("#reset-password").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#new-password").val().match(check)) {
+            $("#reset-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#reset-password").val().length < 8) {
+            $("#reset-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#reset-password").val().length > 32) {
+            $("#reset-password-field").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
+    })
+
     $("#submit").click(() => { 
         $.ajax({
             type: "post",
@@ -59,6 +92,7 @@ $("#forgot").click(() => {
 $("#forgot-modal").modal({
     onShow: function() {
         $('#forgot-modal').form("clear");
+        passwordChecker = true;
     }
 })
 
@@ -106,7 +140,7 @@ $("#reset-button").click(() => {
         }
     }
 
-    if(done) {
+    if(done && passwordChecker) {
         $.ajax({
             type: "post",
             url: "/admin/updateAccountPassword",
@@ -134,6 +168,13 @@ $("#reset-button").click(() => {
                 }
             }
         })
+    } else {
+        $("#reset-password-field").addClass("error");
+        $('body').toast({
+            class: "error",
+            position: "top center",
+            message: "Incorrect password format"
+        });
     }
 })
 
