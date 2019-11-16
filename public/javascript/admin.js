@@ -716,6 +716,13 @@ $("#add-schedule-button").click(() => {
                 thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
                 fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
                 satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+            } else {
+                monbreak.push("");    monbreak.push("");
+                tuebreak.push("");    tuebreak.push("");
+                wedbreak.push("");    wedbreak.push("");
+                thubreak.push("");    thubreak.push("");
+                fribreak.push("");    fribreak.push("");
+                satbreak.push("");    satbreak.push("");
             }
         } else if($("#repeat")[0].checked) {
             for(var i = 0; i < days.length; i++) {
@@ -724,36 +731,48 @@ $("#add-schedule-button").click(() => {
                     if($("#custom")[0].checked) {
                         monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
                         mB = true;
+                    } else {
+                        monbreak.push("");    monbreak.push("");            
                     }
                 } else if(days[i] == "tue") {
                     tue.push($("#start").val());    tue.push($("#end").val());
                     if($("#custom")[0].checked) {
                         tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
                         tB = true;
+                    } else {
+                        tuebreak.push("");    tuebreak.push("");
                     }
                 } else if(days[i] == "wed") {
                     wed.push($("#start").val());    wed.push($("#end").val());
                     if($("#custom")[0].checked) {
                         wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
                         wB = true;
+                    } else {
+                        wedbreak.push("");    wedbreak.push("");
                     }
                 } else if(days[i] == "thu") {
                     thu.push($("#start").val());    thu.push($("#end").val());
                     if($("#custom")[0].checked) {
                         thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
                         hB = true;
+                    } else {
+                        thubreak.push("");    thubreak.push("");
                     }
                 } else if(days[i] == "fri") {
                     fri.push($("#start").val());    fri.push($("#end").val());
                     if($("#custom")[0].checked) {
                         fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
                         fB = true;
+                    } else {
+                        fribreak.push("");    fribreak.push("");
                     }
                 } else if(days[i] == "sat") {
                     sat.push($("#start").val());    sat.push($("#end").val());
                     if($("#custom")[0].checked) {
                         satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
                         sB = true;
+                    } else {
+                        satbreak.push("");    satbreak.push("");
                     }
                 }
             }
@@ -797,18 +816,15 @@ $("#add-schedule-button").click(() => {
     }
 })
 
-$("#schedule-modal").click((event) => {
-    var temp = event.target;
-    if($(temp)[0].id == "edit-schedule") {
-        $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
-        $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
-        $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
-        $("#adding-schedule-modal").modal("show");    
-        $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-        $("#adding-schedule-header").text("Edit Schedule");
+$("#edit-schedule").click(() => {
+    $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
+    $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+    $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+    $("#adding-schedule-modal").modal("show");    
+    $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+    $("#adding-schedule-header").text("Edit Schedule");
 
-        
-    }
+    
 })
 
 // Setup of adding/editing modal
@@ -913,6 +929,7 @@ function setDataTable() {
         success: (value) => {
             let table = Handlebars.compile(value.htmlData);
             $("#table-schedule").html(table(value.data));
+            $("#edit-schedule").data("id", value.scheduleID);
             $("#schedule-modal").modal("show");
         }
     })

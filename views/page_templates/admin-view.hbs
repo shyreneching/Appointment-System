@@ -379,23 +379,25 @@
       <div class="ui tiny modal" id="schedule-modal">
         <i class="close icon deny"></i>
         <div class="header">Schedule</div>
-        <div class="scrolling content">
+        <div class="content">
           <div class="ui grid" style="padding: 10px;">
-            <div class="thirteen wide column" style="padding: 0px">
+            <div class="ten wide column" style="padding: 0px">
               <i class="big user md icon"></i>
               <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
             </div>
             <div class="three wide column right aligned" style="padding: 0px">
               <button class="ui green button" id="add-schedule">Add</button>
             </div>
-            <table class="ui stripped fixed table">
+            <div class="three wide column right aligned" style="padding: 0px">
+              <button class="ui button" id="edit-schedule">Edit</button>
+            </div>
+            <table class="ui stripped celled fixed table">
               <tbody id="table-schedule">
                 
               </tbody>
             </table>
           </div>
         </div>
-        <div class="actions"></div>
       </div>
 
       {{!-- modal for confirmation --}}

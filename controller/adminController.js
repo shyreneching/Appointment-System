@@ -410,10 +410,10 @@ router.post("/getSchedule", urlencoder, async (req, res) => {
     let doctor = await Doctor.getDoctorByID(doctorID);
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
-    
+
     let array = [];
     if(docSched != undefined) {
-        array = getObject(docSched);
+        array = modifySchedule(docSched);
     }
 
     let sendData = {
@@ -421,13 +421,12 @@ router.post("/getSchedule", urlencoder, async (req, res) => {
     }
     res.send({
         htmlData: table,
-        data: sendData
+        data: sendData,
+        scheduleID: docSched._id
     })
 })
 
-var weekday = ["M","T","W","H","F","S"];
-
-function getObject(object) {
+function modifySchedule(object) {
     let array = [];
     array.push(object.monday);
     array.push(object.tuesday);
@@ -435,29 +434,49 @@ function getObject(object) {
     array.push(object.thursday);
     array.push(object.friday);
     array.push(object.saturday);
-    
-    let timeList = [];
-    let objectTimeList = [];
 
-    var ctr = 0;
-    while(ctr < array.length) {
-        var time = array[ctr][0] + " - " + array[ctr][1];
-        if(timeList.includes(time)) {
-            var obj = objectTimeList.filter((value) => {
-                return value.time == time;
-            });
-            obj[0]['name'] = obj[0].name + weekday[ctr];
-        } else {
-            if(!time.includes("undefined")) {
-                timeList.push(time);
-                objectTimeList.push(new Object({
-                    name: weekday[ctr],
-                    time: time
-                }));
-            }
-        }
-        ctr++;
-    }
+    let objectTimeList = [];
+    objectTimeList.push(new Object({
+        name: "Monday",
+        time: [
+            {range: array[0][0] + " - " + array[0][1]}
+        ]
+    }));
+    objectTimeList.push(new Object({
+        name: "Tuesday",
+        time: [
+            {range: array[1][0] + " - " + array[1][1]},
+            {range: array[1][0] + " - " + array[1][1]}
+        ]
+    }));
+    objectTimeList.push(new Object({
+        name: "Wednesday",
+        time: [
+            {range: array[2][0] + " - " + array[2][1]},
+            {range: array[2][0] + " - " + array[2][1]}
+        ]
+    }));
+    objectTimeList.push(new Object({
+        name: "Thursday",
+        time: [
+            {range: array[3][0] + " - " + array[3][1]},
+            {range: array[3][0] + " - " + array[3][1]}
+        ]
+    }));
+    objectTimeList.push(new Object({
+        name: "Friday",
+        time: [
+            {range: array[4][0] + " - " + array[4][1]}
+        ]
+    }));
+    objectTimeList.push(new Object({
+        name: "Saturday",
+        time: [
+            {range: array[5][0] + " - " + array[5][1]},
+            {range: array[5][0] + " - " + array[5][1]}
+        ]
+    }));
+
     return objectTimeList;
 }
 
