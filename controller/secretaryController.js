@@ -5,7 +5,7 @@ const momentbusinesstime = require('moment-business-time');
 const fs = require('fs');
 const bodyparser = require("body-parser");
 const urlencoder = bodyparser.urlencoded({
-    extended : true
+    extended: true
 });
 
 // router.get("/", (req, res) => {
@@ -13,19 +13,19 @@ const urlencoder = bodyparser.urlencoded({
 // })
 // External files imports
 
-const {Appointment} = require("../model/appointment");
-const {Doctor} = require("../model/doctor");
-const {Process} = require("../model/process");
-const {Schedule} = require("../model/schedule");
-const {BreakTime} = require("../model/breaktime");
-const {UnavailableDate} = require("../model/unavailableDate");
+const { Appointment } = require("../model/appointment");
+const { Doctor } = require("../model/doctor");
+const { Process } = require("../model/process");
+const { Schedule } = require("../model/schedule");
+const { BreakTime } = require("../model/breaktime");
+const { UnavailableDate } = require("../model/unavailableDate");
 
 /* 
     Ty Added :)
 */
 
-router.get("/", async function(req, res) {
-    if(req.session.username != null) {
+router.get("/", async function (req, res) {
+    if (req.session.username != null) {
         let doctor = await Doctor.getAllDoctors();
         let process = await Process.getAllProcesses();
         res.render('page_templates/secretary_view.hbs', {
@@ -40,14 +40,14 @@ router.get("/", async function(req, res) {
 /*
     Getting templates for filtering 
 */
-router.post("/week_all", urlencoder, async function (request, result){
+router.post("/week_all", urlencoder, async function (request, result) {
 
     let weekData = request.body["dates[]"];
 
     //Convert data to MMM D YYYY
     let formattedWeekData = [];
 
-    for(var i = 0; i < weekData.length; i++){
+    for (var i = 0; i < weekData.length; i++) {
         let newDate = Date.parse(weekData[i]);
         let formattedDate = moment(newDate).format("MMM D YYYY");
         formattedWeekData.push(formattedDate);
@@ -70,7 +70,7 @@ router.post("/week_all", urlencoder, async function (request, result){
         "6:00 PM"];
 
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
 
@@ -79,21 +79,21 @@ router.post("/week_all", urlencoder, async function (request, result){
         let maxInWeek = 0;
 
         // loop through all weekdates in one time slot
-        for (var k = 0; k < formattedWeekData.length; k++){
+        for (var k = 0; k < formattedWeekData.length; k++) {
             let date = formattedWeekData[k].toString();
-            
+
 
             // find all appointments in a date in a timeslot
             let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
             let appointments = [];
-            for (var l = 0; l < appointmentlist.length; l++){
+            for (var l = 0; l < appointmentlist.length; l++) {
                 let appointment = appointmentlist[l];
                 //populate necessary info
                 appointment = await appointment.populateDoctorAndProcess();
                 appointments.push(appointment);
             }
 
-            if (appointmentlist.length > maxInWeek){
+            if (appointmentlist.length > maxInWeek) {
                 maxInWeek = appointmentlist.length;
             }
 
@@ -105,7 +105,7 @@ router.post("/week_all", urlencoder, async function (request, result){
 
             weekAppointments.push(dayInWeek);
         }
-        
+
 
         let data = {
             slot: timeSlot,
@@ -127,14 +127,14 @@ router.post("/week_all", urlencoder, async function (request, result){
     });
 });
 
-router.post("/week_one", urlencoder, async function (request, result){
+router.post("/week_one", urlencoder, async function (request, result) {
     let weekData = request.body["dates[]"];
     let doctorID = request.body.doctor;
 
     //Convert data to MMM D YYYY
     let formattedWeekData = [];
 
-    for(var i = 0; i < weekData.length; i++){
+    for (var i = 0; i < weekData.length; i++) {
         let newDate = Date.parse(weekData[i]);
         let formattedDate = moment(newDate).format("MMM D YYYY");
         formattedWeekData.push(formattedDate);
@@ -157,7 +157,7 @@ router.post("/week_one", urlencoder, async function (request, result){
         "6:00 PM"];
 
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
 
@@ -166,21 +166,21 @@ router.post("/week_one", urlencoder, async function (request, result){
         let maxInWeek = 0;
 
         // loop through all weekdates in one time slot
-        for (var k = 0; k < formattedWeekData.length; k++){
+        for (var k = 0; k < formattedWeekData.length; k++) {
             let date = formattedWeekData[k].toString();
-            
+
 
             // find all appointments in a date in a timeslot
             let appointmentlist = await Appointment.getAppByDoctorandDateandTime(doctorID, date, timeSlot);
             let appointments = [];
-            for (var l = 0; l < appointmentlist.length; l++){
+            for (var l = 0; l < appointmentlist.length; l++) {
                 let appointment = appointmentlist[l];
                 //populate necessary info
                 appointment = await appointment.populateDoctorAndProcess();
                 appointments.push(appointment);
             }
 
-            if (appointmentlist.length > maxInWeek){
+            if (appointmentlist.length > maxInWeek) {
                 maxInWeek = appointmentlist.length;
             }
 
@@ -192,7 +192,7 @@ router.post("/week_one", urlencoder, async function (request, result){
 
             weekAppointments.push(dayInWeek);
         }
-        
+
 
         let data = {
             slot: timeSlot,
@@ -215,13 +215,13 @@ router.post("/week_one", urlencoder, async function (request, result){
 
 });
 
-router.post("/week_unavailable", async function (request, result){
+router.post("/week_unavailable", async function (request, result) {
     let weekData = request.body["dates[]"];
 
     //Convert data to MMM D YYYY
     let formattedWeekData = [];
 
-    for(var i = 0; i < weekData.length; i++){
+    for (var i = 0; i < weekData.length; i++) {
         let newDate = Date.parse(weekData[i]);
         let formattedDate = moment(newDate).format("MMM D YYYY");
         formattedWeekData.push(formattedDate);
@@ -245,7 +245,7 @@ router.post("/week_unavailable", async function (request, result){
 
     let doctorsArray = await Doctor.getAllDoctors();
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
 
@@ -254,22 +254,22 @@ router.post("/week_unavailable", async function (request, result){
         let maxInWeek = 0;
 
         // loop through all weekdates in one time slot
-        for (var k = 0; k < formattedWeekData.length; k++){
+        for (var k = 0; k < formattedWeekData.length; k++) {
             let date = formattedWeekData[k].toString();
-            
+
             let unavs = [];
-            
-            for (var l = 0; l < doctorsArray.length; l++){
+
+            for (var l = 0; l < doctorsArray.length; l++) {
                 let doctorID = doctorsArray[l]._id;
                 let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, timeSlot);
 
-                if (appointment){
+                if (appointment) {
                     let unavDoctor = await Doctor.getDoctorByID(doctorID);
                     unavs.push(unavDoctor);
                 }
             }
 
-            if (unavs.length > maxInWeek){
+            if (unavs.length > maxInWeek) {
                 maxInWeek = unavs.length;
             }
 
@@ -281,7 +281,7 @@ router.post("/week_unavailable", async function (request, result){
 
             weekUnavailable.push(dayInWeek);
         }
-        
+
 
         let data = {
             slot: timeSlot,
@@ -303,14 +303,14 @@ router.post("/week_unavailable", async function (request, result){
     });
 });
 
-router.post("/week_available", async function (request, result){
+router.post("/week_available", async function (request, result) {
 
     let weekData = request.body["dates[]"];
 
     //Convert data to MMM D YYYY
     let formattedWeekData = [];
 
-    for(var i = 0; i < weekData.length; i++){
+    for (var i = 0; i < weekData.length; i++) {
         let newDate = Date.parse(weekData[i]);
         let formattedDate = moment(newDate).format("MMM D YYYY");
         formattedWeekData.push(formattedDate);
@@ -334,7 +334,7 @@ router.post("/week_available", async function (request, result){
 
     let doctorsArray = await Doctor.getAllDoctors();
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
 
@@ -343,24 +343,24 @@ router.post("/week_available", async function (request, result){
         let maxInWeek = 0;
 
         // loop through all weekdates in one time slot
-        for (var k = 0; k < formattedWeekData.length; k++){
+        for (var k = 0; k < formattedWeekData.length; k++) {
             let date = formattedWeekData[k].toString();
-            
+
             let avs = [];
-            
-            for (var l = 0; l < doctorsArray.length; l++){
+
+            for (var l = 0; l < doctorsArray.length; l++) {
                 let doctorID = doctorsArray[l]._id;
                 let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, timeSlot);
 
-                if (appointment){
-                    
+                if (appointment) {
+
                 } else {
                     let avDoctor = await Doctor.getDoctorByID(doctorID);
                     avs.push(avDoctor);
                 }
             }
 
-            if (avs.length > maxInWeek){
+            if (avs.length > maxInWeek) {
                 maxInWeek = avs.length;
             }
 
@@ -372,7 +372,7 @@ router.post("/week_available", async function (request, result){
 
             weekAvailable.push(dayInWeek);
         }
-        
+
 
         let data = {
             slot: timeSlot,
@@ -392,16 +392,16 @@ router.post("/week_available", async function (request, result){
         htmlData: week_available,
         data: final
     });
-    
+
 });
 
-router.get("/table_header", function (request, result){
+router.get("/table_header", function (request, result) {
     let table_header = fs.readFileSync('./views/module_templates/secretary_weekdates.hbs', 'utf-8');
     result.send(table_header);
 });
 
-router.post("/day_all", urlencoder, async function (request, result){
-    
+router.post("/day_all", urlencoder, async function (request, result) {
+
     // Get the date from sent data
     let date = request.body.date;
 
@@ -422,12 +422,12 @@ router.post("/day_all", urlencoder, async function (request, result){
         "6:00 PM"];
 
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
         let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
         let appointments = [];
-        for (var k = 0; k < appointmentlist.length; k++){
+        for (var k = 0; k < appointmentlist.length; k++) {
             let appointment = appointmentlist[k];
             //populate necessary info
             appointment = await appointment.populateDoctorAndProcess();
@@ -452,7 +452,7 @@ router.post("/day_all", urlencoder, async function (request, result){
     });
 });
 
-router.post("/day_one", urlencoder, async function (request, result){
+router.post("/day_one", urlencoder, async function (request, result) {
     // Get the date from sent data
     let date = request.body.date;
     let doctorID = request.body.doctor;
@@ -474,12 +474,12 @@ router.post("/day_one", urlencoder, async function (request, result){
         "6:00 PM"];
 
     let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++){
+    for (var i = 0; i < timeSlotsArray.length; i++) {
         let timeSlot = timeSlotsArray[i];
         // get all appointments in this date and time slot
         let appointmentlist = await Appointment.getAppByDoctorandDateandTime(doctorID, date, timeSlot);
         let appointments = [];
-        for (var k = 0; k < appointmentlist.length; k++){
+        for (var k = 0; k < appointmentlist.length; k++) {
             let appointment = appointmentlist[k];
             //populate necessary info
             appointment = await appointment.populateDoctorAndProcess();
@@ -506,7 +506,7 @@ router.post("/day_one", urlencoder, async function (request, result){
     });
 });
 
-router.post("/check_valid_appointment", urlencoder, async function (request, result){
+router.post("/check_valid_appointment", urlencoder, async function (request, result) {
     // Get the date from sent data
     let date = request.body.date;
     let time = request.body.time;
@@ -515,7 +515,7 @@ router.post("/check_valid_appointment", urlencoder, async function (request, res
     console.log(time);
     console.log(doctors);
 
-    
+
 
     result.send("Something");
 });
@@ -523,7 +523,7 @@ router.post("/check_valid_appointment", urlencoder, async function (request, res
     End of Templates
 */
 
-router.post("/getAppointment",urlencoder, async (req, res) => {
+router.post("/getAppointment", urlencoder, async (req, res) => {
     let appID = req.body.appointmentID;
 
     let appointment = await Appointment.getAppointmentsByID(appID);
@@ -562,12 +562,12 @@ router.get("/addproc", (req, res) => {
 */
 
 router.get("/appointmentlist", (req, res) => {
-    Appointment.find({}, (err, docs)=>{
-        if(err){
+    Appointment.find({}, (err, docs) => {
+        if (err) {
             res.send(err)
         }
-        else{
-            res.render("admin.hbs",{
+        else {
+            res.render("admin.hbs", {
                 appointments: docs
             })
         }
@@ -593,7 +593,7 @@ router.post("/create", urlencoder, (req, res) => {
 
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("MMM D YYYY");
-    
+
 
     let appointment = new Appointment({
         firstname,
@@ -601,24 +601,24 @@ router.post("/create", urlencoder, (req, res) => {
         patientcontact,
         process,
         notes,
-        time : formattedTime,
-        date : formattedDate,
+        time: formattedTime,
+        date: formattedDate,
         doctor
     });
 
-    Appointment.addAppointment(appointment, function(appointment){
-        if (appointment){
+    Appointment.addAppointment(appointment, function (appointment) {
+        if (appointment) {
             res.redirect("/secretary");
         } else {
             res.redirect("/");
         }
-        
-    }, (error)=>{
+
+    }, (error) => {
         res.send(error);
     })
 })
 
-router.post("/edit", urlencoder, async (req, res)=>{
+router.post("/edit", urlencoder, async (req, res) => {
     let appointmentID = req.body.appointmentID;
     let firstname = req.body.firstName;
     let lastname = req.body.lastName;
@@ -636,7 +636,7 @@ router.post("/edit", urlencoder, async (req, res)=>{
 
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("MMM D YYYY");
-    
+
 
     let appointment = new Appointment({
         firstname,
@@ -644,8 +644,8 @@ router.post("/edit", urlencoder, async (req, res)=>{
         patientcontact,
         process,
         notes,
-        time : formattedTime,
-        date : formattedDate,
+        time: formattedTime,
+        date: formattedDate,
         doctor
     });
 
@@ -668,23 +668,23 @@ router.post("/check_app_exists", urlencoder, async (req, res) => {
 
     let found = false;
 
-    if (typeof doctor === 'object'){
-        for (var i = 0; i < doctor.length; i++){
+    if (typeof doctor === 'object') {
+        for (var i = 0; i < doctor.length; i++) {
             let doctorID = doctor[i];
             let appointment = await Appointment.getAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
-    
-            if (appointment.length != 0){
+
+            if (appointment.length != 0) {
                 found = true;
             }
-        }    
+        }
     } else {
         let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctor, formattedDate, formattedTime);
-    
-        if (appointment){
+
+        if (appointment) {
             found = true;
         }
     }
-    
+
     res.send(found);
 });
 
@@ -716,14 +716,14 @@ router.get("/getAvailable", async (req, res) => {
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
     let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
     let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
-    
+
     // date = what date is the appointment
     let date = req.body.dateInput;
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("YYYY-MM-DD");
 
     let dataArray = [];
-    
+
     moment.updateLocale('en', {
         workinghours: {
             0: docSched.sunday,
@@ -742,25 +742,25 @@ router.get("/getAvailable", async (req, res) => {
     let endformattedDate = moment(end).format("YYYY-MM-DD");
 
     //gets the 'breaktime' of the doctor
-    if(formattedDate.isoWeekday() == 1){
+    if (formattedDate.isoWeekday() == 1) {
         var breakstart = new Date(breaktime.monday[0]);
         var breakend = new Date(breaktime.monday[1]);
-    }else if(formattedDate.isoWeekday() == 2){      
+    } else if (formattedDate.isoWeekday() == 2) {
         var breakstart = new Date(breaktime.tuesday[0]);
         var breakend = new Date(breaktime.tuesday[1]);
-    }else if(formattedDate.isoWeekday() == 3){
+    } else if (formattedDate.isoWeekday() == 3) {
         var breakstart = new Date(breaktime.wednesday[0]);
         var breakend = new Date(breaktime.wednesday[1]);
-    }else if(formattedDate.isoWeekday() == 4){
+    } else if (formattedDate.isoWeekday() == 4) {
         var breakstart = new Date(breaktime.thursday[0]);
         var breakend = new Date(breaktime.thursday[1]);
-    }else if(formattedDate.isoWeekday() == 5){
+    } else if (formattedDate.isoWeekday() == 5) {
         var breakstart = new Date(breaktime.friday[0]);
         var breakend = new Date(breaktime.friday[1]);
-    }else if(formattedDate.isoWeekday() == 6){
+    } else if (formattedDate.isoWeekday() == 6) {
         var breakstart = new Date(breaktime.saturday[0]);
         var breakend = new Date(breaktime.saturday[1]);
-    }else if(formattedDate.isoWeekday() == 7){
+    } else if (formattedDate.isoWeekday() == 7) {
         var breakstart = new Date(breaktime.sunday[0]);
         var breakend = new Date(breaktime.sunday[1]);
     }
@@ -770,41 +770,41 @@ router.get("/getAvailable", async (req, res) => {
 
     // Sets the unavailable dates as holidays
     var loop = new Date(startformattedDate);
-    while(loop <= endformattedDate){
+    while (loop <= endformattedDate) {
         // alert(loop);     
         moment.updateLocale('en', {
             holidays: [
                 loop
             ]
-        });      
+        });
 
         var tempDate = loop.setDate(loop.getDate() + 1);
-            loop = new Date(tempDate);
+        loop = new Date(tempDate);
     }
     // end here
 
 
     //Checks if the dentist is available based on schedule
-    if(moment(formattedDate).isWorkingDay()){
-        for (var i = 0; i < timeSlotsArray.length; i++){
+    if (moment(formattedDate).isWorkingDay()) {
+        for (var i = 0; i < timeSlotsArray.length; i++) {
             let timeSlot = timeSlotsArray[i];
-            
+
             let newTime = Date.parse(timeslot);
             let formattedTime = moment(newTime).format("h:mm A");
-        
+
             let datetime = moment(formattedDate + ' ' + formattedTime, 'DD/MM/YYYY HH:mm');
 
             // if working time of dentist and the time is not in the 'break time' adds to the list of available times
-            if(moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))){
+            if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
                 let data = {
                     slot: timeSlot,
                 };
-        
+
                 dataArray.push(data);
             }
         }
     }
-    result.send({ /* Send the available time somewhere*/ 
+    result.send({ /* Send the available time somewhere*/
         htmlData: all_day,
         data: dataArray
     });
@@ -830,14 +830,14 @@ router.get("/getUnavailable", async (req, res) => {
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
     let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
     let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
-    
+
     // date = what date is the appointment
     let date = req.body.dateInput;
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("YYYY-MM-DD");
 
     let dataArray = [];
-    
+
     moment.updateLocale('en', {
         workinghours: {
             0: docSched.sunday,
@@ -856,25 +856,25 @@ router.get("/getUnavailable", async (req, res) => {
     let endformattedDate = moment(end).format("YYYY-MM-DD");
 
     // gets the 'break time' of the doctor
-    if(formattedDate.isoWeekday() == 1){
+    if (formattedDate.isoWeekday() == 1) {
         var breakstart = new Date(breaktime.monday[0]);
         var breakend = new Date(breaktime.monday[1]);
-    }else if(formattedDate.isoWeekday() == 2){      
+    } else if (formattedDate.isoWeekday() == 2) {
         var breakstart = new Date(breaktime.tuesday[0]);
         var breakend = new Date(breaktime.tuesday[1]);
-    }else if(formattedDate.isoWeekday() == 3){
+    } else if (formattedDate.isoWeekday() == 3) {
         var breakstart = new Date(breaktime.wednesday[0]);
         var breakend = new Date(breaktime.wednesday[1]);
-    }else if(formattedDate.isoWeekday() == 4){
+    } else if (formattedDate.isoWeekday() == 4) {
         var breakstart = new Date(breaktime.thursday[0]);
         var breakend = new Date(breaktime.thursday[1]);
-    }else if(formattedDate.isoWeekday() == 5){
+    } else if (formattedDate.isoWeekday() == 5) {
         var breakstart = new Date(breaktime.friday[0]);
         var breakend = new Date(breaktime.friday[1]);
-    }else if(formattedDate.isoWeekday() == 6){
+    } else if (formattedDate.isoWeekday() == 6) {
         var breakstart = new Date(breaktime.saturday[0]);
         var breakend = new Date(breaktime.saturday[1]);
-    }else if(formattedDate.isoWeekday() == 7){
+    } else if (formattedDate.isoWeekday() == 7) {
         var breakstart = new Date(breaktime.sunday[0]);
         var breakend = new Date(breaktime.sunday[1]);
     }
@@ -884,42 +884,42 @@ router.get("/getUnavailable", async (req, res) => {
 
     // Sets the unavailable dates as holidays
     var loop = new Date(startformattedDate);
-    while(loop <= endformattedDate){
+    while (loop <= endformattedDate) {
         // alert(loop);     
         moment.updateLocale('en', {
             holidays: [
                 loop
             ]
-        });      
+        });
 
         var tempDate = loop.setDate(loop.getDate() + 1);
-            loop = new Date(tempDate);
+        loop = new Date(tempDate);
     }
     // end here
 
     // if it is not working day then sends the whole timeslot array
-    if(!moment(formattedDate).isWorkingDay()){
+    if (!moment(formattedDate).isWorkingDay()) {
         dataArray = timeSlotsArray;
     } else {
-        for (var i = 0; i < timeSlotsArray.length; i++){
+        for (var i = 0; i < timeSlotsArray.length; i++) {
             let timeSlot = timeSlotsArray[i];
-            
+
             let newTime = Date.parse(timeslot);
             let formattedTime = moment(newTime).format("h:mm A");
-        
+
             let datetime = moment(formattedDate + ' ' + formattedTime, 'DD/MM/YYYY HH:mm');
 
             //checks if the time is not working time or in between break adds to the unavailable times
-            if(!moment(datetime).isWorkingTime() || (moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))){
+            if (!moment(datetime).isWorkingTime() || (moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
                 let data = {
                     slot: timeSlot,
                 };
-        
+
                 dataArray.push(data);
             }
         }
     }
-    result.send({ /* Send the available time somewhere*/ 
+    result.send({ /* Send the available time somewhere*/
         htmlData: all_day,
         data: dataArray
     });
@@ -942,22 +942,30 @@ router.get("/getUnavailable", async (req, res) => {
 })
 
 // given date and time, will return the available doctors
-router.get("/getAvailableDoctors", async (req, res) => {
-
+router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
+    console.log("POST /secretary/getAvailableDoctors")
     let time = req.body.timeInput;
     let date = req.body.dateInput;
 
-    let datetime = moment(date + ' ' + time, 'DD/MM/YYYY HH:mm');
+    let newTime = Date.parse(time);
+    let formattedTime = moment(newTime).format("HH:mm")
+
+
+    let newDate = Date.parse(date);
+    let formattedDate = moment(newDate).format("DD-MM-YYYY")
+
+    let datetime = moment(formattedDate + ' ' + formattedTime);
+    console.log(datetime)
 
     let doctors = Doctor.getAllDoctors();
     let doctorsArray = [];
 
-    for (var i = 0; i < doctors.length; i++){
+    for (var i = 0; i < doctors.length; i++) {
         let doctor = doctors[i];
         let docSched = await Schedule.getScheduleByID(doctor.schedule);
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
-      
+
         moment.updateLocale('en', {
             workinghours: {
                 0: docSched.sunday,
@@ -969,62 +977,62 @@ router.get("/getAvailableDoctors", async (req, res) => {
                 6: docSched.saturday
             }
         });
-    
+
         var start = new Date(doctorUnAvail.stringDate1);
         let startformattedDate = moment(start).format("YYYY-MM-DD");
         var end = new Date(doctorUnAvail.stringDate2);
         let endformattedDate = moment(end).format("YYYY-MM-DD");
-    
+
         //gets the 'breaktime' of the doctor
-        if(formattedDate.isoWeekday() == 1){
+        if (formattedDate.isoWeekday() == 1) {
             var breakstart = new Date(breaktime.monday[0]);
             var breakend = new Date(breaktime.monday[1]);
-        }else if(formattedDate.isoWeekday() == 2){      
+        } else if (formattedDate.isoWeekday() == 2) {
             var breakstart = new Date(breaktime.tuesday[0]);
             var breakend = new Date(breaktime.tuesday[1]);
-        }else if(formattedDate.isoWeekday() == 3){
+        } else if (formattedDate.isoWeekday() == 3) {
             var breakstart = new Date(breaktime.wednesday[0]);
             var breakend = new Date(breaktime.wednesday[1]);
-        }else if(formattedDate.isoWeekday() == 4){
+        } else if (formattedDate.isoWeekday() == 4) {
             var breakstart = new Date(breaktime.thursday[0]);
             var breakend = new Date(breaktime.thursday[1]);
-        }else if(formattedDate.isoWeekday() == 5){
+        } else if (formattedDate.isoWeekday() == 5) {
             var breakstart = new Date(breaktime.friday[0]);
             var breakend = new Date(breaktime.friday[1]);
-        }else if(formattedDate.isoWeekday() == 6){
+        } else if (formattedDate.isoWeekday() == 6) {
             var breakstart = new Date(breaktime.saturday[0]);
             var breakend = new Date(breaktime.saturday[1]);
-        }else if(formattedDate.isoWeekday() == 7){
+        } else if (formattedDate.isoWeekday() == 7) {
             var breakstart = new Date(breaktime.sunday[0]);
             var breakend = new Date(breaktime.sunday[1]);
         }
-    
+
         let breakstartFormat = moment(formattedDate + ' ' + breakstart, 'DD/MM/YYYY HH:mm');
         let breakendFormat = moment(formattedDate + ' ' + breakend, 'DD/MM/YYYY HH:mm');
-    
+
         // Sets the unavailable dates as holidays
         var loop = new Date(startformattedDate);
-        while(loop <= endformattedDate){  
+        while (loop <= endformattedDate) {
             moment.updateLocale('en', {
                 holidays: [
                     loop
                 ]
-            });      
-    
+            });
+
             var tempDate = loop.setDate(loop.getDate() + 1);
-                loop = new Date(tempDate);
+            loop = new Date(tempDate);
         }
         // end here
-    
+
         //Checks if the dentist is available based on schedule
-        if(moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))){
+        if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
             let data = {
                 doctor: doctemp,
             };
-    
+
             doctorsArray.push(data);
         }
-        result.send({ /* Send the doctors somewhere*/ 
+        result.send({ /* Send the doctors somewhere*/
             htmlData: all_day,
             data: doctorArray
         });

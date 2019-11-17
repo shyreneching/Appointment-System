@@ -100,7 +100,6 @@ $(document).ready(function () {
         // Compile Data
         let template = Handlebars.compile(data.htmlData);
         $('#the-body').html(template(data.data));
-
         //Set up sticky top
         $('#main-menu').sticky({
             context: '#schedule-table'
@@ -277,6 +276,7 @@ function updateTableRows(date) {
             $.post("/secretary/day_one", sendData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
+                
                 $('.active.dimmer').toggle();
             });
         }
@@ -449,8 +449,27 @@ async function initializeTHead(date) {
             $(document).unbind("keydown")
         }
 
+
+
         $('#add-appointment-date-modal').modal({
-            onHidden: resetModalState
+            onHidden: resetModalState,
+            onApprove: function () {
+                var date = $('#add-date_calendar').calendar('get date')
+                var time = $('#add-time_calendar').calendar('get date')
+                
+
+                var datetime = {
+                    dateInput: date.toString(),
+                    timeInput: time.toString()
+                }
+                
+                let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                    return data;
+                });
+                console.log(data)
+                
+                
+            }
         })
 
         $('#add-appointment-modal').modal({
@@ -601,7 +620,7 @@ async function addAppointment() {
         };
 
         console.log("checking flag");
-        await $.post("/secretary/check_app_exists", checkData, function (data) {
+        await $.post("/secretary/", checkData, function (data) {
 
             if (data == true) {
                 $("#add-fieldDoctors").addClass("error");
