@@ -33,13 +33,13 @@ scheduleSchema.statics.updateSchedule = async function(scheduleID, schedule){
     return await this.updateOne({
         _id: scheduleID
     }, {
-        sunday,
-        monday,
-        tuesday,
-        wednesday,
-        thursday,
-        friday,
-        saturday
+        sunday: schedule.sunday,
+        monday: schedule.monday,
+        tuesday: schedule.tuesday,
+        wednesday: schedule.wednesday,
+        thursday: schedule.thursday,
+        friday: schedule.friday,
+        saturday: schedule.saturday
     }, {
         new: true
     }); 
