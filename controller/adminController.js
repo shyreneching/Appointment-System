@@ -68,6 +68,12 @@ router.post("/deleteAccount", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
     if(account.accountType == "dentist") {
         Doctor.delete(account.doctorID);
+        let appointments = Appintment.getDoctorAppointment(account.doctorID);
+        for (var i = 0; i < appointments.length; i++){
+            let appID = appointments[i]._id;
+
+            await Appointment.delete(appID);
+        }
     } 
     Account.delete(req.body.accountID);
     res.send({message: true});

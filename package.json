@@ -26,8 +26,13 @@
     "jquery-address": "^1.6.0",
     "moment": "^2.24.0",
     "moment-business-time": "^0.7.1",
+<<<<<<< HEAD
     "mongoose": "^5.7.5",
     "nodemon": "^1.19.3",
+=======
+    "mongoose": "^5.7.11",
+    "nodemon": "^1.19.4",
+>>>>>>> master
     "path": "^0.12.7"
   }
 }
