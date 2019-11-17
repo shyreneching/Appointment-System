@@ -81,7 +81,7 @@ $(document).ready(function () {
         }
     });
 
-    
+
 
     // Initialize Table header
     initializeTHead(moment().toDate());
@@ -160,7 +160,7 @@ function updateTableRows(date) {
 
 
     if (viewType == "week-view") {
-        if (choice == 'all'|| choice == 'all1') {
+        if (choice == 'all' || choice == 'all1') {
             let weekData = {
                 "dates": days
             }
@@ -363,17 +363,23 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
+
+
     //Initializes Add button-------------------------------------------
     $("#add-button").on("click", function () {
+
+        $('#add-appointment-date-modal').modal('toggle');
         $(document).unbind('keydown')
-        $('#add-appointment-modal').modal('toggle');
+
+        $("#add-date_calendar").removeClass("disabled")
+        $("#add-time_calendar").removeClass("disabled")
+        // $('#add-appointment-modal').modal('toggle');
         // Initialize popup stuff
         $("#add-date_calendar").calendar({
             type: 'date',
             today: 'true',
             disabledDaysOfWeek: [0],
             initialDate: moment().toDate(),
-            
         })
 
 
@@ -422,25 +428,38 @@ async function initializeTHead(date) {
             $("#add-fieldProcedures").removeClass("error")
         })
 
-        $('#add-appointment-modal').modal({
-            onHidden: function () {
-                $("#add-multiDoctor").dropdown("clear")
-                $("#add-multiProcedure").dropdown("clear")
-                $("#add-lastName").val("");
-                $("#add-firstName").val("");
-                $("#add-notes").val("");
-                $("#add-contact").val("");
+        var resetModalState = function () {
+            $("#add-multiDoctor").dropdown("clear")
+            $("#add-multiProcedure").dropdown("clear")
+            $("#add-lastName").val("");
+            $("#add-firstName").val("");
+            $("#add-notes").val("");
+            $("#add-contact").val("");
 
-                $("#add-fieldProcedures").removeClass("error")
-                $("#add-fieldDoctors").removeClass("error")
-                $("#add-fieldFirstName").removeClass("error")
-                $("#add-fieldLastName").removeClass("error")
-                //rebinding keydown
-                initializeShortcutsMain();
-                
-            }
-        });
+            $("#add-fieldProcedures").removeClass("error")
+            $("#add-fieldDoctors").removeClass("error")
+            $("#add-fieldContact").removeClass("error")
+            $("#add-fieldFirstName").removeClass("error")
+            $("#add-fieldLastName").removeClass("error")
+            //rebinding keydown
+            initializeShortcutsMain();
+        }
+
+        var unbindShorcuts = function () {
+            $(document).unbind("keydown")
+        }
+
+        $('#add-appointment-date-modal').modal({
+            onHidden: resetModalState
+        })
+
+        $('#add-appointment-modal').modal({
+            onHidden: resetModalState,
+            onVisible: unbindShorcuts
+        }).modal('attach events', '#add-appointment-date-modal #date-done')
     });
+
+
 
     // Sets up the on click of the week dates displayed----------------------------------------
     for (var i = 0; i < 7; i++) {
@@ -485,7 +504,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'Missing First Name!',
-                position: 'top left'
+                position: 'bottom right'
             });
         isValid = false;
     } else {
@@ -496,7 +515,7 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'First Name should only be Alphanumeric.',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
             isValid = false;
         }
@@ -508,7 +527,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'Missing Last Name',
-                position: 'top left'
+                position: 'bottom right'
             });
         isValid = false;
     } else {
@@ -519,7 +538,7 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'Last Name should only be Alphanumeric.',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
             isValid = false;
         }
@@ -531,7 +550,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one doctor',
-                position: 'top left'
+                position: 'bottom right'
             });
         isValid = false;
     }
@@ -542,7 +561,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one procedure',
-                position: 'top left'
+                position: 'bottom right'
             });
         isValid = false;
     }
@@ -558,11 +577,20 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'Invalid contact number format',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
 
             isValid = false;
         }
+    } else {
+        $("#add-fieldContact").addClass("error");
+        $('#add-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing contact number',
+                position: 'bottom right'
+            });
+        isValid = false;
     }
 
     if (isValid) {
@@ -574,14 +602,14 @@ async function addAppointment() {
 
         console.log("checking flag");
         await $.post("/secretary/check_app_exists", checkData, function (data) {
-            
-            if (data == true){
+
+            if (data == true) {
                 $("#add-fieldDoctors").addClass("error");
                 $('#add-appointment-modal')
                     .toast({
                         class: 'error',
                         message: 'Doctor already booked on date and time',
-                        position: 'top left'
+                        position: 'bottom right'
                     });
 
                 isValid = false;
@@ -611,11 +639,11 @@ async function addAppointment() {
         });
 
         $("#add-appointment-modal").modal('toggle');
-            $('#standard_calendar').calendar('set date', dateInput, true, false);
-            $('#view-chooser').dropdown('set selected', "day-view");
+        $('#standard_calendar').calendar('set date', dateInput, true, false);
+        $('#view-chooser').dropdown('set selected', "day-view");
 
-            initializeTHead(dateInput);
-            updateTableRows(dateInput);
+        initializeTHead(dateInput);
+        updateTableRows(dateInput);
     }
 
 }
@@ -736,11 +764,11 @@ async function openDetailsModal(appointmentID) {
             $("#edit-fieldFirstName").removeClass("error")
             $("#edit-fieldLastName").removeClass("error")
             $("#edit-fieldContact").removeClass("error")
-           
+
         }
     });
 
-    
+
     let doctors = $("#edit-multiDoctor").dropdown("get value");
 
     $('#edit-save-button').unbind('click');
@@ -749,10 +777,44 @@ async function openDetailsModal(appointmentID) {
     });
 }
 
+function quickAdd(slot) {
+    $("#add-button").trigger('click')
+    let date = $('#standard_calendar').calendar('get date');
+
+    console.log();
+    $("#add-date_calendar").calendar({
+        type: 'date',
+        today: 'true',
+        disabledDaysOfWeek: [0],
+        initialDate: moment(date).toDate()
+    })
+
+    $("#add-date_calendar").addClass("disabled")
+
+    var minDate = new Date();
+    var maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(18);
+    maxDate.setMinutes(0);
+
+    $('#add-time_calendar').calendar({
+        type: 'time',
+        minTimeGap: 30,
+        maxDate: maxDate,
+        minDate: minDate,
+        initialDate: moment(slot, 'HH:mm a').toDate()
+    });
+
+    $("#add-time_calendar").addClass("disabled")
+
+
+}
+
 function arraysEqual(_arr1, _arr2) {
 
-    if (!Array.isArray(_arr1) || ! Array.isArray(_arr2) || _arr1.length !== _arr2.length)
-      return false;
+    if (!Array.isArray(_arr1) || !Array.isArray(_arr2) || _arr1.length !== _arr2.length)
+        return false;
 
     var arr1 = _arr1.concat().sort();
     var arr2 = _arr2.concat().sort();
@@ -786,7 +848,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'Missing First Name!',
-                position: 'top left'
+                position: 'bottom right'
             });
         flag = false;
     } else {
@@ -797,7 +859,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'First Name should only be Alphanumeric.',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
             flag = false;
         }
@@ -809,7 +871,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'Missing Last Name',
-                position: 'top left'
+                position: 'bottom right'
             });
         flag = false;
     } else {
@@ -820,7 +882,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'Last Name should only be Alphanumeric.',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
             flag = false;
         }
@@ -832,7 +894,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one doctor',
-                position: 'top left'
+                position: 'bottom right'
             });
         flag = false;
     }
@@ -843,7 +905,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one procedure',
-                position: 'top left'
+                position: 'bottom right'
             });
         flag = false;
     }
@@ -859,7 +921,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'Invalid contact number format',
-                    position: 'top left'
+                    position: 'bottom right'
                 });
 
             flag = false;
@@ -868,18 +930,18 @@ async function editAppointment(appointmentID, initialDoctors) {
 
     if (flag) {
 
-        if (!arraysEqual(doctors,initialDoctors)){
+        if (!arraysEqual(doctors, initialDoctors)) {
 
             var clone = doctors.slice(0);
 
-            for (var i = 0; i<initialDoctors.length; i++){
+            for (var i = 0; i < initialDoctors.length; i++) {
                 var index = clone.indexOf(initialDoctors[i]);
                 if (index > -1) {
                     clone.splice(index, 1);
                 }
             }
 
-            
+
             let checkData = {
                 dateInput: dateInput.toString(),
                 timeInput: timeInput.toString(),
@@ -887,14 +949,14 @@ async function editAppointment(appointmentID, initialDoctors) {
             };
 
             await $.post("/secretary/check_app_exists", checkData, function (data) {
-                
-                if (data == true){
+
+                if (data == true) {
                     $("#edit-fieldDoctors").addClass("error");
                     $('#edit-appointment-modal')
                         .toast({
                             class: 'error',
                             message: 'Doctor already booked on date and time',
-                            position: 'top left'
+                            position: 'bottom right'
                         });
 
                     flag = false;
@@ -934,13 +996,14 @@ async function editAppointment(appointmentID, initialDoctors) {
 }
 
 
-function initializeShortcutsMain(){
-    $(document).on('keydown',function(e) {
+function initializeShortcutsMain() {
+    console.log("initializeShortcutsMain")
+    $(document).on('keydown', function (e) {
         var LEFT = 37,
             RIGHT = 39,
             SPACE = 32,
             ENTER = 13
-        switch(e.keyCode){
+        switch (e.keyCode) {
             case LEFT:
                 $('#prev-button').trigger('click')
                 break;
@@ -958,13 +1021,13 @@ function initializeShortcutsMain(){
     });
 }
 
-function initializeShortcutsAddModal(){
-     $("#add-appointment-modal").on("keydown", function(e){
-       
-     })
+function initializeShortcutsAddModal() {
+    $("#add-appointment-modal").on("keydown", function (e) {
+
+    })
 }
 
 
-$("#logoutButton").click(function() {
-    window.location.href="/logout";
+$("#logoutButton").click(function () {
+    window.location.href = "/logout";
 })
