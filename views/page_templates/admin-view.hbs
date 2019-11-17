@@ -62,7 +62,7 @@
         </a>
       </div>
       <div class="column" style="width: 85%;">
-        <table class="ui striped table" id="table">
+        <table class="ui striped selectable table" id="table">
 
         </table>
       </div>
@@ -110,18 +110,18 @@
         <div class="ui form">
           <div class="required field" id="current-password-field">
               <label>Current Password</label>
-              <input type="password" name="currentPassword" id="current-password" data-password="{{password}}" placeholder="Current Password">
+              <input type="password" name="currentPassword" id="current-password" autocomplete="false" data-password="{{password}}" placeholder="Current Password">
           </div>
           <div class="required field" id="new-password-field">
               <label>New Password</label>
               <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                <input type="password" name="newPassword" id="new-password" placeholder="New Password">
+                <input type="password" name="newPassword" id="new-password" autocomplete="false" placeholder="New Password">
               </div>
           </div>
           <div class="required field" id="confirm-new-password-field">
               <label>Confirm New Password</label>
               <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
+                <input type="password" name="confirmNewPassword" id="confirm-new-password" autocomplete="false" placeholder="Confirm New Password">
               </div>
           </div>
         </div>
@@ -143,19 +143,19 @@
             <div class="required field" id="username-field-user">
                 <label>Username</label>
                 <div data-tooltip="You will not be able to change your username once created" data-position="right center">
-                  <input type="text" name="username" id="add-username-user" placeholder="Username">
+                  <input type="text" name="username" id="add-username-user" autocomplete="false" placeholder="Username">
                 </div>
             </div>
             <div class="required field" id="password-field-user">
                 <label>Password</label>
                 <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                  <input type="password" name="password" id="add-password-user" placeholder="Password">
+                  <input type="password" name="password" id="add-password-user" autocomplete="false" placeholder="Password">
                 </div>
             </div>
             <div class="required field" id="confirm-password-field-user">
                 <label>Confirm Password</label>
                 <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                  <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
+                  <input type="password" name="confirmPassword" id="confirm-password-user" autocomplete="false" placeholder="Confirm Password">
                 </div>
             </div>
         </div>
@@ -181,13 +181,13 @@
               <div class="required field" id="edit-password-field-user">
                   <label>Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="password" id="edit-password-user" placeholder="Password">
+                    <input type="password" name="password" id="edit-password-user" autocomplete="false" placeholder="Password">
                   </div>
               </div>
               <div class="required field" id="edit-confirm-password-field-user">
                   <label>Confirm Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="confirmPassword" id="edit-confirm-password-user" placeholder="Confirm Password">
+                    <input type="password" name="confirmPassword" id="edit-confirm-password-user" autocomplete="false" placeholder="Confirm Password">
                   </div>
               </div>
           </div>
@@ -226,28 +226,28 @@
           <div class="ui form">
               <div class="required field" id="firstname-field-dentist">
                   <label>First Name</label>
-                  <input type="text" name="firstname" id="add-firstname-dentist" placeholder="First Name">
+                  <input type="text" name="firstname" id="add-firstname-dentist" autocomplete="false" placeholder="First Name">
               </div>
               <div class="required field" id="lastname-field-dentist">
                   <label>Last Name</label>
-                  <input type="text" name="lastname" id="add-lastname-dentist" placeholder="Last Name">
+                  <input type="text" name="lastname" id="add-lastname-dentist" autocomplete="false" placeholder="Last Name">
               </div>
               <div class="required field" id="username-field-dentist">
                   <label>Username</label>
                   <div data-tooltip="You will not be able to change your username once created" data-position="right center">
-                    <input type="text" name="username" id="add-username-dentist" placeholder="Username">
+                    <input type="text" name="username" id="add-username-dentist" autocomplete="false" placeholder="Username">
                   </div>
               </div>
               <div class="required field" id="password-field-dentist">
                   <label>Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="password" id="add-password-dentist" placeholder="Password">
+                    <input type="password" name="password" id="add-password-dentist" autocomplete="false" placeholder="Password">
                   </div>
               </div>
               <div class="required field" id="confirm-password-field-dentist">
                   <label>Confirm Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
+                    <input type="password" name="confirmPassword" id="confirm-password-dentist" autocomplete="false" placeholder="Confirm Password">
                   </div>
               </div>
           </div>
@@ -268,11 +268,11 @@
           <div class="ui form">
               <div class="required field" id="edit-firstname-field-dentist">
                   <label>First Name</label>
-                  <input type="text" name="firstname" id="edit-firstname-dentist" placeholder="First Name">
+                  <input type="text" name="firstname" id="edit-firstname-dentist" autocomplete="false" placeholder="First Name">
               </div>
               <div class="required field" id="edit-lastname-field-dentist">
                   <label>Last Name</label>
-                  <input type="text" name="lastname" id="edit-lastname-dentist" placeholder="Last Name">
+                  <input type="text" name="lastname" id="edit-lastname-dentist" autocomplete="false" placeholder="Last Name">
               </div>
               <div class="required field" id="edit-username-field-dentist">
                   <label>Username</label>
@@ -281,13 +281,13 @@
               <div class="required field" id="edit-password-field-dentist">
                   <label>Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="password" id="edit-password-dentist" placeholder="Password">
+                    <input type="password" name="password" id="edit-password-dentist" autocomplete="false" placeholder="Password">
                   </div>
               </div>
               <div class="required field" id="edit-confirm-password-field-dentist">
                   <label>Confirm Password</label>
                   <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="confirmPassword" id="edit-confirm-password-dentist" placeholder="Confirm Password">
+                    <input type="password" name="confirmPassword" id="edit-confirm-password-dentist" autocomplete="false" placeholder="Confirm Password">
                   </div>
               </div>
           </div>
@@ -300,112 +300,110 @@
       </div>
     </div>
 
-    {{!-- multiple modal for adding and editing dentist schedule --}}
-    <div class="ui coupled modal">
-      {{!-- modal for adding/editing dentist schedule --}}
-      <div class="ui small modal" id="adding-schedule-modal">
-        <i class="close icon deny"></i>
-        <div class="header" id="adding-schedule-header"></div>
-        <div class="content">
-          <div class="ui center aligned basic segment">
-            <i class="huge user md icon"></i><br>
-            <span id="doctor-name" style="font-weight: bold; font-size: 25px"></span>
-            <div class="ui horizontal divider"> ● </div>
-            <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
-              <div class="ui checkbox" style="margin-top: 10px;" id="daily-field">
-                <input type="checkbox" name="mon" id="daily">
-                <label for="daily" style="cursor: pointer">Repeat Daily</label>
-              </div>
-              <div class="ui checkbox" style="margin-top: 10px;" id="repeat-field">
-                <input type="checkbox" name="mon" id="repeat">
-                <label for="repeat" style="cursor: pointer">Customized Occurence</label>
+    {{!-- modal for adding/editing dentist schedule --}}
+    <div class="ui small modal" id="adding-schedule-modal">
+      <i class="close icon deny"></i>
+      <div class="header">Add Schedule</div>
+      <div class="content">
+        <div class="ui center aligned basic segment">
+          <i class="huge user md icon"></i><br>
+          <span id="doctor-name" style="font-weight: bold; font-size: 25px"></span>
+          <div class="ui horizontal divider"> ● </div>
+          <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
+            <div class="ui checkbox" style="margin-top: 10px;" id="daily-field">
+              <input type="checkbox" id="daily">
+              <label for="daily" style="cursor: pointer">Repeat Daily</label>
+            </div>
+            <div class="ui checkbox" style="margin-top: 10px;" id="repeat-field">
+              <input type="checkbox" id="repeat">
+              <label for="repeat" style="cursor: pointer">Customized Occurence</label>
+            </div>
+          </div>
+          <div class="ui checkbox" style="padding-top: 20px;" id="custom-field">
+            <input type="checkbox" id="custom">
+            <label for="custom" style="cursor: pointer">Customized Working Hours</label>
+          </div>
+          <h3>Working Hours</h3>
+          <span style="font-weight: bold; color: white" id="first-schedule">First Session</span>
+          <div class="ui two column center aligned grid" style="padding-top: 20px;">
+            <div class="ui calendar" id="start-field">
+              <div class="ui input left icon">
+                <i class="time icon"></i>
+                <input type="text" placeholder="Start Time" id="start" autocomplete="false">
               </div>
             </div>
-            <div class="ui checkbox" style="padding-top: 20px;" id="custom-field">
-              <input type="checkbox" name="mon" id="custom">
-              <label for="custom" style="cursor: pointer">Customized Working Hours</label>
-            </div>
-            <h3>Working Hours</h3>
-            <span style="font-weight: bold; color: white" id="first-schedule">First Session</span>
-            <div class="ui two column center aligned grid" style="padding-top: 20px;">
-              <div class="ui calendar" id="start-field">
-                <div class="ui input left icon">
-                  <i class="time icon"></i>
-                  <input type="text" placeholder="Start Time" id="start">
-                </div>
-              </div>
-              <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-              <div class="ui calendar" id="end-field">
-                <div class="ui input left icon">
-                  <i class="time icon"></i>
-                  <input type="text" placeholder="End Time" id="end">
-                </div>
+            <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
+            <div class="ui calendar" id="end-field">
+              <div class="ui input left icon">
+                <i class="time icon"></i>
+                <input type="text" placeholder="End Time" id="end" autocomplete="false">
               </div>
             </div>
-            <div class="ui accordion">
-              <div class="title active"></div>
-              <div class="content" id="custom-schedule">
-                <span style="font-weight: bold;" id="second-schedule">Second Session</span>
-                <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
-                  <div class="ui calendar" id="start-add-field">
-                    <div class="ui input left icon">
-                      <i class="time icon"></i>
-                      <input type="text" placeholder="Start Time" id="start-add">
-                    </div>
-                  </div>
-                  <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-                  <div class="ui calendar" id="end-add-field">
-                    <div class="ui input left icon">
-                      <i class="time icon"></i>
-                      <input type="text" placeholder="End Time" id="end-add">
-                    </div>
+          </div>
+          <div class="ui accordion">
+            <div class="title active"></div>
+            <div class="content" id="custom-schedule">
+              <span style="font-weight: bold;" id="second-schedule">Second Session</span>
+              <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
+                <div class="ui calendar" id="start-add-field">
+                  <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="Start Time" id="start-add" autocomplete="false">
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="ui accordion">
-              <div class="title active"></div>
-              <div class="content" id="repeat-content">
-                <div class="ui one wide column center aligned grid" style="font-weight: bold; padding-bottom: 10px">
-                  Repeat on
-                </div>
-                <div class="ui six column center aligned grid">
-                  <button class="circular ui toggle button" name="mon">M</button>
-                  <button class="circular ui toggle button" name="tue">T</button>
-                  <button class="circular ui toggle button" name="wed">W</button>
-                  <button class="circular ui toggle button" name="thu">H</button>
-                  <button class="circular ui toggle button" name="fri">F</button>
-                  <button class="circular ui toggle button" name="sat">S</button>
+                <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
+                <div class="ui calendar" id="end-add-field">
+                  <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="End Time" id="end-add" autocomplete="false">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="actions">
-          <div class="ui right floated labeled icon green button very padded" id="add-schedule-button" style="margin-bottom: 15px;">
-              FINISH
-              <i class="checkmark icon"></i>
+          <div class="ui accordion">
+            <div class="title active"></div>
+            <div class="content" id="repeat-content">
+              <div class="ui one wide column center aligned grid" style="font-weight: bold; padding-bottom: 10px">
+                Repeat on
+              </div>
+              <div class="ui six column center aligned grid">
+                <button class="circular ui toggle button" name="mon">M</button>
+                <button class="circular ui toggle button" name="tue">T</button>
+                <button class="circular ui toggle button" name="wed">W</button>
+                <button class="circular ui toggle button" name="thu">H</button>
+                <button class="circular ui toggle button" name="fri">F</button>
+                <button class="circular ui toggle button" name="sat">S</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="add-schedule-button" style="margin-bottom: 15px;">
+            FINISH
+            <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>
 
-      {{!-- modal for showing dentist schedule --}}
-      <div class="ui tiny modal" id="schedule-modal">
-        <i class="close icon deny"></i>
-        <div class="header">Schedule</div>
-        <div class="content">
-          <div class="ui grid" style="padding: 10px;">
-            <div class="ten wide column" style="padding: 0px">
-              <i class="big user md icon"></i>
-              <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
-            </div>
-            <div class="three wide column right aligned" style="padding: 0px">
-              <button class="ui green button" id="add-schedule">Add</button>
-            </div>
-            <div class="three wide column right aligned" style="padding: 0px">
-              <button class="ui button" id="edit-schedule">Edit</button>
-            </div>
-            <table class="ui stripped celled fixed table">
+    {{!-- modal for showing dentist schedule --}}
+    <div class="ui small modal" id="schedule-modal">
+      <i class="close icon deny"></i>
+      <div class="header">Schedule</div>
+      <div class="content">
+        <div class="ui grid" style="padding: 10px;">
+          <div class="thirteen wide column">
+            <i class="big user md icon"></i>
+            <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
+          </div>
+          <div class="three wide column right aligned">
+            <button class="ui green button" id="add-schedule">Add</button>
+          </div>
+          <div class="ui center aligned basic segment" style="padding: 0px">
+            <button class="ui button" id="weekly">Weekly Schedule</button>
+            <button class="ui button" id="unavailable">Unavailable Date</button>
+            <table class="ui stripped selectable celled fixed table">
               <tbody id="table-schedule">
                 
               </tbody>
@@ -413,11 +411,101 @@
           </div>
         </div>
       </div>
+      <div class="actions"></div>
+    </div>
 
-      {{!-- modal for confirmation --}}
-      <div class="ui mini modal" id="confirmation-modal">
-
+    {{!-- modal for editing schedule --}}
+    <div class="ui tiny modal" id="editing-schedule-modal">
+      <i class="close icon deny"></i>
+      <div class="header">Edit Schedule</div>
+      <div class="content">
+        <div class="ui center aligned basic segment">
+          <h3>Working Hours</h3><br>
+          <div class="ui checkbox" id="edit-custom-field" style="padding-bottom: 20px;">
+            <input type="checkbox" id="edit-custom">
+            <label for="edit-custom" style="cursor: pointer">Customized Working Hours</label>
+          </div><br>
+          <span style="font-weight: bold; color: white" id="edit-first-schedule">First Session</span>
+          <div class="ui two column center aligned grid" style="padding-top: 25px;">
+            <div class="ui calendar" id="edit-start-field" style="padding: 0px">
+              <div class="ui input left icon">
+                <i class="time icon"></i>
+                <input type="text" placeholder="Start Time" id="edit-start" autocomplete="false">
+              </div>
+            </div>
+            <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
+            <div class="ui calendar" id="edit-end-field" style="padding: 0px">
+              <div class="ui input left icon">
+                <i class="time icon"></i>
+                <input type="text" placeholder="End Time" id="edit-end" autocomplete="false">
+              </div>
+            </div>
+          </div>
+          <div class="ui accordion">
+            <div class="title active"></div>
+            <div class="content" id="edit-custom-schedule">
+              <span style="font-weight: bold;" id="edit-second-schedule">Second Session</span>
+              <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
+                <div class="ui calendar" id="edit-start-add-field" style="padding: 0px">
+                  <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="Start Time" id="edit-start-add" autocomplete="false">
+                  </div>
+                </div>
+                <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
+                <div class="ui calendar" id="edit-end-add-field" style="padding: 0px">
+                  <div class="ui input left icon">
+                    <i class="time icon"></i>
+                    <input type="text" placeholder="End Time" id="edit-end-add" autocomplete="false">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very p added" id="save-changes-schedule" style="margin-bottom: 15px;">
+            SAVE CHANGES
+            <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>
+
+    {{!-- modal for adding unavailable date --}}
+    <div class="ui tiny modal" id="add-unavailable-modal">
+      <i class="close icon deny"></i>
+      <div class="header">Add Unavailable Date</div>
+      <div class="content">
+        <div class="ui center aligned basic segment">
+          <div class="ui two column center aligned grid">
+            <div class="ui calendar" id="start-date" style="padding: 0px;">
+              <div class="ui input left icon">
+                <i class="calendar icon"></i>
+                <input type="text" placeholder="Start Date" id="start-date-input" autocomplete="false">
+              </div>
+            </div>
+            <span style="font-weight: bold; margin-top: 10px;">to</span>
+            <div class="ui calendar" id="end-date" style="padding: 0px;">
+              <div class="ui input left icon">
+                <i class="calendar icon"></i>
+                <input type="text" placeholder="End Date" id="end-date-input" autocomplete="false">
+              </div>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="add-unavailable-button" style="margin-bottom: 15px;">
+            FINISH
+            <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>
+
+    {{!-- modal for confirmation --}}
+    <div class="ui mini modal" id="confirmation-modal">
+
     </div>
 
     {{!-- modal for adding procedure --}}
@@ -428,7 +516,7 @@
         <div class="ui form">
             <div class="required field" id="procedure-field">
                 <label>Procedure Name</label>
-                <input type="text" name="procedure" id="procedure-name" placeholder="Procedure Name">
+                <input type="text" name="procedure" id="procedure-name" autocomplete="false" placeholder="Procedure Name">
             </div>
         </div>
       </div>
@@ -452,7 +540,7 @@
             </div>
             <div class="required field" id="edit-procedure-field">
                 <label>New Procedure Name</label>
-                <input type="text" name="procedure" id="edit-procedure-name" placeholder="Procedure Name">
+                <input type="text" name="procedure" id="edit-procedure-name" autocomplete="false" placeholder="Procedure Name">
             </div>
         </div>
       </div>
@@ -488,7 +576,5 @@
     <script src="javascript/jquery-data-table-semanticui.js"></script>
     <script src="javascript/handlebars.js"></script>
     <script src="javascript/admin.js"></script>
-    <script src="javascript/admin_modal.js"></script>
-    <script src="javascript/admin_page.js"></script>
   </body>
 </html>

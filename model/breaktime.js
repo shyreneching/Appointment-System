@@ -34,13 +34,13 @@ breakTimeSchema.statics.updateBreakTime = async function(breakTimeID, breakTime)
     return await this.updateOne({
         _id: breakTimeID
     }, {
-        sunday,
-        monday,
-        tuesday,
-        wednesday,
-        thursday,
-        friday,
-        saturday
+        sunday: breakTime.sunday,
+        monday: breakTime.monday,
+        tuesday: breakTime.tuesday,
+        wednesday: breakTime.wednesday,
+        thursday: breakTime.thursday,
+        friday: breakTime.friday,
+        saturday: breakTime.saturday
     }, {
         new: true
     }); 

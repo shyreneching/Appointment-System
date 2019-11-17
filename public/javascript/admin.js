@@ -1,7 +1,36 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab, userType, days = [], passwordChecker;
+var defaultButton, currTab, userType, days = [], passwordChecker, accor_show;;
+var editSchedule, editBreaktime, editDay;
+
+var weekday = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
 $(document).ready(() => {
+    // switch page between users, dentist, and procedure
+    $(".ui .item").on("click", switchPage);
+
+    $("#start-field").calendar({
+        type: "time",   
+        minTimeGap: 30
+    })
+    $("#end-field").calendar({
+        type: "time",   
+        minTimeGap: 30
+    })
+    $("#start-add-field").calendar({
+        type: "time",   
+        minTimeGap: 30
+    })
+    $("#end-add-field").calendar({
+        type: "time",   
+        minTimeGap: 30
+    })
+    $("#start-date").calendar({
+        type: "date"
+    })
+    $("#end-date").calendar({
+        type: "date"
+    })
+
     // validation if username exist
     $("#add-username-user").focusout(() => {
         $.ajax({
@@ -133,6 +162,52 @@ $(document).ready(() => {
         }
     })
 
+    // Switch between weekly and unavailable
+    $("#weekly").click(() => {
+        $("#weekly").addClass("green");
+        $("#unavailable").removeClass("green");
+    })
+    $("#unavailable").click(() => {
+        $("#weekly").removeClass("green");
+        $("#unavailable").addClass("green");
+    })
+
+    // EDITING DENTIST SCHEDULE
+    $("#table-schedule").on("click", (event) => {
+        editDay = $($(event.target)[0].parentNode).data("day").toLowerCase();
+        
+        $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
+        $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+        $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+        $("#editing-schedule-modal").modal("show");    
+        
+        $.ajax({
+            type: "post",
+            url: "admin/getDoctorSchedule",
+            data: {
+                doctorID: $("#editing-schedule-modal").data("id")
+            },
+            success: (value) => {
+                editSchedule = value.docSched;
+                editBreaktime = value.breakTime;
+                var normal = value.docSched[editDay];
+                var breaktime = value.breakTime[editDay];
+                if(normal != "") {
+                    $("#edit-start").val(normal[0]);
+                    $("#edit-end").val(normal[1]);
+                } 
+                if(breaktime != "") {   
+                    $("#edit-custom")[0]["checked"] = true;
+                    $("#edit-start-add").val(breaktime[0]);
+                    $("#edit-end-add").val(breaktime[1]);
+                    accor_show = true;
+                    $("#edit-first-schedule").css({'color':'black'})
+                    $("#edit-custom-schedule").slideToggle(500);
+                } 
+            }
+        })    
+    })
+
     // switch selected day in adding/editing dentist schedule
     $(".ui .button").on('click', (event) => {
         var temp = $(event.target)[0];
@@ -146,6 +221,54 @@ $(document).ready(() => {
             days.push(temp.name);
         }
     })
+
+    // slide down accordion in add schedule
+    $(".ui .checkbox").on('change', (event) => {
+        var id = $(event.target)[0].id;
+        if(id == "daily") {
+            if($(event.target)[0].checked && !$("#repeat")[0].checked) {
+                $("#repeat-field").addClass("disabled");
+                $("#repeat").attr("disabled", "disabled");
+            } else {
+                $("#repeat-field").removeClass("disabled");
+                $("#repeat").removeAttr("disabled");
+            }
+        } else {
+            if(id == "custom") {
+                accor_show = !accor_show;
+                if(accor_show) {
+                    $("#first-schedule").css({'color': 'black'});
+                } 
+                $("#" + id + "-schedule").slideToggle(500, () => {
+                    if(!accor_show) {
+                        $("#first-schedule").css({'color': 'white'});
+                    }
+                });
+            } else if(id == "repeat") {
+                $("body").find("#" + id + "-content").slideToggle(500);
+                if($(event.target)[0].checked && !$("#daily")[0].checked) {
+                    $("#daily-field").addClass("disabled");
+                    $("#daily").attr("disabled","disabled");
+                } else {
+                    $("#daily-field").removeClass("disabled");
+                    $("#daily").removeAttr("disabled");
+                }
+            }
+        }
+        if($("#editing-schedule-modal")[0].className.includes("active")) {
+            accor_show = !accor_show;
+            if(accor_show) {
+                $("#edit-first-schedule").css({'color':'black'});
+            } 
+            $("#edit-custom-schedule").slideToggle(500, () => {
+                if(!accor_show) {
+                    $("#edit-first-schedule").css({'color':'white'});
+                }
+            });
+        }
+        $("#daily-field").removeClass("error");
+        $("#report-field").removeClass("error");
+    });
 
     // function to access the loaded table
     $('#table').on("click", (event) => {
@@ -193,12 +316,11 @@ $(document).ready(() => {
                     $("#adding-schedule-modal").data("lastname", $(temp).data("lastname"));
                     $("#adding-schedule-modal").modal("show");    
                     $("#doctor-name").text("Dr. " + $(temp).data("firstname") + " " + $(temp).data("lastname"));
-                    $("#adding-schedule-header").text("Add Schedule");
                 } else if($(temp).text() == "View") {
                     $("#schedule-modal").data("id", $(temp).data("id"));
                     $("#schedule-modal").data("firstname", $(temp).data("firstname"));
                     $("#schedule-modal").data("lastname", $(temp).data("lastname"));
-                    $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));                    
+                    $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
                     setDataTable();
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
@@ -481,7 +603,6 @@ $("#create-dentist-button").click(() => {
                     $("#adding-schedule-modal").data("firstname", value.doctor.firstname);
                     $("#adding-schedule-modal").data("lastname", value.doctor.lastname);
                     $("#doctor-name").text("Dr. " + value.doctor.firstname + " " + value.doctor.lastname);
-                    $("#adding-schedule-header").text("Add Schedule");
                     $("#adding-schedule-modal").modal("show");
                 } else {
                     $("#username-field-dentist").addClass("error");
@@ -775,7 +896,7 @@ $("#delete-procedure-button").click(() => {
 
 // ADDING DENTIST SCHEDULE
 $("#add-schedule-button").click(() => {
-
+    
     // ERROR CHECKING
     var done = true;
     if(!$("#daily")[0].checked && !$("#repeat")[0].checked) {
@@ -784,13 +905,17 @@ $("#add-schedule-button").click(() => {
         $("body").toast({
             class: "error",
             position: "top center",
-            message: "Please chooose an occurence"
+            message: "Please choose an occurence"
         });
         done = false;
     } 
-    if($("#start").val() == "" && $("#end").val() == "") {
-        $("#start-field").addClass("error");
-        $("#end-field").addClass("error");
+    if($("#start").val() == "" || $("#end").val() == "") {
+        if($("#start").val() == "") {
+            $("#start-field").addClass("error");
+        }
+        if($("#end").val() == "") {
+            $("#end-field").addClass("error");
+        }
         $("body").toast({
             class: "error",
             position: "top center",
@@ -798,13 +923,25 @@ $("#add-schedule-button").click(() => {
         })
         done = false;
     }
-    if($("#custom")[0].checked && ($("#start-add").val() == "" && $("#end-add").val() == "") && done) {
-        $("#start-add-field").addClass("error");
-        $("#end-add-field").addClass("error");
+    if($("#custom")[0].checked && ($("#start-add").val() == "" || $("#end-add").val() == "") && done) {
+        if($("#start-add").val() == "") {
+            $("#start-add-field").addClass("error");
+        }
+        if($("#end-add").val() == "") {
+            $("#end-add-field").addClass("error");   
+        }
         $("body").toast({
             class: "error",
             position: "top center",
             message: "Please input a valid time"
+        })
+        done = false;
+    }
+    if($("#repeat")[0].checked && days[0] == undefined) {
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please choose a specific day of reoccurence"
         })
         done = false;
     }
@@ -818,8 +955,10 @@ $("#add-schedule-button").click(() => {
                 doctorID: $("#adding-schedule-modal").data("id")
             },
             success: (value) => {
+                editSchedule = value.docSched;
+                editBreaktime = value.breakTime;
                 if(value.docSched != undefined) {
-                    updateSchedule(value.docSched, value.breakTime);
+                    addScheduleExist();
                 } else {
                     addSchedule();
                 }
@@ -828,16 +967,35 @@ $("#add-schedule-button").click(() => {
     }
 })
 
-// EDITING DENTIST SCHEDULE
-$("#edit-schedule").click(() => {
-    $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
-    $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
-    $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
-    $("#adding-schedule-modal").modal("show");    
-    $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-    $("#adding-schedule-header").text("Edit Schedule");
+// Save changes in schedule
+$("#save-changes-schedule").click(() => {
+    // ERROR CHECKING
+    var done = true;
 
-    
+    if($("#edit-custom")[0].checked && ($("#edit-start-add").val() == "" || $("#edit-end-add").val() == "") && ($("#start-add").val() == "" || $("#end-add").val() == "")) {
+        if($("#start-add").val() == "") {
+            $("#start-add-field").addClass("error");
+        }
+        if($("#end-add").val() == "") {
+            $("#end-add-field").addClass("error");   
+        }
+        if($("#edit-start-add").val() == "") {
+            $("#edit-start-add-field").addClass("error");
+        }
+        if($("#edit-end-add").val() == "") {
+            $("#edit-end-add-field").addClass("error");   
+        }
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid time"
+        })
+        done = false;
+    }
+
+    if(done) {
+        updateSchedule();
+    }
 })
 
 // Checking for conflict
@@ -845,7 +1003,7 @@ function checkConflict(schedule, breaktime) {
 
 }
 
-// Adding schedule function
+// Adding schedule without existing
 function addSchedule() {
     let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
     let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
@@ -866,14 +1024,8 @@ function addSchedule() {
             thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
             fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
             satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
-        } else {
-            monbreak.push("");    monbreak.push("");
-            tuebreak.push("");    tuebreak.push("");
-            wedbreak.push("");    wedbreak.push("");
-            thubreak.push("");    thubreak.push("");
-            fribreak.push("");    fribreak.push("");
-            satbreak.push("");    satbreak.push("");
-        }
+            mB = true; tB = true; wB = true; hB = true; fB = true; sB = true;
+        } 
     } else if($("#repeat")[0].checked) {
         for(var i = 0; i < days.length; i++) {
             if(days[i] == "mon") {
@@ -881,49 +1033,37 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
                     mB = true;
-                } else {
-                    monbreak.push("");    monbreak.push("");            
-                }
+                } 
             } else if(days[i] == "tue") {
                 tue.push($("#start").val());    tue.push($("#end").val());
                 if($("#custom")[0].checked) {
                     tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
                     tB = true;
-                } else {
-                    tuebreak.push("");    tuebreak.push("");
-                }
+                } 
             } else if(days[i] == "wed") {
                 wed.push($("#start").val());    wed.push($("#end").val());
                 if($("#custom")[0].checked) {
                     wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
                     wB = true;
-                } else {
-                    wedbreak.push("");    wedbreak.push("");
-                }
+                } 
             } else if(days[i] == "thu") {
                 thu.push($("#start").val());    thu.push($("#end").val());
                 if($("#custom")[0].checked) {
                     thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
                     hB = true;
-                } else {
-                    thubreak.push("");    thubreak.push("");
-                }
+                } 
             } else if(days[i] == "fri") {
                 fri.push($("#start").val());    fri.push($("#end").val());
                 if($("#custom")[0].checked) {
                     fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
                     fB = true;
-                } else {
-                    fribreak.push("");    fribreak.push("");
-                }
+                } 
             } else if(days[i] == "sat") {
                 sat.push($("#start").val());    sat.push($("#end").val());
                 if($("#custom")[0].checked) {
                     satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
                     sB = true;
-                } else {
-                    satbreak.push("");    satbreak.push("");
-                }
+                } 
             }
         }
     }
@@ -965,26 +1105,181 @@ function addSchedule() {
     })
 }
 
-// Updating schedule function
-function updateSchedule(schedule, breaktime) {
+// Adding schedule with existing
+function addScheduleExist() {
 
 }
 
-// Setup for adding user modal
+// Updating schedule function
+function updateSchedule() {
+    let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+
+    if($("#edit-start").val() != "") {
+        editSchedule[editDay][0] = $("#edit-start").val();
+    }
+    if($("#edit-end").val() != "") {
+        editSchedule[editDay][1] = $("#edit-end").val();
+    }
+    if($("#edit-start-add").val() != "") {
+        editBreaktime[editDay][0] = $("#edit-start-add").val();
+    }
+    if($("#edit-end-add").val() != "") {
+        editBreaktime[editDay][1] = $("#edit-end-add").val();
+    }
+
+    if($("#edit-start").val() == "" && $("#edit-end").val() == "") {
+        editSchedule[editDay] = [];
+    }
+    if($("#edit-start-add").val() == "" && $("#edit-end-add").val() == "") {
+        editBreaktime[editDay] = []
+    }
+
+    if(editBreaktime["monday"] != "") {
+        mB = true;
+    }
+    if(editBreaktime["tuesday"] != "") {
+        tB = true;
+    }
+    if(editBreaktime["wednesday"] != "") {
+        wB = true;
+    }
+    if(editBreaktime["thursday"] != "") {
+        tB = true;
+    }
+    if(editBreaktime["friday"] != "") {
+        fB = true;
+    }
+    if(editBreaktime["saturday"] != "") {
+        sB = true;
+    }
+
+    $.ajax({
+        type: "post",
+        url: 'admin/editSchedule',
+        data: {
+            'monday[]': editSchedule["monday"],
+            'tuesday[]': editSchedule["tuesday"],
+            'wednesday[]': editSchedule["wednesday"],
+            'thursday[]': editSchedule["thursday"],
+            'friday[]': editSchedule["friday"],
+            'saturday[]': editSchedule["saturday"],
+            'mondaydifference[]': editBreaktime["monday"],
+            'tuesdaydifference[]': editBreaktime["tuesday"],
+            'wednesdaydifference[]': editBreaktime["wednesday"],
+            'thursdaydifference[]': editBreaktime["thursday"],
+            'fridaydifference[]': editBreaktime["friday"],
+            'saturdaydifference[]': editBreaktime["saturday"],
+            doctorID: $("#editing-schedule-modal").data("id"),
+            mB,
+            tB,
+            wB,
+            hB,
+            fB,
+            sB,
+            defaultTime
+        },
+        success: (value) => {
+            if(value) {
+                $("body").toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Dentist schedule successfully edited"
+                })
+                $("#editing-schedule-modal").modal("hide");
+            } 
+        }
+    })    
+}
+
+// MODALS
+$("#add").click(() => {
+    $("#create-modal").modal("show");
+})
+
+$("#add-schedule").click(() => {
+    if($("#weekly")[0].className.includes("green")) {
+        $("#schedule-modal").modal("deny");
+        $("#adding-schedule-modal").modal("show");
+        $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        $("#adding-schedule-header").text("Add Schedule");
+    } else {
+        $("#schedule-modal").modal("deny");
+        $("#start-date-input").val("");
+        $("#end-date-input").val("");
+        $("#add-unavailable-modal").modal("show");
+    }
+})
+
+$("#add-sec-button").click(() => {
+    $("#add-user-modal").modal('show');
+    $("#add-dentist-modal").form('clear');
+    $("#procedure-modal").form('clear');
+})
+
+$("#add-dentist-button").click(() => {  
+    $("#add-dentist-modal").modal('show');
+    $("#add-user-modal").form('clear');
+    $("#procedure-modal").form('clear');
+})
+
+$("#add-procedure-button").click(() => {
+    $("#procedure-modal").modal('show');
+    $("#add-user-modal").form('clear');
+    $("#add-dentist-modal").form('clear');
+})
+
+$("#add-user-modal").modal({
+    onShow: function() {
+        $("#add-password-user").val("");
+        $("#confirm-password-user").val("");
+    }
+})
+
+$("#add-dentist-modal").modal({
+    onShow: function() {
+        $("#add-password-dentist").val("");
+        $("#confirm-password-dentist").val("");
+    }
+})
+
+$("#edit-user-modal").modal({
+    onShow: function() {
+        $("#edit-user-modal").form("clear");
+    }
+})
+
+$("#edit-dentist-modal").modal({
+    onShow: function() {
+        $("#edit-dentist-modal").form("clear");
+    }
+})
+
+$("#edit-procedure-modal").modal({
+    onShow: function() {
+        $("#edit-procedure-modal").form("clear");
+    }
+})
+
+$("#reset-password-modal").modal({
+    onShow: function() {
+        $("#current-password").val("");
+        $("#new-password").val("");
+        $("#confirm-new-password").val("")
+    }
+})
+
 $("#add-user-modal").modal({
     onShow: function() {
         passwordChecker = true;
     }
 })
 
-// Setup for reset admin password
 $("#reset-password-modal").modal({
     onShow: function() {
         passwordChecker = true;   
     }
 })
 
-// Setup of adding/editing modal
 $("#adding-schedule-modal").modal({
     onShow: () => {
         accor_show = false;
@@ -1005,6 +1300,23 @@ $("#adding-schedule-modal").modal({
     }
 })
 
+$("#editing-schedule-modal").modal({
+    onHidden: () => {
+        $(".ui .button").removeClass("active");
+        $(".ui .checkbox").checkbox('uncheck');
+        $(".accordion .content").css({
+            display: 'none'
+        })
+        $("input").val("");
+        accor_show = false;
+        $("#schedule-modal").data("id", $("#editing-schedule-modal").data("id"));
+        $("#schedule-modal").data("firstname", $("#editing-schedule-modal").data("firstname"));
+        $("#schedule-modal").data("lastname", $("#editing-schedule-modal").data("lastname"));
+        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        setDataTable();
+    }
+})
+
 // Initialization
 function setup() {
     // load the list of users
@@ -1012,6 +1324,7 @@ function setup() {
         updateTable(data);
     });
 
+    accor_show = false;
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
@@ -1080,7 +1393,61 @@ function setDataTable() {
             let table = Handlebars.compile(value.htmlData);
             $("#table-schedule").html(table(value.data));
             $("#edit-schedule").data("id", value.scheduleID);
+            $("#weekly").click();
             $("#schedule-modal").modal("show");
         }
     })
 }
+
+// Setting default button on modal when ENTER key is pressed
+$(document).keypress((event) => {
+    if(event.keyCode == 13) {
+        if($("#reset-password-modal")[0].className.includes("active")) {
+            $("#save-password").click();
+        } else if($("#add-user-modal")[0].className.includes("active")) {
+            $("#create-user-button").click();
+        } else if($("#add-dentist-modal")[0].className.includes("active")) {
+            $("#create-dentist-button").click();
+        } else if($("#procedure-modal")[0].className.includes("active")) {
+            $("#create-procedure-button").click();
+        } else if($("#edit-user-modal")[0].className.includes("active")) {
+            $("#edit-user-button").click();
+        } else if($("#edit-dentist-modal")[0].className.includes("active")) {
+            $("#edit-dentist-button").click();
+        } else if($("#edit-procedure-modal")[0].className.includes("active")) {
+            $("#edit-procedure-button").click();
+        } else if($("#adding-schedule-modal")[0].className.includes("active")) {
+            $("#add-schedule-button").click();
+        }
+    }
+})
+
+// RESETTING ERRORS
+$(document).on("keydown", () => {
+    $("#username-field-user").removeClass("error");
+    $("#password-field-user").removeClass("error");
+    $("#confirm-password-field-user").removeClass("error");
+    $("#firstname-field-dentist").removeClass("error");
+    $("#lastname-field-dentist").removeClass("error");
+    $("#username-field-dentist").removeClass("error");
+    $("#password-field-dentist").removeClass("error");
+    $("#confirm-password-field-dentist").removeClass("error");
+    $("#procedure-field").removeClass("error");
+    $("#current-password-field").removeClass("error");
+    $("#new-password-field").removeClass("error");
+    $("#confirm-new-password-field").removeClass("error");
+    $("#edit-password-field-user").removeClass("error");
+    $("#edit-confirm-password-field-user").removeClass("error");
+    $("#edit-firstname-field-dentist").removeClass("error");
+    $("#edit-lastname-field-dentist").removeClass("error");
+    $("#edit-password-field-dentist").removeClass("error");
+    $("#edit-confirm-password-field-dentist").removeClass("error");
+    $("#edit-procedure-field").removeClass("error");
+    $("#start-add-field").removeClass("error");
+    $("#end-add-field").removeClass("error");
+})
+
+// LOGOUT
+$("#logout").click(() => {
+    window.location.href="/logout";
+})
