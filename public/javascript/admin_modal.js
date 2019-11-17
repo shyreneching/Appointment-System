@@ -56,11 +56,6 @@ $(document).keypress((event) => {
         } else if($("#procedure-modal")[0].className.includes("active")) {
             $("#create-procedure-button").click();
         } 
-        // else if($("#delete-procedure-modal")[0].className.includes("active")) {
-        //     $("#delete-procedure-button").click();
-        // } else if($("#delete-user-modal")[0].className.includes("active")) {
-        //     $("#delete-user-button").click();
-        // } 
         else if($("#edit-user-modal")[0].className.includes("active")) {
             $("#edit-user-button").click();
         } else if($("#edit-dentist-modal")[0].className.includes("active")) {
@@ -103,6 +98,20 @@ $("#add-procedure-button").click(() => {
     $("#add-dentist-modal").form('clear');
 })
 
+$("#add-user-modal").modal({
+    onShow: function() {
+        $("#add-password-user").val("");
+        $("#confirm-password-user").val("");
+    }
+})
+
+$("#add-dentist-modal").modal({
+    onShow: function() {
+        $("#add-password-dentist").val("");
+        $("#confirm-password-dentist").val("");
+    }
+})
+
 $("#edit-user-modal").modal({
     onShow: function() {
         $("#edit-user-modal").form("clear");
@@ -118,5 +127,13 @@ $("#edit-dentist-modal").modal({
 $("#edit-procedure-modal").modal({
     onShow: function() {
         $("#edit-procedure-modal").form("clear");
+    }
+})
+
+$("#reset-password-modal").modal({
+    onShow: function() {
+        $("#current-password").val("");
+        $("#new-password").val("");
+        $("#confirm-new-password").val("")
     }
 })

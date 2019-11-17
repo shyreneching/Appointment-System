@@ -68,6 +68,12 @@ router.post("/deleteAccount", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
     if(account.accountType == "dentist") {
         Doctor.delete(account.doctorID);
+        let appointments = Appintment.getDoctorAppointment(account.doctorID);
+        for (var i = 0; i < appointments.length; i++){
+            let appID = appointments[i]._id;
+
+            await Appointment.delete(appID);
+        }
     } 
     Account.delete(req.body.accountID);
     res.send({message: true});
@@ -226,7 +232,7 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
 
-    let time = ['08:00:00', '18:00:00'];
+    let time = ['8:00 AM', '6:00 PM'];
 
     let defaultschedule = new Schedule({
         sunday: null,
@@ -238,12 +244,12 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
         saturday: time
     })
 
-    let mondayBreak= null;
-    let tuesdayBreak = null;
-    let wednesdayBreak = null;
-    let thursdayBreak = null;
-    let fridayBreak = null;
-    let saturdayBreak = null;
+    let mondayBreak= ["",""];
+    let tuesdayBreak = ["",""];
+    let wednesdayBreak = ["",""];
+    let thursdayBreak = ["",""];
+    let fridayBreak = ["",""];
+    let saturdayBreak = ["",""];
 
     if(req.body.defaultTime == 'false'){
         let monday, tuesday, wednesday, thursday, friday, saturday;
@@ -403,56 +409,95 @@ router.post("/editSchedule", urlencoder, async (req, res) => {
     Schedule.updateSchedule(doctor.schedule, schedule);
 })
 
+router.post("/getDoctorSchedule", async (req, res) => {
+    let doctor = await Doctor.getDoctorByID(req.body.doctorID);
+    let docSched = await Schedule.getScheduleByID(doctor.schedule);
+    let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
+
+    res.send({
+        docSched,
+        breaktime
+    })
+})
+
 router.post("/getSchedule", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let doctor = await Doctor.getDoctorByID(doctorID);
     let docSched = await Schedule.getScheduleByID(doctor.schedule);
     let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-schedule-modal.hbs', 'utf-8');
-    
-    let array = [];
+
+    let array = [], docID;
     if(docSched != undefined) {
         array = getObject(docSched, breaktime);
+        docID = docSched._id;
+    } else {
+        docID = "";
     }
 
     let sendData = {
-        sched: array
+        sched: array,
+        schedID: docID
     }
     res.send({
         htmlData: table,
-        data: sendData
+        data: sendData,
     })
 })
-
-var weekday = ["M","T","W","H","F","S"];
 
 function getObject(object, breakTime) {
     let array = [];
     array.push(object.monday);
+    array.push(breakTime.monday);
     array.push(object.tuesday);
+    array.push(breakTime.tuesday);
     array.push(object.wednesday);
+    array.push(breakTime.wednesday);
     array.push(object.thursday);
+    array.push(breakTime.thursday);
     array.push(object.friday);
+    array.push(breakTime.friday);
     array.push(object.saturday);
-    
-    let timeList = [];
+    array.push(breakTime.saturday);
+
     let objectTimeList = [];
+    objectTimeList.push(new Object({
+        name: "Monday",
+        time: []
+    }));
+    objectTimeList.push(new Object({
+        name: "Tuesday",
+        time: []
+    }));
+    objectTimeList.push(new Object({
+        name: "Wednesday",
+        time: []
+    }));
+    objectTimeList.push(new Object({
+        name: "Thursday",
+        time: []
+    }));
+    objectTimeList.push(new Object({
+        name: "Friday",
+        time: []
+    }));
+    objectTimeList.push(new Object({
+        name: "Saturday",
+        time: []
+    }));
 
     var ctr = 0;
     while(ctr < array.length) {
-        var time = array[ctr][0] + " - " + array[ctr][1];
-        if(timeList.includes(time)) {
-            var obj = objectTimeList.filter((value) => {
-                return value.time == time;
-            });
-            obj[0]['name'] = obj[0].name + weekday[ctr];
+        var temp = array[ctr][0] + " - " + array[ctr][1];
+        if(!temp.includes("undefined") && temp != " - ") {
+            objectTimeList[Math.floor(ctr/2)].time.push({
+                range: temp
+            })
         } else {
-            if(!time.includes("undefined")) {
-                timeList.push(time);
-                objectTimeList.push(new Object({
-                    name: weekday[ctr],
-                    time: time
-                }));
+            if(ctr % 2 == 0) {
+                objectTimeList[Math.floor(ctr/2)].time.push({
+                    range: "-"
+                })
             }
         }
         ctr++;

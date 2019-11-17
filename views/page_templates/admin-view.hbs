@@ -82,8 +82,6 @@
               New Secretary
             </div>
           </div>
-          {{!-- background-color: #cc1445 !important;
-        color: white !important; --}}
           <div class="column">
             <div class="ui button" id="add-dentist-button" style="text-align: center">
               <div class="segment">
@@ -116,11 +114,15 @@
           </div>
           <div class="required field" id="new-password-field">
               <label>New Password</label>
-              <input type="password" name="newPassword" id="new-password" placeholder="New Password">
+              <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                <input type="password" name="newPassword" id="new-password" placeholder="New Password">
+              </div>
           </div>
           <div class="required field" id="confirm-new-password-field">
               <label>Confirm New Password</label>
-              <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
+              <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                <input type="password" name="confirmNewPassword" id="confirm-new-password" placeholder="Confirm New Password">
+              </div>
           </div>
         </div>
       </div>
@@ -128,10 +130,6 @@
         <div class="ui right floated labeled icon green button" id="save-password" style="margin-bottom: 15px;">
             CONFIRM
             <i class="checkmark icon"></i>
-        </div>
-        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
-            CANCEL
-            <i class="cancel icon"></i>
         </div>
       </div>
     </div>  
@@ -150,11 +148,15 @@
             </div>
             <div class="required field" id="password-field-user">
                 <label>Password</label>
-                <input type="password" name="password" id="add-password-user" placeholder="Password">
+                <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                  <input type="password" name="password" id="add-password-user" placeholder="Password">
+                </div>
             </div>
             <div class="required field" id="confirm-password-field-user">
                 <label>Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
+                <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                  <input type="password" name="confirmPassword" id="confirm-password-user" placeholder="Confirm Password">
+                </div>
             </div>
         </div>
       </div>
@@ -178,11 +180,15 @@
               </div>
               <div class="required field" id="edit-password-field-user">
                   <label>Password</label>
-                  <input type="password" name="password" id="edit-password-user" placeholder="Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="password" id="edit-password-user" placeholder="Password">
+                  </div>
               </div>
               <div class="required field" id="edit-confirm-password-field-user">
                   <label>Confirm Password</label>
-                  <input type="password" name="confirmPassword" id="edit-confirm-password-user" placeholder="Confirm Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="confirmPassword" id="edit-confirm-password-user" placeholder="Confirm Password">
+                  </div>
               </div>
           </div>
       </div>
@@ -234,11 +240,15 @@
               </div>
               <div class="required field" id="password-field-dentist">
                   <label>Password</label>
-                  <input type="password" name="password" id="add-password-dentist" placeholder="Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="password" id="add-password-dentist" placeholder="Password">
+                  </div>
               </div>
               <div class="required field" id="confirm-password-field-dentist">
                   <label>Confirm Password</label>
-                  <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="confirmPassword" id="confirm-password-dentist" placeholder="Confirm Password">
+                  </div>
               </div>
           </div>
       </div>
@@ -270,11 +280,15 @@
               </div>
               <div class="required field" id="edit-password-field-dentist">
                   <label>Password</label>
-                  <input type="password" name="password" id="edit-password-dentist" placeholder="Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="password" id="edit-password-dentist" placeholder="Password">
+                  </div>
               </div>
               <div class="required field" id="edit-confirm-password-field-dentist">
                   <label>Confirm Password</label>
-                  <input type="password" name="confirmPassword" id="edit-confirm-password-dentist" placeholder="Confirm Password">
+                  <div data-tooltip="Password should contain 8 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="confirmPassword" id="edit-confirm-password-dentist" placeholder="Confirm Password">
+                  </div>
               </div>
           </div>
       </div>
@@ -379,23 +393,25 @@
       <div class="ui tiny modal" id="schedule-modal">
         <i class="close icon deny"></i>
         <div class="header">Schedule</div>
-        <div class="scrolling content">
+        <div class="content">
           <div class="ui grid" style="padding: 10px;">
-            <div class="thirteen wide column" style="padding: 0px">
+            <div class="ten wide column" style="padding: 0px">
               <i class="big user md icon"></i>
               <span id="doctor-name-schedule" style="font-weight: bold; font-size: 20px"></span>
             </div>
             <div class="three wide column right aligned" style="padding: 0px">
               <button class="ui green button" id="add-schedule">Add</button>
             </div>
-            <table class="ui stripped fixed table">
+            <div class="three wide column right aligned" style="padding: 0px">
+              <button class="ui button" id="edit-schedule">Edit</button>
+            </div>
+            <table class="ui stripped celled fixed table">
               <tbody id="table-schedule">
                 
               </tbody>
             </table>
           </div>
         </div>
-        <div class="actions"></div>
       </div>
 
       {{!-- modal for confirmation --}}
