@@ -7,6 +7,7 @@ const urlencoder = bodyparser.urlencoded({
     extended : true
 });
 
+const {Appointment} = require("../model/appointment");
 const {Doctor} = require("../model/doctor");
 const {Process} = require("../model/process");
 const {Account} = require("../model/account");
@@ -68,7 +69,7 @@ router.post("/deleteAccount", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
     if(account.accountType == "dentist") {
         Doctor.delete(account.doctorID);
-        let appointments = Appintment.getDoctorAppointment(account.doctorID);
+        let appointments = await Appointment.getDoctorAppointment(account.doctorID);
         for (var i = 0; i < appointments.length; i++){
             let appID = appointments[i]._id;
 
@@ -535,12 +536,21 @@ router.post("/addUnavailableDates", urlencoder, async (req, res) => {
 router.post("/getUnavailableDates", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
     let data = UnavailableDate.getDoctorUnavailableDates(doctorID);
+    let table = fs.readFileSync('./views/module_templates/admin-dentist-unavailable.hbs', 'utf-8');
     
+    let sendData = {
+        sched: modifyArray(data)
+    }
+
     res.send({
         htmlData: table,
-        data: data
+        data: sendData
     })   
 })
+
+function modifyArray(object) {
+    return [];
+}
 
 router.post("/deleteUnavailableDates", urlencoder, async (req, res) => {
     UnavailableDate.delete(req.body.unavailableDateID);
