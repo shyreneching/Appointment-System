@@ -453,7 +453,7 @@ async function initializeTHead(date) {
 
         $('#add-appointment-date-modal').modal({
             onHidden: resetModalState,
-            onApprove: function () {
+            onApprove: async function () {
                 var date = $('#add-date_calendar').calendar('get date')
                 var time = $('#add-time_calendar').calendar('get date')
                 
@@ -463,7 +463,7 @@ async function initializeTHead(date) {
                     timeInput: time.toString()
                 }
                 
-                let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                let data = await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
                     return data;
                 });
                 console.log(data.data)

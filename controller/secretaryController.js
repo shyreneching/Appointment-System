@@ -1027,8 +1027,6 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
 
 
         //Checks if the dentist is available based on schedule
-        console.log(moment(datetime).isWorkingTime())
-        console.log(!(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute')))
         if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
             let data = {
                 doctor: doctor,
@@ -1036,11 +1034,11 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
 
             doctorsArray.push(data);
         }
-        console.log("DOCTORS ARRAY:" + doctorsArray)
-        res.send({ /* Send the doctors somewhere*/
-            data: doctorsArray
-        });
+       
     }
+    res.send({ /* Send the doctors somewhere*/
+        data: doctorsArray
+    });
 })
 
 
