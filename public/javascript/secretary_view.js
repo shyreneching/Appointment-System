@@ -254,6 +254,7 @@ function updateTableRows(date) {
 
             // The ajax query
             $.post("/secretary/day_all", sentData, function (data) {
+                console.log(data.data) 
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
                 $('.active.dimmer').toggle();
@@ -276,7 +277,7 @@ function updateTableRows(date) {
             $.post("/secretary/day_one", sendData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
-                
+
                 $('.active.dimmer').toggle();
             });
         }
@@ -397,7 +398,7 @@ async function initializeTHead(date) {
             initialDate: minDate
         });
 
-        $('#add-multiDoctor').dropdown();
+        
         $('#add-multiProcedure').dropdown();
 
         $("#add-lastName").keypress(function () {
@@ -453,22 +454,25 @@ async function initializeTHead(date) {
 
         $('#add-appointment-date-modal').modal({
             onHidden: resetModalState,
-            onApprove: function () {
-                // var date = $('#add-date_calendar').calendar('get date')
-                // var time = $('#add-time_calendar').calendar('get date')
-                
+            onApprove: async function () {
+                var date = $('#add-date_calendar').calendar('get date')
+                var time = $('#add-time_calendar').calendar('get date')
 
-                // var datetime = {
-                //     dateInput: date.toString(),
-                //     timeInput: time.toString()
-                // }
-                
-                // let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-                //     return data;
-                // });
-                // console.log(data)
-                
-                
+
+                var datetime = {
+                    dateInput: date.toString(),
+                    timeInput: time.toString()
+                   }
+
+                await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                    console.log(data)
+                    let template = Handlebars.compile(data.htmlData);
+                    $('#add-fieldDoctors').html(template(data.data));
+                    $('#add-multiDoctor').dropdown();
+                });
+
+
+
             }
         })
 
