@@ -454,20 +454,19 @@ async function initializeTHead(date) {
         $('#add-appointment-date-modal').modal({
             onHidden: resetModalState,
             onApprove: function () {
-                // var date = $('#add-date_calendar').calendar('get date')
-                // var time = $('#add-time_calendar').calendar('get date')
+                var date = $('#add-date_calendar').calendar('get date')
+                var time = $('#add-time_calendar').calendar('get date')
                 
 
-                // var datetime = {
-                //     dateInput: date.toString(),
-                //     timeInput: time.toString()
-                // }
+                var datetime = {
+                    dateInput: date.toString(),
+                    timeInput: time.toString()
+                }
                 
-                // let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-                //     return data;
-                // });
-                // console.log(data)
-                
+                let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                    return data;
+                });
+                console.log(data.data)
                 
             }
         })

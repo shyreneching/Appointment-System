@@ -763,24 +763,24 @@ router.get("/getAvailable", async (req, res) => {
     let breakstartFormat = moment(formattedDate + ' ' + breakstart);
     let breakendFormat = moment(formattedDate + ' ' + breakend);
 
-    if(doctorUnAvail != undefined){
+    if (doctorUnAvail != undefined) {
         var start = new Date(doctorUnAvail.stringDate1);
         let startformattedDate = moment(start).format("YYYY-MM-DD");
         var end = new Date(doctorUnAvail.stringDate2);
-        let endformattedDate = moment(end).format("YYYY-MM-DD");    
+        let endformattedDate = moment(end).format("YYYY-MM-DD");
 
         // Sets the unavailable dates as holidays
         var loop = new Date(startformattedDate);
-        while(loop <= endformattedDate){
+        while (loop <= endformattedDate) {
             // alert(loop);     
             moment.updateLocale('en', {
                 holidays: [
                     loop
                 ]
-            });      
+            });
 
             var tempDate = loop.setDate(loop.getDate() + 1);
-                loop = new Date(tempDate);
+            loop = new Date(tempDate);
         }
         // end here
     }
@@ -792,7 +792,7 @@ router.get("/getAvailable", async (req, res) => {
 
             let newTime = Date.parse(timeslot);
             let formattedTime = moment(newTime).format("HH:mm");
-        
+
             let datetime = moment(formattedDate + ' ' + formattedTime);
 
             // if working time of dentist and the time is not in the 'break time' adds to the list of available times
@@ -878,24 +878,24 @@ router.get("/getUnavailable", async (req, res) => {
     let breakstartFormat = moment(formattedDate + ' ' + breakstart);
     let breakendFormat = moment(formattedDate + ' ' + breakend);
 
-    if(doctorUnAvail != undefined){
+    if (doctorUnAvail != undefined) {
         var start = new Date(doctorUnAvail.stringDate1);
         let startformattedDate = moment(start).format("YYYY-MM-DD");
         var end = new Date(doctorUnAvail.stringDate2);
-        let endformattedDate = moment(end).format("YYYY-MM-DD");    
+        let endformattedDate = moment(end).format("YYYY-MM-DD");
 
         // Sets the unavailable dates as holidays
         var loop = new Date(startformattedDate);
-        while(loop <= endformattedDate){
+        while (loop <= endformattedDate) {
             // alert(loop);     
             moment.updateLocale('en', {
                 holidays: [
                     loop
                 ]
-            });      
+            });
 
             var tempDate = loop.setDate(loop.getDate() + 1);
-                loop = new Date(tempDate);
+            loop = new Date(tempDate);
         }
         // end here
     }
@@ -909,7 +909,7 @@ router.get("/getUnavailable", async (req, res) => {
 
             let newTime = Date.parse(timeslot);
             let formattedTime = moment(newTime).format("HH:mm");
-        
+
             let datetime = moment(formattedDate + ' ' + formattedTime);
 
             //checks if the time is not working time or in between break adds to the unavailable times
@@ -933,24 +933,26 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
     console.log("POST /secretary/getAvailableDoctors")
     let time = req.body.timeInput;
     let date = req.body.dateInput;
+ 
 
     let newTime = Date.parse(time);
-    let formattedTime = moment(newTime).format("HH:mm");
+    let formattedTime = moment(newTime).format("HH:mm A");
 
     let newDate = Date.parse(date);
-    let formattedDate = moment(newDate).format("DD-MM-YYYY");
+    let formattedDate = moment(newDate).format("YYYY-MM-DD");
 
     let datetime = moment(formattedDate + ' ' + formattedTime);
 
-    let doctors = Doctor.getAllDoctors();
+
+    let doctors = await Doctor.getAllDoctors();
     let doctorsArray = [];
 
     for (var i = 0; i < doctors.length; i++) {
         let doctor = doctors[i];
         let docSched = await Schedule.getScheduleByID(doctor.schedule);
+        console.log(docSched);
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
-
         moment.updateLocale('en', {
             workinghours: {
                 0: docSched.sunday,
@@ -962,70 +964,81 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
                 6: docSched.saturday
             }
         });
-    
-        
-        
+
+
+
+
+        var breakstart = "19:00:00";
+        var breakend = "19:00:00";
+
         //gets the 'breaktime' of the doctor
-        if (formattedDate.isoWeekday() == 1) {
-            var breakstart = new Date(breaktime.monday[0]);
-            var breakend = new Date(breaktime.monday[1]);
-        } else if (formattedDate.isoWeekday() == 2) {
-            var breakstart = new Date(breaktime.tuesday[0]);
-            var breakend = new Date(breaktime.tuesday[1]);
-        } else if (formattedDate.isoWeekday() == 3) {
-            var breakstart = new Date(breaktime.wednesday[0]);
-            var breakend = new Date(breaktime.wednesday[1]);
-        } else if (formattedDate.isoWeekday() == 4) {
-            var breakstart = new Date(breaktime.thursday[0]);
-            var breakend = new Date(breaktime.thursday[1]);
-        } else if (formattedDate.isoWeekday() == 5) {
-            var breakstart = new Date(breaktime.friday[0]);
-            var breakend = new Date(breaktime.friday[1]);
-        } else if (formattedDate.isoWeekday() == 6) {
-            var breakstart = new Date(breaktime.saturday[0]);
-            var breakend = new Date(breaktime.saturday[1]);
-        } else if (formattedDate.isoWeekday() == 7) {
-            var breakstart = new Date(breaktime.sunday[0]);
-            var breakend = new Date(breaktime.sunday[1]);
-        }
-    
+        // if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != []) {
+        //     var breakstart = new Date(breaktime.monday[0]);
+        //     var breakend = new Date(breaktime.monday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 2 && breaktime.tuesday != []) {
+        //     var breakstart = new Date(breaktime.tuesday[0]);
+        //     var breakend = new Date(breaktime.tuesday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 3 && breaktime.wednesday != []) {
+        //     var breakstart = new Date(breaktime.wednesday[0]);
+        //     var breakend = new Date(breaktime.wednesday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 4 && breaktime.thursday != []) {
+        //     var breakstart = new Date(breaktime.thursday[0]);
+        //     var breakend = new Date(breaktime.thursday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 5 && breaktime.friday != []) {
+        //     var breakstart = new Date(breaktime.friday[0]);
+        //     var breakend = new Date(breaktime.friday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 6 && breaktime.saturday != []) {
+        //     var breakstart = new Date(breaktime.saturday[0]);
+        //     var breakend = new Date(breaktime.saturday[1]);
+        // } else if (moment(formattedDate).isoWeekday() == 7 && breaktime.sunday != []) {
+        //     var breakstart = new Date(breaktime.sunday[0]);
+        //     var breakend = new Date(breaktime.sunday[1]);
+        // }
+
+        // console.log(formattedDate + " " + breakstart)
+        // console.log(formattedDate + " " + breakend)
+
         let breakstartFormat = moment(formattedDate + ' ' + breakstart);
         let breakendFormat = moment(formattedDate + ' ' + breakend);
-        
-        if(doctorUnAvail != undefined){
+
+        // console.log(breakstartFormat)
+        // console.log(doctorUnAvail != "")
+        if (doctorUnAvail != undefined || doctorUnAvail != "") {
             var start = new Date(doctorUnAvail.stringDate1);
             let startformattedDate = moment(start).format("YYYY-MM-DD");
             var end = new Date(doctorUnAvail.stringDate2);
-            let endformattedDate = moment(end).format("YYYY-MM-DD");    
-    
+            let endformattedDate = moment(end).format("YYYY-MM-DD");
+
             // Sets the unavailable dates as holidays
             var loop = new Date(startformattedDate);
-            while(loop <= endformattedDate){
+            while (loop <= endformattedDate) {
                 // alert(loop);     
                 moment.updateLocale('en', {
                     holidays: [
                         loop
                     ]
-                });      
-    
+                });
+
                 var tempDate = loop.setDate(loop.getDate() + 1);
-                    loop = new Date(tempDate);
+                loop = new Date(tempDate);
             }
             // end here
         }
-       
-    
+
+
         //Checks if the dentist is available based on schedule
+        console.log(moment(datetime).isWorkingTime())
+        console.log(!(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute')))
         if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
             let data = {
-                doctor: doctemp,
+                doctor: doctor,
             };
 
             doctorsArray.push(data);
         }
-        result.send({ /* Send the doctors somewhere*/
-            htmlData: all_day,
-            data: doctorArray
+        console.log("DOCTORS ARRAY:" + doctorsArray)
+        res.send({ /* Send the doctors somewhere*/
+            data: doctorsArray
         });
     }
 })
