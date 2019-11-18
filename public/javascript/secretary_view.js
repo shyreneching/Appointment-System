@@ -465,7 +465,7 @@ async function initializeTHead(date) {
                    }
 
                 await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-                    console.log(data.data)
+                    console.log(data)
                     let template = Handlebars.compile(data.htmlData);
                     $('#add-fieldDoctors').html(template(data.data));
                     $('#add-multiDoctor').dropdown();

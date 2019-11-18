@@ -948,9 +948,12 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
 
     let newTime = Date.parse(time);
     let formattedTime = moment(newTime).format("HH:mm");
+    let schemaFormattedTime = moment(newTime).format("h:mm A")
+
 
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("YYYY-MM-DD");
+    let schemaFormattedDate = moment(newDate).format("MMM D YYYY")
 
     let datetime = moment(formattedDate + ' ' + formattedTime);
 
@@ -963,8 +966,8 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         let docSched = await Schedule.getScheduleByID(doctor.schedule);
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
-        let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctor._id, formattedDate, formattedTime);
-
+        let appointment = await Appointment.getAppByDoctorandDateandTime(doctor._id, schemaFormattedDate, schemaFormattedTime);
+        console.log(appointment)
         moment.updateLocale('en', {
             workinghours: {
                 0: docSched.sunday,
