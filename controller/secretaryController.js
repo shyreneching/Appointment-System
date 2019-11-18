@@ -931,12 +931,14 @@ router.get("/getUnavailable", async (req, res) => {
 // given date and time, will return the available doctors
 router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
     console.log("POST /secretary/getAvailableDoctors")
+    let addDoctorField = fs.readFileSync('./views/module_templates/secretary_add_doctor_field.hbs', 'utf-8');
+
     let time = req.body.timeInput;
     let date = req.body.dateInput;
  
 
     let newTime = Date.parse(time);
-    let formattedTime = moment(newTime).format("HH:mm A");
+    let formattedTime = moment(newTime).format("HH:mm");
 
     let newDate = Date.parse(date);
     let formattedDate = moment(newDate).format("YYYY-MM-DD");
@@ -1036,8 +1038,13 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         }
        
     }
-    res.send({ /* Send the doctors somewhere*/
+    let final = {
         data: doctorsArray
+    }
+
+    res.send({ /* Send the doctors somewhere*/
+        htmlData: addDoctorField,
+        data: final
     });
 })
 
