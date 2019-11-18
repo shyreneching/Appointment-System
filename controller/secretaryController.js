@@ -736,34 +736,37 @@ router.get("/getAvailable", async (req, res) => {
         }
     });
 
-    //gets the 'breaktime' of the doctor
-    if (formattedDate.isoWeekday() == 1) {
-        var breakstart = new Date(breaktime.monday[0]);
-        var breakend = new Date(breaktime.monday[1]);
-    } else if (formattedDate.isoWeekday() == 2) {
-        var breakstart = new Date(breaktime.tuesday[0]);
-        var breakend = new Date(breaktime.tuesday[1]);
-    } else if (formattedDate.isoWeekday() == 3) {
-        var breakstart = new Date(breaktime.wednesday[0]);
-        var breakend = new Date(breaktime.wednesday[1]);
-    } else if (formattedDate.isoWeekday() == 4) {
-        var breakstart = new Date(breaktime.thursday[0]);
-        var breakend = new Date(breaktime.thursday[1]);
-    } else if (formattedDate.isoWeekday() == 5) {
-        var breakstart = new Date(breaktime.friday[0]);
-        var breakend = new Date(breaktime.friday[1]);
-    } else if (formattedDate.isoWeekday() == 6) {
-        var breakstart = new Date(breaktime.saturday[0]);
-        var breakend = new Date(breaktime.saturday[1]);
-    } else if (formattedDate.isoWeekday() == 7) {
-        var breakstart = new Date(breaktime.sunday[0]);
-        var breakend = new Date(breaktime.sunday[1]);
+    var breakstart = "19:00:00";
+    var breakend = "19:00:00";
+
+    // gets the 'breaktime' of the doctor
+    if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != "") {
+        var breakstart = breaktime.monday[0];
+        var breakend = breaktime.monday[1];
+    } else if (moment(formattedDate).isoWeekday() == 2 && breaktime.tuesday != "") {
+        var breakstart = breaktime.tuesday[0];
+        var breakend = breaktime.tuesday[1];
+    } else if (moment(formattedDate).isoWeekday() == 3 && breaktime.wednesday != "") {
+        var breakstart = breaktime.wednesday[0];
+        var breakend = breaktime.wednesday[1];
+    } else if (moment(formattedDate).isoWeekday() == 4 && breaktime.thursday != "") {
+        var breakstart = breaktime.thursday[0];
+        var breakend = breaktime.thursday[1];
+    } else if (moment(formattedDate).isoWeekday() == 5 && breaktime.friday != "") {
+        var breakstart = breaktime.friday[0];
+        var breakend = breaktime.friday[1];
+    } else if (moment(formattedDate).isoWeekday() == 6 && breaktime.saturday != "") {
+        var breakstart = breaktime.saturday[0];
+        var breakend = breaktime.saturday[1];
+    } else if (moment(formattedDate).isoWeekday() == 7 && breaktime.sunday != "") {
+        var breakstart = breaktime.sunday[0];
+        var breakend = breaktime.sunday[1];
     }
 
     let breakstartFormat = moment(formattedDate + ' ' + breakstart);
     let breakendFormat = moment(formattedDate + ' ' + breakend);
 
-    if (doctorUnAvail != undefined) {
+    if (doctorUnAvail != undefined || doctorUnAvail != "") {
         var start = new Date(doctorUnAvail.stringDate1);
         let startformattedDate = moment(start).format("YYYY-MM-DD");
         var end = new Date(doctorUnAvail.stringDate2);
@@ -850,35 +853,37 @@ router.get("/getUnavailable", async (req, res) => {
             6: docSched.saturday
         }
     });
+    var breakstart = "19:00:00";
+    var breakend = "19:00:00";
 
-    // gets the 'break time' of the doctor
-    if (formattedDate.isoWeekday() == 1) {
-        var breakstart = new Date(breaktime.monday[0]);
-        var breakend = new Date(breaktime.monday[1]);
-    } else if (formattedDate.isoWeekday() == 2) {
-        var breakstart = new Date(breaktime.tuesday[0]);
-        var breakend = new Date(breaktime.tuesday[1]);
-    } else if (formattedDate.isoWeekday() == 3) {
-        var breakstart = new Date(breaktime.wednesday[0]);
-        var breakend = new Date(breaktime.wednesday[1]);
-    } else if (formattedDate.isoWeekday() == 4) {
-        var breakstart = new Date(breaktime.thursday[0]);
-        var breakend = new Date(breaktime.thursday[1]);
-    } else if (formattedDate.isoWeekday() == 5) {
-        var breakstart = new Date(breaktime.friday[0]);
-        var breakend = new Date(breaktime.friday[1]);
-    } else if (formattedDate.isoWeekday() == 6) {
-        var breakstart = new Date(breaktime.saturday[0]);
-        var breakend = new Date(breaktime.saturday[1]);
-    } else if (formattedDate.isoWeekday() == 7) {
-        var breakstart = new Date(breaktime.sunday[0]);
-        var breakend = new Date(breaktime.sunday[1]);
+   // gets the 'breaktime' of the doctor
+    if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != "") {
+        var breakstart = breaktime.monday[0];
+        var breakend = breaktime.monday[1];
+    } else if (moment(formattedDate).isoWeekday() == 2 && breaktime.tuesday != "") {
+        var breakstart = breaktime.tuesday[0];
+        var breakend = breaktime.tuesday[1];
+    } else if (moment(formattedDate).isoWeekday() == 3 && breaktime.wednesday != "") {
+        var breakstart = breaktime.wednesday[0];
+        var breakend = breaktime.wednesday[1];
+    } else if (moment(formattedDate).isoWeekday() == 4 && breaktime.thursday != "") {
+        var breakstart = breaktime.thursday[0];
+        var breakend = breaktime.thursday[1];
+    } else if (moment(formattedDate).isoWeekday() == 5 && breaktime.friday != "") {
+        var breakstart = breaktime.friday[0];
+        var breakend = breaktime.friday[1];
+    } else if (moment(formattedDate).isoWeekday() == 6 && breaktime.saturday != "") {
+        var breakstart = breaktime.saturday[0];
+        var breakend = breaktime.saturday[1];
+    } else if (moment(formattedDate).isoWeekday() == 7 && breaktime.sunday != "") {
+        var breakstart = breaktime.sunday[0];
+        var breakend = breaktime.sunday[1];
     }
 
     let breakstartFormat = moment(formattedDate + ' ' + breakstart);
     let breakendFormat = moment(formattedDate + ' ' + breakend);
 
-    if (doctorUnAvail != undefined) {
+    if (doctorUnAvail != undefined || doctorUnAvail != "") {
         var start = new Date(doctorUnAvail.stringDate1);
         let startformattedDate = moment(start).format("YYYY-MM-DD");
         var end = new Date(doctorUnAvail.stringDate2);
@@ -952,7 +957,6 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
     for (var i = 0; i < doctors.length; i++) {
         let doctor = doctors[i];
         let docSched = await Schedule.getScheduleByID(doctor.schedule);
-        console.log(docSched);
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
         moment.updateLocale('en', {
@@ -967,38 +971,37 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
             }
         });
 
-
-
-
         var breakstart = "19:00:00";
         var breakend = "19:00:00";
 
-        //gets the 'breaktime' of the doctor
-        // if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != []) {
-        //     var breakstart = new Date(breaktime.monday[0]);
-        //     var breakend = new Date(breaktime.monday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 2 && breaktime.tuesday != []) {
-        //     var breakstart = new Date(breaktime.tuesday[0]);
-        //     var breakend = new Date(breaktime.tuesday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 3 && breaktime.wednesday != []) {
-        //     var breakstart = new Date(breaktime.wednesday[0]);
-        //     var breakend = new Date(breaktime.wednesday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 4 && breaktime.thursday != []) {
-        //     var breakstart = new Date(breaktime.thursday[0]);
-        //     var breakend = new Date(breaktime.thursday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 5 && breaktime.friday != []) {
-        //     var breakstart = new Date(breaktime.friday[0]);
-        //     var breakend = new Date(breaktime.friday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 6 && breaktime.saturday != []) {
-        //     var breakstart = new Date(breaktime.saturday[0]);
-        //     var breakend = new Date(breaktime.saturday[1]);
-        // } else if (moment(formattedDate).isoWeekday() == 7 && breaktime.sunday != []) {
-        //     var breakstart = new Date(breaktime.sunday[0]);
-        //     var breakend = new Date(breaktime.sunday[1]);
-        // }
+       // gets the 'breaktime' of the doctor
+        if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != "") {
+            var breakstart = breaktime.monday[0];
+            var breakend = breaktime.monday[1];
+        } else if (moment(formattedDate).isoWeekday() == 2 && breaktime.tuesday != "") {
+            var breakstart = breaktime.tuesday[0];
+            var breakend = breaktime.tuesday[1];
+        } else if (moment(formattedDate).isoWeekday() == 3 && breaktime.wednesday != "") {
+            var breakstart = breaktime.wednesday[0];
+            var breakend = breaktime.wednesday[1];
+        } else if (moment(formattedDate).isoWeekday() == 4 && breaktime.thursday != "") {
+            var breakstart = breaktime.thursday[0];
+            var breakend = breaktime.thursday[1];
+        } else if (moment(formattedDate).isoWeekday() == 5 && breaktime.friday != "") {
+            var breakstart = breaktime.friday[0];
+            var breakend = breaktime.friday[1];
+        } else if (moment(formattedDate).isoWeekday() == 6 && breaktime.saturday != "") {
+            var breakstart = breaktime.saturday[0];
+            var breakend = breaktime.saturday[1];
+        } else if (moment(formattedDate).isoWeekday() == 7 && breaktime.sunday != "") {
+            var breakstart = breaktime.sunday[0];
+            var breakend = breaktime.sunday[1];
+        }
 
-        // console.log(formattedDate + " " + breakstart)
-        // console.log(formattedDate + " " + breakend)
+        console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakstart)
+        console.log(breaktime.monday[0])
+        console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakend)
+        console.log(breaktime.monday[1])
 
         let breakstartFormat = moment(formattedDate + ' ' + breakstart);
         let breakendFormat = moment(formattedDate + ' ' + breakend);
@@ -1026,7 +1029,6 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
             }
             // end here
         }
-
 
         //Checks if the dentist is available based on schedule
         if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
