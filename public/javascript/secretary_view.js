@@ -129,6 +129,8 @@ $(document).ready(function () {
         addAppointment();
     });
 
+    
+
     initializeShortcutsMain();
 
 });
@@ -254,7 +256,7 @@ function updateTableRows(date) {
 
             // The ajax query
             $.post("/secretary/day_all", sentData, function (data) {
-                console.log(data.data) 
+                console.log(data.data)
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
                 $('.active.dimmer').toggle();
@@ -364,7 +366,12 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
-
+    $(".with.tooltip").popup({
+        delay: {
+            show: 500,
+            hide: 50
+        }
+    })
 
     //Initializes Add button-------------------------------------------
     $("#add-button").on("click", function () {
@@ -399,6 +406,7 @@ async function initializeTHead(date) {
         });
 
         
+
         $('#add-multiProcedure').dropdown();
 
         $("#add-lastName").keypress(function () {
@@ -462,7 +470,7 @@ async function initializeTHead(date) {
                 var datetime = {
                     dateInput: date.toString(),
                     timeInput: time.toString()
-                   }
+                }
 
                 await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
                     console.log(data)

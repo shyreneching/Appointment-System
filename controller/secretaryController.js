@@ -967,7 +967,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
         let appointment = await Appointment.getAppByDoctorandDateandTime(doctor._id, schemaFormattedDate, schemaFormattedTime);
-        console.log(appointment)
+        // console.log(appointment)
         moment.updateLocale('en', {
             workinghours: {
                 0: docSched.sunday,
@@ -1007,10 +1007,10 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
             var breakend = breaktime.sunday[1];
         }
 
-        console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakstart)
-        console.log(breaktime.monday[0])
-        console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakend)
-        console.log(breaktime.monday[1])
+        // console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakstart)
+        // console.log(breaktime.monday[0])
+        // console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakend)
+        // console.log(breaktime.monday[1])
 
         let breakstartFormat = moment(formattedDate + ' ' + breakstart);
         let breakendFormat = moment(formattedDate + ' ' + breakend);
