@@ -2,34 +2,9 @@ var accountID, procedureID, accountUsername;
 var defaultButton, currTab, userType, days = [], passwordChecker, accor_show;;
 var editSchedule, editBreaktime, editDay;
 
-var weekday = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-
 $(document).ready(() => {
     // switch page between users, dentist, and procedure
     $(".ui .item").on("click", switchPage);
-
-    $("#start-field").calendar({
-        type: "time",   
-        minTimeGap: 30
-    })
-    $("#end-field").calendar({
-        type: "time",   
-        minTimeGap: 30
-    })
-    $("#start-add-field").calendar({
-        type: "time",   
-        minTimeGap: 30
-    })
-    $("#end-add-field").calendar({
-        type: "time",   
-        minTimeGap: 30
-    })
-    $("#start-date").calendar({
-        type: "date"
-    })
-    $("#end-date").calendar({
-        type: "date"
-    })
 
     // validation if username exist
     $("#add-username-user").focusout(() => {
@@ -81,7 +56,7 @@ $(document).ready(() => {
                 message: "Incorrect password format"
             })
             passwordChecker = false;
-        } else if($("#new-password").val().length < 8) {
+        } else if($("#new-password").val().length < 10) {
             $("#new-password-field").addClass("error");
             $("body").toast({
                 class: "error",
@@ -111,7 +86,7 @@ $(document).ready(() => {
                 message: "Incorrect password format"
             })
             passwordChecker = false;
-        } else if($("#add-password-user").val().length < 8) {
+        } else if($("#add-password-user").val().length < 10) {
             $("#password-field-user").addClass("error");
             $("body").toast({
                 class: "error",
@@ -166,16 +141,42 @@ $(document).ready(() => {
     $("#weekly").click(() => {
         $("#weekly").addClass("green");
         $("#unavailable").removeClass("green");
+        $.ajax({
+            type: 'post',
+            url: 'admin/getSchedule',
+            data: {
+                doctorID: $("#schedule-modal").data("id")
+            },
+            success: (value) => {
+                let table = Handlebars.compile(value.htmlData);
+                $("#table-schedule").html(table(value.data));
+            }
+        })
     })
     $("#unavailable").click(() => {
         $("#weekly").removeClass("green");
         $("#unavailable").addClass("green");
+        $.ajax({
+            type: 'post',
+            url: 'admin/getUnavailableDates',
+            data: {
+                doctorID: $("#schedule-modal").data("id")
+            },
+            success: (value) => {
+                let table = Handlebars.compile(value.htmlData);
+                $("#table-schedule").html(table(value.data));
+            }
+        })
     })
 
     // EDITING DENTIST SCHEDULE
     $("#table-schedule").on("click", (event) => {
         editDay = $($(event.target)[0].parentNode).data("day").toLowerCase();
-        
+        $(".ui .calendar").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
         $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
         $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
         $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
@@ -894,6 +895,11 @@ $("#delete-procedure-button").click(() => {
     })
 })
 
+// ADDING UNAVAILABLE DATE
+$("#add-unavailable-button").click(() => {
+    
+})
+
 // ADDING DENTIST SCHEDULE
 $("#add-schedule-button").click(() => {
     
@@ -1199,13 +1205,21 @@ $("#add").click(() => {
 $("#add-schedule").click(() => {
     if($("#weekly")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        $("#adding-schedule-modal").modal("show");
+        $(".ui .calendar").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
         $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-        $("#adding-schedule-header").text("Add Schedule");
-    } else {
+        $("#adding-schedule-modal").modal("show");
+    } else if($("#unavailable")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        $("#start-date-input").val("");
-        $("#end-date-input").val("");
+        $("#start-date").calendar({
+            type: "date"
+        })
+        $("#end-date").calendar({
+            type: "date"
+        })
         $("#add-unavailable-modal").modal("show");
     }
 })
@@ -1317,6 +1331,20 @@ $("#editing-schedule-modal").modal({
     }
 })
 
+$("#add-unavailable-modal").modal({
+    onShow: () => {
+        $("#start-date-input").val("");
+        $("#end-date-input").val("");
+    },
+    onHidden: () => {
+        $("#schedule-modal").data("id", $("#add-unavailable-modal").data("id"));
+        $("#schedule-modal").data("firstname", $("#add-unavailable-modal").data("firstname"));
+        $("#schedule-modal").data("lastname", $("#add-unavailable-modal").data("lastname"));
+        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        setDataTable();
+    }
+})
+
 // Initialization
 function setup() {
     // load the list of users
@@ -1383,20 +1411,8 @@ function updateTable(data) {
 
 // Set data to table in modal
 function setDataTable() {
-    $.ajax({
-        type: 'post',
-        url: 'admin/getSchedule',
-        data: {
-            doctorID: $("#schedule-modal").data("id")
-        },
-        success: (value) => {
-            let table = Handlebars.compile(value.htmlData);
-            $("#table-schedule").html(table(value.data));
-            $("#edit-schedule").data("id", value.scheduleID);
-            $("#weekly").click();
-            $("#schedule-modal").modal("show");
-        }
-    })
+    $("#weekly").click();
+    $("#schedule-modal").modal("show");
 }
 
 // Setting default button on modal when ENTER key is pressed
