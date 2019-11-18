@@ -150,6 +150,9 @@ $(document).ready(() => {
             success: (value) => {
                 let table = Handlebars.compile(value.htmlData);
                 $("#table-schedule").html(table(value.data));
+                if(!$("#schedule-modal")[0].className.includes("active")) {
+                    $("#schedule-modal").modal("show");
+                }
             }
         })
     })
@@ -199,8 +202,10 @@ $(document).ready(() => {
                 } 
                 if(breaktime != "") {   
                     $("#edit-custom")[0]["checked"] = true;
-                    $("#edit-start-add").val(breaktime[0]);
-                    $("#edit-end-add").val(breaktime[1]);
+                    $("#edit-start").val(normal[0]);
+                    $("#edit-end").val(breaktime[0]);
+                    $("#edit-start-add").val(breaktime[1]);
+                    $("#edit-end-add").val(normal[1]);
                     accor_show = true;
                     $("#edit-first-schedule").css({'color':'black'})
                     $("#edit-custom-schedule").slideToggle(500);
@@ -1016,60 +1021,78 @@ function addSchedule() {
     let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
     
     if($("#daily")[0].checked) {
-        mon.push($("#start").val());    mon.push($("#end").val());
-        tue.push($("#start").val());    tue.push($("#end").val());
-        wed.push($("#start").val());    wed.push($("#end").val());
-        thu.push($("#start").val());    thu.push($("#end").val());
-        fri.push($("#start").val());    fri.push($("#end").val());
-        sat.push($("#start").val());    sat.push($("#end").val());
-        
         if($("#custom")[0].checked) {
-            monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
-            tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
-            wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
-            thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
-            fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
-            satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+            mon.push($("#start").val());    mon.push($("#end-add").val());
+            tue.push($("#start").val());    tue.push($("#end-add").val());
+            wed.push($("#start").val());    wed.push($("#end-add").val());
+            thu.push($("#start").val());    thu.push($("#end-add").val());
+            fri.push($("#start").val());    fri.push($("#end-add").val());
+            sat.push($("#start").val());    sat.push($("#end-add").val());
+            monbreak.push($("#end").val());    monbreak.push($("#start-add").val());
+            tuebreak.push($("#end").val());    tuebreak.push($("#start-add").val());
+            wedbreak.push($("#end").val());    wedbreak.push($("#start-add").val());
+            thubreak.push($("#end").val());    thubreak.push($("#start-add").val());
+            fribreak.push($("#end").val());    fribreak.push($("#start-add").val());
+            satbreak.push($("#end").val());    satbreak.push($("#start-add").val());
             mB = true; tB = true; wB = true; hB = true; fB = true; sB = true;
-        } 
+        } else {
+            mon.push($("#start").val());    mon.push($("#end").val());
+            tue.push($("#start").val());    tue.push($("#end").val());
+            wed.push($("#start").val());    wed.push($("#end").val());
+            thu.push($("#start").val());    thu.push($("#end").val());
+            fri.push($("#start").val());    fri.push($("#end").val());
+            sat.push($("#start").val());    sat.push($("#end").val());
+        }
     } else if($("#repeat")[0].checked) {
         for(var i = 0; i < days.length; i++) {
             if(days[i] == "mon") {
-                mon.push($("#start").val());    mon.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    monbreak.push($("#start-add").val());    monbreak.push($("#end-add").val());
+                    mon.push($("#start").val());    mon.push($("#end-add").val());
+                    monbreak.push($("#end").val());    monbreak.push($("#start-add").val());
                     mB = true;
-                } 
+                } else {
+                    mon.push($("#start").val());    mon.push($("#end").val());
+                }
             } else if(days[i] == "tue") {
-                tue.push($("#start").val());    tue.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    tuebreak.push($("#start-add").val());    tuebreak.push($("#end-add").val());
+                    tue.push($("#start").val());    tue.push($("#end-add").val());
+                    tuebreak.push($("#end").val());    tuebreak.push($("#start-add").val());
                     tB = true;
-                } 
+                } else {
+                    tue.push($("#start").val());    tue.push($("#end").val());
+                }
             } else if(days[i] == "wed") {
-                wed.push($("#start").val());    wed.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    wedbreak.push($("#start-add").val());    wedbreak.push($("#end-add").val());
+                    wed.push($("#start").val());    wed.push($("#end-add").val());
+                    wedbreak.push($("#end").val());    wedbreak.push($("#start-add").val());
                     wB = true;
-                } 
+                } else {
+                    wed.push($("#start").val());    wed.push($("#end").val());
+                }
             } else if(days[i] == "thu") {
-                thu.push($("#start").val());    thu.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    thubreak.push($("#start-add").val());    thubreak.push($("#end-add").val());
+                    thu.push($("#start").val());    thu.push($("#end-add").val());
+                    thubreak.push($("#end").val());    thubreak.push($("#start-add").val());
                     hB = true;
-                } 
+                } else {
+                    thu.push($("#start").val());    thu.push($("#end").val());
+                }
             } else if(days[i] == "fri") {
-                fri.push($("#start").val());    fri.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    fribreak.push($("#start-add").val());    fribreak.push($("#end-add").val());
+                    fri.push($("#start").val());    fri.push($("#end-add").val());
+                    fribreak.push($("#end").val());    fribreak.push($("#start-add").val());
                     fB = true;
-                } 
+                } else {
+                    fri.push($("#start").val());    fri.push($("#end").val());
+                }
             } else if(days[i] == "sat") {
-                sat.push($("#start").val());    sat.push($("#end").val());
                 if($("#custom")[0].checked) {
-                    satbreak.push($("#start-add").val());    satbreak.push($("#end-add").val());
+                    sat.push($("#start").val());    sat.push($("#end-add").val());
+                    satbreak.push($("#end").val());    satbreak.push($("#start-add").val());
                     sB = true;
-                } 
+                } else {
+                    sat.push($("#start").val());    sat.push($("#end").val());
+                }
             }
         }
     }
@@ -1120,23 +1143,32 @@ function addScheduleExist() {
 function updateSchedule() {
     let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
 
-    if($("#edit-start").val() != "") {
-        editSchedule[editDay][0] = $("#edit-start").val();
-    }
-    if($("#edit-end").val() != "") {
-        editSchedule[editDay][1] = $("#edit-end").val();
-    }
-    if($("#edit-start-add").val() != "") {
-        editBreaktime[editDay][0] = $("#edit-start-add").val();
-    }
-    if($("#edit-end-add").val() != "") {
-        editBreaktime[editDay][1] = $("#edit-end-add").val();
-    }
-
     if($("#edit-start").val() == "" && $("#edit-end").val() == "") {
         editSchedule[editDay] = [];
+        editBreaktime[editDay] = [];
+    } else {
+        if($("#edit-start").val() != "") {
+            editSchedule[editDay][0] = $("#edit-start").val();
+        }
+        if($("#edit-end").val() != "") {
+            editSchedule[editDay][1] = $("#edit-end").val();
+        }
+        editBreaktime[editDay] = [];
     }
-    if($("#edit-start-add").val() == "" && $("#edit-end-add").val() == "") {
+    if($("#edit-custom")[0].checked) {
+        if($("#edit-start").val() != "") {
+            editSchedule[editDay][0] = $("#edit-start").val();
+        }
+        if($("#edit-end").val() != "") {
+            editBreaktime[editDay][0] = $("#edit-end").val();
+        }
+        if($("#edit-start-add").val() != "") {
+            editBreaktime[editDay][1] = $("#edit-start-add").val();
+        }
+        if($("#edit-end-add").val() != "") {
+            editSchedule[editDay][1] = $("#edit-end-add").val();
+        }
+    } else {
         editBreaktime[editDay] = []
     }
 
@@ -1412,7 +1444,6 @@ function updateTable(data) {
 // Set data to table in modal
 function setDataTable() {
     $("#weekly").click();
-    $("#schedule-modal").modal("show");
 }
 
 // Setting default button on modal when ENTER key is pressed
