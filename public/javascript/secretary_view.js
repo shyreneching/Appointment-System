@@ -454,19 +454,19 @@ async function initializeTHead(date) {
         $('#add-appointment-date-modal').modal({
             onHidden: resetModalState,
             onApprove: function () {
-                var date = $('#add-date_calendar').calendar('get date')
-                var time = $('#add-time_calendar').calendar('get date')
+                // var date = $('#add-date_calendar').calendar('get date')
+                // var time = $('#add-time_calendar').calendar('get date')
                 
 
-                var datetime = {
-                    dateInput: date.toString(),
-                    timeInput: time.toString()
-                }
+                // var datetime = {
+                //     dateInput: date.toString(),
+                //     timeInput: time.toString()
+                // }
                 
-                let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-                    return data;
-                });
-                console.log(data)
+                // let data = $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                //     return data;
+                // });
+                // console.log(data)
                 
                 
             }
@@ -620,7 +620,7 @@ async function addAppointment() {
         };
 
         console.log("checking flag");
-        await $.post("/secretary/", checkData, function (data) {
+        await $.post("/secretary/check_app_exists", checkData, function (data) {
 
             if (data == true) {
                 $("#add-fieldDoctors").addClass("error");
