@@ -493,11 +493,23 @@ function getObject(object, breakTime) {
 
     var ctr = 0;
     while(ctr < array.length) {
-        var temp = array[ctr][0] + " - " + array[ctr][1];
-        if(!temp.includes("undefined")) {
-            objectTimeList[Math.floor(ctr/2)].time.push({
-                range: temp
-            })
+        var temp = array[ctr];
+        if(temp != "") {
+            if(array[ctr + 1] == "") {
+                var sc = array[ctr][0] + " - " + array[ctr][1];
+                objectTimeList[Math.floor(ctr/2)].time.push({
+                    range: sc
+                })
+            } else {
+                var sc1 = array[ctr][0] + " - " + array[ctr + 1][0];
+                objectTimeList[Math.floor(ctr/2)].time.push({
+                    range: sc1
+                })
+                var sc2 = array[ctr + 1][1] + " - " + array[ctr][1];
+                objectTimeList[Math.floor(ctr/2)].time.push({
+                    range: sc2
+                })
+            }
         } else {
             if(ctr % 2 == 0) {
                 objectTimeList[Math.floor(ctr/2)].time.push({
@@ -505,7 +517,7 @@ function getObject(object, breakTime) {
                 })
             }
         }
-        ctr++;
+        ctr+=2;
     }
     return objectTimeList;
 }
