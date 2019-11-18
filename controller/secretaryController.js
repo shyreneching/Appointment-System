@@ -798,8 +798,10 @@ router.get("/getAvailable", async (req, res) => {
 
             let datetime = moment(formattedDate + ' ' + formattedTime);
 
+            let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
+
             // if working time of dentist and the time is not in the 'break time' adds to the list of available times
-            if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
+            if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))  && appointment == "") {
                 let data = {
                     slot: timeSlot,
                 };
@@ -917,8 +919,10 @@ router.get("/getUnavailable", async (req, res) => {
 
             let datetime = moment(formattedDate + ' ' + formattedTime);
 
+            let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
+
             //checks if the time is not working time or in between break adds to the unavailable times
-            if (!moment(datetime).isWorkingTime() || (moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
+            if (!moment(datetime).isWorkingTime() || (moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute')) || appointment != "") {
                 let data = {
                     slot: timeSlot,
                 };
@@ -959,6 +963,8 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         let docSched = await Schedule.getScheduleByID(doctor.schedule);
         let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctor._id);
         let breaktime = await BreakTime.getBreakTimeByID(doctor.breakTime);
+        let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctor._id, formattedDate, formattedTime);
+
         moment.updateLocale('en', {
             workinghours: {
                 0: docSched.sunday,
@@ -1031,7 +1037,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         }
 
         //Checks if the dentist is available based on schedule
-        if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute'))) {
+        if (moment(datetime).isWorkingTime() && !(moment(datetime).isBetween(breakstartFormat, breakendFormat, 'minute')) && appointment == "") {
             let data = {
                 doctor: doctor,
             };
