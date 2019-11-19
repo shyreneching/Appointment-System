@@ -1060,6 +1060,34 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
 })
 
 
+router.post("/info1", urlencoder, async function (request, result) {
+    let info1 = fs.readFileSync('./views/module_templates/info1.hbs', 'utf-8');
+    result.send({
+        htmlData:info1
+    })
+
+})
+
+router.post("/info2", urlencoder, async function (request, result) {
+    let info2 = fs.readFileSync('./views/module_templates/info2.hbs', 'utf-8');
+    result.send({
+        htmlData:info2
+    })
+})
+
+router.post("/info3", urlencoder, async function (request, result) {
+    let info3 = fs.readFileSync('./views/module_templates/info3.hbs', 'utf-8');
+    result.send({
+        htmlData:info3
+    })
+})
+
+router.post("/info4", urlencoder, async function (request, result) {
+    let info4 = fs.readFileSync('./views/module_templates/info4.hbs', 'utf-8');
+    result.send({
+        htmlData:info4
+    })
+})
 
 
 
