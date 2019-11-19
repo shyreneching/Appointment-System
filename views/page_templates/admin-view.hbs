@@ -63,7 +63,10 @@
       </div>
       <div class="column" style="width: 85%;">
         <table class="ui striped selectable table" id="table">
-
+        
+        <div class="ui inverted dimmer" id="list-dimmer">
+          <div class="ui elastic huge green loader"></div>
+        </div>
         </table>
       </div>
     </div>
@@ -588,10 +591,7 @@
         </div>
       </div>
     </div>
-
-    <div class="ui active inverted dimmer">
-        <div class="ui elastic massive green loader"></div>
-    </div>
+    
     <script src="javascript/jquery.js"></script>
     <script src="semantic/dist/semantic.js"></script>
     <script src="javascript/jquery-data-table.js"></script>

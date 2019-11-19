@@ -46,6 +46,17 @@ $(document).ready(() => {
         })
     })
     // validate password format
+    $("#current-password").focusout(() => {
+        if($("#current-password").val() != $("#current-password").data("password")) {
+            $("#current-password-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect current password"
+            });
+        }
+        passwordChecker = false;
+    })
     $("#new-password").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
         if(!$("#new-password").val().match(check)) {
@@ -136,6 +147,66 @@ $(document).ready(() => {
             passwordChecker = true;
         }
     })
+    $("#edit-password-user").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#edit-password-user").val().match(check)) {
+            $("#edit-password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#edit-password-user").val().length < 10) {
+            $("#edit-password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#edit-password-user").val().length > 32) {
+            $("#edit-password-field-user").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
+    })
+    $("#edit-password-dentist").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
+        if(!$("#edit-password-dentist").val().match(check)) {
+            $("#edit-password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Incorrect password format"
+            })
+            passwordChecker = false;
+        } else if($("#edit-password-dentist").val().length < 10) {
+            $("#edit-password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too short"
+            })
+            passwordChecker = false;
+        } else if($("#edit-password-dentist").val().length > 32) {
+            $("#edit-password-field-dentist").addClass("error");
+            $("body").toast({
+                class: "error",
+                position: "top center",
+                message: "Password is too long"
+            })
+            passwordChecker = false;
+        } else {
+            passwordChecker = true;
+        }
+    })
 
     // Switch between weekly and unavailable
     $("#weekly").click(() => {
@@ -204,7 +275,6 @@ $(document).ready(() => {
             $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
             $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
             $("#editing-schedule-modal").modal("show");    
-            $('.dimmer').addClass("active");
             $.ajax({
                 type: "post",
                 url: "admin/getDoctorSchedule",
@@ -212,7 +282,6 @@ $(document).ready(() => {
                     doctorID: $("#editing-schedule-modal").data("id")
                 },
                 success: (value) => {
-                    $('.dimmer').removeClass("active");
                     editSchedule = value.docSched;
                     editBreaktime = value.breakTime;
                     var normal = value.docSched[editDay];
@@ -314,7 +383,6 @@ $(document).ready(() => {
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
-                    $('.dimmer').addClass("active");
                     // getting the user object to be edited
                     $.ajax({
                         type: "post",
@@ -323,7 +391,6 @@ $(document).ready(() => {
                             username: accountUsername
                         },
                         success: (value) => {
-                            $('.dimmer').removeClass("active");
                             let user = value.user;
                             let doctor = value.doctor;
                             if(user.accountType == "dentist") {
@@ -381,17 +448,7 @@ $("#save-password").click(() => {
             message: "Please input your current password"
         });
         done = false;
-    } else {
-        if($("#current-password").val() != $("#current-password").data("password")) {
-            $("#current-password-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect current password"
-            });
-            done = false;
-        }   
-    }
+    } 
     if($("#new-password").val() == "" || $("#confirm-new-password").val() == "") {
         if($("#new-password").val() == "") {
             $("#new-password-field").addClass("error");
@@ -419,7 +476,6 @@ $("#save-password").click(() => {
             done = false;
         }
     }
-    $('.dimmer').addClass("active");
     if(done && passwordChecker) {
         $.ajax({
             type: "post",
@@ -429,9 +485,8 @@ $("#save-password").click(() => {
                 newPassword: $("#new-password").val()
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
-                $("#setting-modal").modal("hide");
-                $("#setting-modal").form("clear");
+                $("#reset-password-modal").modal("hide");
+                $("#reset-password-modal").form("clear");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -492,7 +547,7 @@ $("#create-user-button").click(() => {
     }
 
     if(done && passwordChecker) {
-        $('.dimmer').addClass("active");
+        $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addAccount",
@@ -503,7 +558,6 @@ $("#create-user-button").click(() => {
                 doctorID: ""
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#add-user-modal").modal("hide");
                     $('#add-user-modal').form("clear");
@@ -531,6 +585,7 @@ $("#create-user-button").click(() => {
                         message: "Username already taken"
                     });
                 }
+                $("#list-dimmer").removeClass("active");
             }
         })
     } else {
@@ -600,7 +655,7 @@ $("#create-dentist-button").click(() => {
     }
 
     if(done && passwordChecker) {
-        $('.dimmer').addClass("active");
+        $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addDentist",
@@ -613,7 +668,6 @@ $("#create-dentist-button").click(() => {
                 status: "Available"
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#add-dentist-modal").modal("hide");
                     $('#add-dentist-modal').form("clear");
@@ -646,6 +700,7 @@ $("#create-dentist-button").click(() => {
                         message: "Username already taken"
                     });
                 }
+                $("#list-dimmer").removeClass("active");
             }
         })
     } else {
@@ -674,7 +729,7 @@ $("#create-procedure-button").click(() => {
     }
 
     if(done) {
-        $('.dimmer').addClass("active");
+        $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addProcess",
@@ -682,7 +737,6 @@ $("#create-procedure-button").click(() => {
                 name: $("#procedure-name").val()
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#procedure-modal").modal("hide");
                     $('#procedure-modal').form("clear");
@@ -705,6 +759,7 @@ $("#create-procedure-button").click(() => {
                         message: "Procedure already exist"
                     });
                 }
+                $("#list-dimmer").removeClass("active");
             }
         })
     }
@@ -742,8 +797,8 @@ $("#edit-user-button").click(() => {
             done = false;
         }
     }
-    if(done) {
-        $('.dimmer').addClass("active");
+    if(done && passwordChecker) {
+        $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/editAccount",
@@ -753,7 +808,6 @@ $("#edit-user-button").click(() => {
                 accountPassword: $("#edit-password-user").val()
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 $("#edit-user-modal").modal("hide");
                 $("#edit-user-modal").form("clear");
                 $('body').toast({
@@ -761,6 +815,7 @@ $("#edit-user-button").click(() => {
                     position: "top center",
                     message: "Secretary details successfully edited"
                 })
+                $("#list-dimmer").removeClass("active");
             }
         })
     }
@@ -813,8 +868,7 @@ $("#edit-dentist-button").click(() => {
         }
     }
 
-    if(done) {
-        $('.dimmer').addClass("active");
+    if(done && passwordChecker) {
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -825,7 +879,6 @@ $("#edit-dentist-button").click(() => {
                 password: $("#edit-password-dentist").val()
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 $("#edit-dentist-modal").modal("hide");
                 $("#edit-dentist-modal").form("clear");
                 $('body').toast({
@@ -854,7 +907,6 @@ $("#edit-procedure-button").click(() => {
     }
 
     if(done) {
-        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/editProcess",
@@ -863,7 +915,6 @@ $("#edit-procedure-button").click(() => {
                 name: $("#edit-procedure-name").val()
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
                     $("#edit-procedure-modal").form("clear");
@@ -891,7 +942,6 @@ $("#edit-procedure-button").click(() => {
 
 // DELETING USER
 $("#delete-user-button").click(() => {
-    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: "/admin/deleteAccount",
@@ -900,7 +950,6 @@ $("#delete-user-button").click(() => {
             accountUsername: accountUsername
         },
         success: (value) => {
-            $('.dimmer').removeClass("active");
             $("#delete-user-modal").modal("hide");
             $.get("/admin/adminUsers", (data) => {
                 $("#table").DataTable().destroy();
@@ -917,7 +966,6 @@ $("#delete-user-button").click(() => {
 
 // DELETING PROCEDURE
 $("#delete-procedure-button").click(() => {
-    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: "/admin/deleteProcess",
@@ -925,7 +973,6 @@ $("#delete-procedure-button").click(() => {
             processID: procedureID
         },
         success: (value) => {
-            $('.dimmer').removeClass("active");
             $("#delete-procedure-modal").modal("hide");
             $.get("/admin/adminProcedure", (data) => {
                 $("#table").DataTable().destroy();
@@ -963,7 +1010,6 @@ $("#add-unavailable-button").click(() => {
     }
 
     if(done) {
-        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "admin/addUnavailableDates",
@@ -973,7 +1019,6 @@ $("#add-unavailable-button").click(() => {
                 enddate: end
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 $("body").toast({
                     class: "success",
                     position: "top center",
@@ -1059,7 +1104,6 @@ $("#add-schedule-button").click(() => {
     }
 
     if(done) {
-        $('.dimmer').addClass("active");
         // checking if a doctor has a schedule or not
         $.ajax({
             type: "post",
@@ -1068,7 +1112,6 @@ $("#add-schedule-button").click(() => {
                 doctorID: $("#adding-schedule-modal").data("id")
             },
             success: (value) => {
-                $('.dimmer').removeClass("active");
                 editSchedule = value.docSched;
                 editBreaktime = value.breakTime;
                 addSchedule();
@@ -1183,7 +1226,6 @@ function addSchedule() {
             }
         }
     }
-    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: 'admin/addSchedule',
@@ -1204,7 +1246,6 @@ function addSchedule() {
             defaultTime
         },
         success: (value) => {
-            $('.dimmer').removeClass("active");
             if(value) {
                 $("body").toast({
                     class: "success",
@@ -1249,7 +1290,6 @@ function updateSchedule() {
     } else {
         editBreaktime[editDay] = []
     }
-    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: 'admin/editSchedule',
@@ -1270,7 +1310,6 @@ function updateSchedule() {
             defaultTime
         },
         success: (value) => {
-            $('.dimmer').removeClass("active");
             if(value) {
                 $("body").toast({
                     class: "success",
@@ -1287,7 +1326,8 @@ function updateSchedule() {
 $(".modal").modal({
     onHidden: () => {
         $('body').removeClass("dimmed");
-        $('.modals').removeClass("active");
+        $('.modals').removeClass("active page transition visible");
+        $('.modals').css({'display':'none'})
     }
 })
 
@@ -1497,7 +1537,6 @@ function setup() {
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
-    $(".dimmer").removeClass("active");
 }
 
 // SWITCH TAB
