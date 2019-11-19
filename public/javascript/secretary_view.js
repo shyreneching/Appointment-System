@@ -129,7 +129,7 @@ $(document).ready(function () {
         addAppointment();
     });
 
-    
+
 
     initializeShortcutsMain();
 
@@ -143,7 +143,7 @@ function updateTableRows(date) {
         "date": moment(date).format("MMM D YYYY").toString()
     };
 
-    console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
+    // console.log(`table row updated for ${date} with view ${viewType} and fitler choice ${choice}`);
     let actualName = $('#filter-dropdown').dropdown('get text');
 
     // Dates for week view
@@ -279,7 +279,6 @@ function updateTableRows(date) {
             $.post("/secretary/day_one", sendData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
-
                 $('.active.dimmer').toggle();
             });
         }
@@ -376,7 +375,6 @@ async function initializeTHead(date) {
     //Initializes Add button-------------------------------------------
     $("#add-button").on("click", function () {
 
-        $('#add-appointment-date-modal').modal('toggle');
         $(document).unbind('keydown')
 
         $("#add-date_calendar").removeClass("disabled")
@@ -389,6 +387,13 @@ async function initializeTHead(date) {
             disabledDaysOfWeek: [0],
             initialDate: moment().toDate(),
         })
+
+        // $("#add-date_calendar").on('click', function(){
+        //     $("#add-date_calendar").calendar('popup', 'show')
+        // })
+        // $("#add-time_calendar").on('click', function(){
+        //     $("#add-time_calendar").calendar('popup','show')
+        // })
 
 
         var minDate = new Date();
@@ -405,7 +410,7 @@ async function initializeTHead(date) {
             initialDate: minDate
         });
 
-        
+
 
         $('#add-multiProcedure').dropdown();
 
@@ -452,6 +457,7 @@ async function initializeTHead(date) {
             $("#add-fieldLastName").removeClass("error")
             //rebinding keydown
             initializeShortcutsMain();
+
         }
 
         var unbindShorcuts = function () {
@@ -459,9 +465,11 @@ async function initializeTHead(date) {
         }
 
 
-
         $('#add-appointment-date-modal').modal({
-            onHidden: resetModalState,
+            transition: "fade",
+            closable: false,
+            duration: 500,
+            queue: true,
             onApprove: async function () {
                 var date = $('#add-date_calendar').calendar('get date')
                 var time = $('#add-time_calendar').calendar('get date')
@@ -473,21 +481,65 @@ async function initializeTHead(date) {
                 }
 
                 await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-                    console.log(data)
+
                     let template = Handlebars.compile(data.htmlData);
                     $('#add-fieldDoctors').html(template(data.data));
                     $('#add-multiDoctor').dropdown();
                 });
-
-
-
+            },
+            onDeny: function () {
+                $('#cancelConfirmation').modal('toggle')
+                $('#discard').one('click', function () {
+                    resetModalState()
+                })
+                $('#cancelDiscard').one('click', function () {
+                    $("#add-appointment-date-modal").modal("toggle")
+                })
+            },
+            onShow: function () {
+                initializeShortcutsModalDate()
+            },
+            onHidden: function () {
+                $("#add-appointment-date-modal").unbind('keydown')
             }
+
         })
 
         $('#add-appointment-modal').modal({
-            onHidden: resetModalState,
-            onVisible: unbindShorcuts
+            transition: "fade",
+            closable: false,
+            duration: 500,
+            queue: true,
+            onShow:function () {
+                unbindShorcuts()
+                initializeShortcutsModal()
+            },
+            onHidden: function () {
+                $("#add-appointment-modal").unbind('keydown')
+            },
+            onDeny: function () {
+                $('#cancelConfirmation').modal('toggle')
+
+                $('#discard').one('click', function () {
+                    resetModalState()
+                })
+                $('#cancelDiscard').one('click', function () {
+                    $("#add-appointment-modal").modal("toggle")
+                })
+            }
         }).modal('attach events', '#add-appointment-date-modal #date-done')
+
+        $('#cancelConfirmation').modal({
+            transition: "fly down",
+            closable: false,
+            duration: 400
+        })
+
+
+
+        $('#add-appointment-date-modal').modal('show');
+
+
     });
 
 
@@ -516,6 +568,7 @@ async function initializeTHead(date) {
     }
 
 };
+
 
 async function addAppointment() {
     let firstName = $('#add-firstName').val();
@@ -676,7 +729,7 @@ async function addAppointment() {
         initializeTHead(dateInput);
         updateTableRows(dateInput);
     }
-
+    return isValid
 }
 
 async function openDetailsModal(appointmentID) {
@@ -808,11 +861,12 @@ async function openDetailsModal(appointmentID) {
     });
 }
 
+
+
 function quickAdd(slot) {
     $("#add-button").trigger('click')
     let date = $('#standard_calendar').calendar('get date');
 
-    console.log();
     $("#add-date_calendar").calendar({
         type: 'date',
         today: 'true',
@@ -838,7 +892,6 @@ function quickAdd(slot) {
     });
 
     $("#add-time_calendar").addClass("disabled")
-
 
 }
 
@@ -1028,7 +1081,6 @@ async function editAppointment(appointmentID, initialDoctors) {
 
 
 function initializeShortcutsMain() {
-    console.log("initializeShortcutsMain")
     $(document).on('keydown', function (e) {
         var LEFT = 37,
             RIGHT = 39,
@@ -1052,10 +1104,38 @@ function initializeShortcutsMain() {
     });
 }
 
-function initializeShortcutsAddModal() {
-    $("#add-appointment-modal").on("keydown", function (e) {
+async function initializeShortcutsModalDate() {
+    var ENTER = 13,
+        ESC = 27
+    $("#add-appointment-date-modal").on('keydown', function (e) {
+        switch (e.keyCode) {
+            case ENTER:
+                console.log("ENTER")
 
+                $("#date-done").trigger('click');
+                break;
+            case ESC:
+                $("#date-cancel").trigger('click');
+                break;
+        }
     })
+}
+async function initializeShortcutsModal() {
+    var ENTER = 13,
+        ESC = 27
+
+    $("#add-appointment-modal").on('keydown', function (e) {
+        switch (e.keyCode) {
+            case ENTER:
+                console.log("ENTER")
+                $("#add-save-button").trigger('click');
+                break;
+            case ESC:
+                $("#cancel-appointment").trigger('click');
+                break;
+        }
+    })
+
 }
 
 
