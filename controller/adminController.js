@@ -110,6 +110,37 @@ router.post("/addDentist", async (req, res) => {
                 accountType: req.body.type,
                 doctorID: value.id
             }), (val) => {
+                let time = ['8:00', '18:00'];
+                let defaultschedule = new Schedule({
+                    sunday: null,
+                    monday: time,
+                    tuesday: time,
+                    wednesday: time,
+                    thursday: time,
+                    friday: time,
+                    saturday: time
+                })
+                let breaktime = new BreakTime({
+                    monday: [],
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: []
+                })
+
+                BreakTime.addBreakTime(breaktime, function(data){
+                    Doctor.updateDoctorBreakTime(value._id, data._id);
+                }, (error)=>{
+                    res.send(error);
+                })
+            
+                Schedule.addschedule(defaultschedule, function(data){
+                    Doctor.updateDoctorSchedule(value._id, data._id);    
+                }, (error)=>{
+                    res.send(error);
+                })                
+
                 res.send({
                     message: true,
                     doctor: value
@@ -233,18 +264,7 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
 
-    let time = ['8:00 AM', '6:00 PM'];
-
-    let defaultschedule = new Schedule({
-        sunday: null,
-        monday: time,
-        tuesday: time,
-        wednesday: time,
-        thursday: time,
-        friday: time,
-        saturday: time
-    })
-
+    let defaultschedule;
     let mondayBreak= [];
     let tuesdayBreak = [];
     let wednesdayBreak = [];
@@ -255,47 +275,18 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
     if(req.body.defaultTime == 'false'){
         let monday, tuesday, wednesday, thursday, friday, saturday;
 
-        if(req.body.mB == 'false'){
-            monday= req.body["monday[]"];
-        }else{
-            monday =  req.body["monday[]"]; // whole bracket
-            mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
-        }
-
-        if(req.body.tB == 'false'){
-            tuesday = req.body["tuesday[]"];
-        }else{
-            tuesday = req.body["tuesday[]"]; // whole bracket
-            tuesdayBreak = req.body["tuesdaydifference[]"];
-        }
-
-        if(req.body.wB == 'false'){
-            wednesday = req.body["wednesday[]"];
-        }else{
-            wednesday = req.body["wednesday[]"]; // whole bracket
-            wednesdayBreak = req.body["wednesdaydifference[]"];
-        }
-
-        if(req.body.hB == 'false'){
-            thursday = req.body["thursday[]"];
-        }else{
-            thursday = req.body["thursday[]"]; // whole bracket
-            thursdayBreak = req.body["thursdaydifference[]"];
-        }
-
-        if(req.body.fB == 'false'){
-            friday = req.body["friday[]"];
-        }else{
-            friday = req.body["friday[]"]; // whole bracket
-            fridayBreak = req.body["fridaydifference[]"];
-        }
-
-        if(req.body.sB == 'false'){
-            saturday = req.body["saturday[]"]; 
-        }else{
-            saturday =  req.body["saturday[]"]; // whole bracket
-            saturdayBreak = req.body["saturdaydifference[]"];
-        }
+        monday =  req.body["monday[]"]; // whole bracket
+        tuesday = req.body["tuesday[]"]; // whole bracket
+        wednesday = req.body["wednesday[]"]; // whole bracket
+        thursday = req.body["thursday[]"]; // whole bracket
+        friday = req.body["friday[]"]; // whole bracket
+        saturday =  req.body["saturday[]"]; // whole bracket
+        mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
+        tuesdayBreak = req.body["tuesdaydifference[]"];
+        wednesdayBreak = req.body["wednesdaydifference[]"];
+        thursdayBreak = req.body["thursdaydifference[]"];
+        fridayBreak = req.body["fridaydifference[]"];
+        saturdayBreak = req.body["saturdaydifference[]"];
         
         defaultschedule = new Schedule({
             sunday: null,
@@ -346,47 +337,18 @@ router.post("/editSchedule", urlencoder, async (req, res) => {
 
     let monday, tuesday, wednesday, thursday, friday, saturday;
 
-    if(req.body.mB == 'false'){
-        monday= req.body["monday[]"];
-    }else{
-        monday =  req.body["monday[]"]; // whole bracket
-        mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
-    }
-
-    if(req.body.tB == 'false'){
-        tuesday = req.body["tuesday[]"];
-    }else{
-        tuesday = req.body["tuesday[]"]; // whole bracket
-        tuesdayBreak = req.body["tuesdaydifference[]"];
-    }
-
-    if(req.body.wB == 'false'){
-        wednesday = req.body["wednesday[]"];
-    }else{
-        wednesday = req.body["wednesday[]"]; // whole bracket
-        wednesdayBreak = req.body["wednesdaydifference[]"];
-    }
-
-    if(req.body.hB == 'false'){
-        thursday = req.body["thursday[]"];
-    }else{
-        thursday = req.body["thursday[]"]; // whole bracket
-        thursdayBreak = req.body["thursdaydifference[]"];
-    }
-
-    if(req.body.fB == 'false'){
-        friday = req.body["friday[]"];
-    }else{
-        friday = req.body["friday[]"]; // whole bracket
-        fridayBreak = req.body["fridaydifference[]"];
-    }
-
-    if(req.body.sB == 'false'){
-        saturday = req.body["saturday[]"]; 
-    }else{
-        saturday =  req.body["saturday[]"]; // whole bracket
-        saturdayBreak = req.body["saturdaydifference[]"];
-    }
+    monday =  req.body["monday[]"]; // whole bracket
+    tuesday = req.body["tuesday[]"]; // whole bracket
+    wednesday = req.body["wednesday[]"]; // whole bracket
+    thursday = req.body["thursday[]"]; // whole bracket
+    friday = req.body["friday[]"]; // whole bracket
+    saturday =  req.body["saturday[]"]; // whole bracket
+    mondayBreak = req.body["mondaydifference[]"]; // the difference of end of first session and start of second session
+    tuesdayBreak = req.body["tuesdaydifference[]"];
+    wednesdayBreak = req.body["wednesdaydifference[]"];
+    thursdayBreak = req.body["thursdaydifference[]"];
+    fridayBreak = req.body["fridaydifference[]"];
+    saturdayBreak = req.body["saturdaydifference[]"];
     
     let schedule = new Schedule({
         sunday: null,
@@ -539,6 +501,7 @@ router.post("/addUnavailableDates", urlencoder, async (req, res) => {
     })
 
     UnavailableDate.addUnavailableDate(unavailableDate, function(val){
+        res.send(true);
     }, (error)=>{
         res.send(error);
     })
@@ -547,7 +510,7 @@ router.post("/addUnavailableDates", urlencoder, async (req, res) => {
 
 router.post("/getUnavailableDates", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
-    let data = UnavailableDate.getDoctorUnavailableDates(doctorID);
+    let data = await UnavailableDate.getDoctorUnavailableDates(doctorID);
     let table = fs.readFileSync('./views/module_templates/admin-dentist-unavailable.hbs', 'utf-8');
     
     let sendData = {
@@ -561,12 +524,26 @@ router.post("/getUnavailableDates", urlencoder, async (req, res) => {
 })
 
 function modifyArray(object) {
-    return [];
+    var objectUnavailable = [];
+    for(var i = 0; i < object.length; i++) {
+        if(object[i].momentDate1 == object[i].momentDate2) {
+            objectUnavailable.push({
+                _id: object[i]._id,
+                time: object[i].momentDate1
+            })
+        } else {
+            objectUnavailable.push({
+                _id: object[i]._id,
+                time: object[i].momentDate1 + " - " + object[i].momentDate2
+            })
+        }
+    }
+    return objectUnavailable;
 }
 
 router.post("/deleteUnavailableDates", urlencoder, async (req, res) => {
     UnavailableDate.delete(req.body.unavailableDateID);
-    res.send({message: true});  
+    res.send(true);  
 })
 
 router.post("/editUnavailableDates", urlencoder, async (req, res) => {

@@ -141,6 +141,7 @@ $(document).ready(() => {
     $("#weekly").click(() => {
         $("#weekly").addClass("green");
         $("#unavailable").removeClass("green");
+        $('#table-dimmer').addClass("active");
         $.ajax({
             type: 'post',
             url: 'admin/getSchedule',
@@ -148,8 +149,15 @@ $(document).ready(() => {
                 doctorID: $("#schedule-modal").data("id")
             },
             success: (value) => {
+                $('#table-dimmer').removeClass("active");
                 let table = Handlebars.compile(value.htmlData);
                 $("#table-schedule").html(table(value.data));
+                $("#schedule-table").addClass("celled");
+                if(value.data.sched == "") {
+                    $("#table-detail").text("No available schedules yet");
+                } else {
+                    $("#table-detail").text("");
+                }
                 if(!$("#schedule-modal")[0].className.includes("active")) {
                     $("#schedule-modal").modal("show");
                 }
@@ -159,6 +167,7 @@ $(document).ready(() => {
     $("#unavailable").click(() => {
         $("#weekly").removeClass("green");
         $("#unavailable").addClass("green");
+        $('#table-dimmer').addClass("active");
         $.ajax({
             type: 'post',
             url: 'admin/getUnavailableDates',
@@ -166,52 +175,65 @@ $(document).ready(() => {
                 doctorID: $("#schedule-modal").data("id")
             },
             success: (value) => {
+                $('#table-dimmer').removeClass("active");
                 let table = Handlebars.compile(value.htmlData);
                 $("#table-schedule").html(table(value.data));
+                $("#schedule-table").removeClass("celled");
+                if(value.data.sched == "") {
+                    $("#table-detail").text("No unavailable dates yet");
+                } else {
+                    $("#table-detail").text("");
+                }
+                if(!$("#schedule-modal")[0].className.includes("active")) {
+                    $("#schedule-modal").modal("show");
+                }
             }
         })
     })
 
     // EDITING DENTIST SCHEDULE
     $("#table-schedule").on("click", (event) => {
-        editDay = $($(event.target)[0].parentNode).data("day").toLowerCase();
-        $(".ui .calendar").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false
-        })
-        $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
-        $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
-        $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
-        $("#editing-schedule-modal").modal("show");    
-        
-        $.ajax({
-            type: "post",
-            url: "admin/getDoctorSchedule",
-            data: {
-                doctorID: $("#editing-schedule-modal").data("id")
-            },
-            success: (value) => {
-                editSchedule = value.docSched;
-                editBreaktime = value.breakTime;
-                var normal = value.docSched[editDay];
-                var breaktime = value.breakTime[editDay];
-                if(normal != "") {
-                    $("#edit-start").val(normal[0]);
-                    $("#edit-end").val(normal[1]);
-                } 
-                if(breaktime != "") {   
-                    $("#edit-custom")[0]["checked"] = true;
-                    $("#edit-start").val(normal[0]);
-                    $("#edit-end").val(breaktime[0]);
-                    $("#edit-start-add").val(breaktime[1]);
-                    $("#edit-end-add").val(normal[1]);
-                    accor_show = true;
-                    $("#edit-first-schedule").css({'color':'black'})
-                    $("#edit-custom-schedule").slideToggle(500);
-                } 
-            }
-        })    
+        var temp = event.target;
+        if(temp.id == "delete-unavailable-button") {
+            $("#modal-text-delete-unavailable").text($(temp).data("time"));
+            $("#confirmation-modal").data("id", $(temp).data("id"));
+            $("#confirmation-modal").modal("show");
+        } else {
+            editDay = $($(event.target)[0].parentNode).data("day").toLowerCase();
+            $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
+            $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+            $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+            $("#editing-schedule-modal").modal("show");    
+            $('.dimmer').addClass("active");
+            $.ajax({
+                type: "post",
+                url: "admin/getDoctorSchedule",
+                data: {
+                    doctorID: $("#editing-schedule-modal").data("id")
+                },
+                success: (value) => {
+                    $('.dimmer').removeClass("active");
+                    editSchedule = value.docSched;
+                    editBreaktime = value.breakTime;
+                    var normal = value.docSched[editDay];
+                    var breaktime = value.breakTime[editDay];
+                    if(normal != "") {
+                        $("#edit-start").val(normal[0]);
+                        $("#edit-end").val(normal[1]);
+                    } 
+                    if(breaktime != "") {   
+                        $("#edit-custom")[0]["checked"] = true;
+                        $("#edit-start").val(normal[0]);
+                        $("#edit-end").val(breaktime[0]);
+                        $("#edit-start-add").val(breaktime[1]);
+                        $("#edit-end-add").val(normal[1]);
+                        accor_show = true;
+                        $("#edit-first-schedule").css({'color':'black'})
+                        $("#edit-custom-schedule").slideToggle(500);
+                    } 
+                }
+            })
+        }
     })
 
     // switch selected day in adding/editing dentist schedule
@@ -292,7 +314,7 @@ $(document).ready(() => {
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
-
+                    $('.dimmer').addClass("active");
                     // getting the user object to be edited
                     $.ajax({
                         type: "post",
@@ -301,6 +323,7 @@ $(document).ready(() => {
                             username: accountUsername
                         },
                         success: (value) => {
+                            $('.dimmer').removeClass("active");
                             let user = value.user;
                             let doctor = value.doctor;
                             if(user.accountType == "dentist") {
@@ -327,7 +350,7 @@ $(document).ready(() => {
                     $("#schedule-modal").data("firstname", $(temp).data("firstname"));
                     $("#schedule-modal").data("lastname", $(temp).data("lastname"));
                     $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-                    setDataTable();
+                    setDataTable("weekly");
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(temp).text() == "Delete") {
@@ -396,7 +419,7 @@ $("#save-password").click(() => {
             done = false;
         }
     }
-
+    $('.dimmer').addClass("active");
     if(done && passwordChecker) {
         $.ajax({
             type: "post",
@@ -406,6 +429,7 @@ $("#save-password").click(() => {
                 newPassword: $("#new-password").val()
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 $("#setting-modal").modal("hide");
                 $("#setting-modal").form("clear");
                 $('body').toast({
@@ -468,6 +492,7 @@ $("#create-user-button").click(() => {
     }
 
     if(done && passwordChecker) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addAccount",
@@ -478,6 +503,7 @@ $("#create-user-button").click(() => {
                 doctorID: ""
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#add-user-modal").modal("hide");
                     $('#add-user-modal').form("clear");
@@ -574,6 +600,7 @@ $("#create-dentist-button").click(() => {
     }
 
     if(done && passwordChecker) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addDentist",
@@ -586,6 +613,7 @@ $("#create-dentist-button").click(() => {
                 status: "Available"
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#add-dentist-modal").modal("hide");
                     $('#add-dentist-modal').form("clear");
@@ -646,6 +674,7 @@ $("#create-procedure-button").click(() => {
     }
 
     if(done) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/addProcess",
@@ -653,6 +682,7 @@ $("#create-procedure-button").click(() => {
                 name: $("#procedure-name").val()
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#procedure-modal").modal("hide");
                     $('#procedure-modal').form("clear");
@@ -713,6 +743,7 @@ $("#edit-user-button").click(() => {
         }
     }
     if(done) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/editAccount",
@@ -722,6 +753,7 @@ $("#edit-user-button").click(() => {
                 accountPassword: $("#edit-password-user").val()
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 $("#edit-user-modal").modal("hide");
                 $("#edit-user-modal").form("clear");
                 $('body').toast({
@@ -782,6 +814,7 @@ $("#edit-dentist-button").click(() => {
     }
 
     if(done) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -792,6 +825,7 @@ $("#edit-dentist-button").click(() => {
                 password: $("#edit-password-dentist").val()
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 $("#edit-dentist-modal").modal("hide");
                 $("#edit-dentist-modal").form("clear");
                 $('body').toast({
@@ -820,6 +854,7 @@ $("#edit-procedure-button").click(() => {
     }
 
     if(done) {
+        $('.dimmer').addClass("active");
         $.ajax({
             type: "post",
             url: "/admin/editProcess",
@@ -828,6 +863,7 @@ $("#edit-procedure-button").click(() => {
                 name: $("#edit-procedure-name").val()
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
                     $("#edit-procedure-modal").form("clear");
@@ -855,6 +891,7 @@ $("#edit-procedure-button").click(() => {
 
 // DELETING USER
 $("#delete-user-button").click(() => {
+    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: "/admin/deleteAccount",
@@ -863,6 +900,7 @@ $("#delete-user-button").click(() => {
             accountUsername: accountUsername
         },
         success: (value) => {
+            $('.dimmer').removeClass("active");
             $("#delete-user-modal").modal("hide");
             $.get("/admin/adminUsers", (data) => {
                 $("#table").DataTable().destroy();
@@ -879,6 +917,7 @@ $("#delete-user-button").click(() => {
 
 // DELETING PROCEDURE
 $("#delete-procedure-button").click(() => {
+    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: "/admin/deleteProcess",
@@ -886,6 +925,7 @@ $("#delete-procedure-button").click(() => {
             processID: procedureID
         },
         success: (value) => {
+            $('.dimmer').removeClass("active");
             $("#delete-procedure-modal").modal("hide");
             $.get("/admin/adminProcedure", (data) => {
                 $("#table").DataTable().destroy();
@@ -902,7 +942,68 @@ $("#delete-procedure-button").click(() => {
 
 // ADDING UNAVAILABLE DATE
 $("#add-unavailable-button").click(() => {
+    var start = $("#start-date-input").val();
+    var end = $("#end-date-input").val();
+    var done = true;
     
+    // ERROR CHECKING
+    if(start == "" || end == "")  {
+        if(start == "") {
+            $("#start-date").addClass("error");
+        }
+        if(end == "") {
+            $("#end-date").addClass("error");
+        }
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Please input a valid date"
+        })
+        done = false;
+    }
+
+    if(done) {
+        $('.dimmer').addClass("active");
+        $.ajax({
+            type: "post",
+            url: "admin/addUnavailableDates",
+            data: {
+                doctorID: $("#add-unavailable-modal").data("id"),
+                startdate: start,
+                enddate: end
+            },
+            success: (value) => {
+                $('.dimmer').removeClass("active");
+                $("body").toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Dentist unavailable date successfully added"
+                })
+                $("#add-unavailable-modal").modal("hide");
+            }
+        })
+    }
+})
+
+// DELETING UNAVAILABLE DATES
+$("#remove-unavailable-button").click(() => {
+    $.ajax({
+        type: "post",
+        url: "admin/deleteUnavailableDates",
+        data: {
+            unavailableDateID: $("#confirmation-modal").data("id")
+        },
+        success: (value) => {
+            if(value) {
+                $("#confirmation-modal").modal("hide");
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Unavailable date successfully deleted"
+                })
+            }
+        }
+    })
 })
 
 // ADDING DENTIST SCHEDULE
@@ -958,6 +1059,7 @@ $("#add-schedule-button").click(() => {
     }
 
     if(done) {
+        $('.dimmer').addClass("active");
         // checking if a doctor has a schedule or not
         $.ajax({
             type: "post",
@@ -966,13 +1068,10 @@ $("#add-schedule-button").click(() => {
                 doctorID: $("#adding-schedule-modal").data("id")
             },
             success: (value) => {
+                $('.dimmer').removeClass("active");
                 editSchedule = value.docSched;
                 editBreaktime = value.breakTime;
-                if(value.docSched != undefined) {
-                    addScheduleExist();
-                } else {
-                    addSchedule();
-                }
+                addSchedule();
             }
         })
     }
@@ -1009,16 +1108,11 @@ $("#save-changes-schedule").click(() => {
     }
 })
 
-// Checking for conflict
-function checkConflict(schedule, breaktime) {
-
-}
-
 // Adding schedule without existing
 function addSchedule() {
     let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
     let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
-    let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+    let defaultTime = false;
     
     if($("#daily")[0].checked) {
         if($("#custom")[0].checked) {
@@ -1034,7 +1128,6 @@ function addSchedule() {
             thubreak.push($("#end").val());    thubreak.push($("#start-add").val());
             fribreak.push($("#end").val());    fribreak.push($("#start-add").val());
             satbreak.push($("#end").val());    satbreak.push($("#start-add").val());
-            mB = true; tB = true; wB = true; hB = true; fB = true; sB = true;
         } else {
             mon.push($("#start").val());    mon.push($("#end").val());
             tue.push($("#start").val());    tue.push($("#end").val());
@@ -1049,7 +1142,6 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     mon.push($("#start").val());    mon.push($("#end-add").val());
                     monbreak.push($("#end").val());    monbreak.push($("#start-add").val());
-                    mB = true;
                 } else {
                     mon.push($("#start").val());    mon.push($("#end").val());
                 }
@@ -1057,7 +1149,6 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     tue.push($("#start").val());    tue.push($("#end-add").val());
                     tuebreak.push($("#end").val());    tuebreak.push($("#start-add").val());
-                    tB = true;
                 } else {
                     tue.push($("#start").val());    tue.push($("#end").val());
                 }
@@ -1065,7 +1156,6 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     wed.push($("#start").val());    wed.push($("#end-add").val());
                     wedbreak.push($("#end").val());    wedbreak.push($("#start-add").val());
-                    wB = true;
                 } else {
                     wed.push($("#start").val());    wed.push($("#end").val());
                 }
@@ -1073,7 +1163,6 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     thu.push($("#start").val());    thu.push($("#end-add").val());
                     thubreak.push($("#end").val());    thubreak.push($("#start-add").val());
-                    hB = true;
                 } else {
                     thu.push($("#start").val());    thu.push($("#end").val());
                 }
@@ -1081,7 +1170,6 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     fri.push($("#start").val());    fri.push($("#end-add").val());
                     fribreak.push($("#end").val());    fribreak.push($("#start-add").val());
-                    fB = true;
                 } else {
                     fri.push($("#start").val());    fri.push($("#end").val());
                 }
@@ -1089,13 +1177,13 @@ function addSchedule() {
                 if($("#custom")[0].checked) {
                     sat.push($("#start").val());    sat.push($("#end-add").val());
                     satbreak.push($("#end").val());    satbreak.push($("#start-add").val());
-                    sB = true;
                 } else {
                     sat.push($("#start").val());    sat.push($("#end").val());
                 }
             }
         }
     }
+    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: 'admin/addSchedule',
@@ -1113,15 +1201,10 @@ function addSchedule() {
             'fridaydifference[]': fribreak,
             'saturdaydifference[]': satbreak,
             doctorID: $("#adding-schedule-modal").data("id"),
-            mB,
-            tB,
-            wB,
-            hB,
-            fB,
-            sB,
             defaultTime
         },
         success: (value) => {
+            $('.dimmer').removeClass("active");
             if(value) {
                 $("body").toast({
                     class: "success",
@@ -1134,14 +1217,9 @@ function addSchedule() {
     })
 }
 
-// Adding schedule with existing
-function addScheduleExist() {
-
-}
-
 // Updating schedule function
 function updateSchedule() {
-    let defaultTime = false, mB = false, tB = false, wB = false, hB = false, fB = false, sB = false;
+    let defaultTime = false;
 
     if($("#edit-start").val() == "" && $("#edit-end").val() == "") {
         editSchedule[editDay] = [];
@@ -1171,26 +1249,7 @@ function updateSchedule() {
     } else {
         editBreaktime[editDay] = []
     }
-
-    if(editBreaktime["monday"] != "") {
-        mB = true;
-    }
-    if(editBreaktime["tuesday"] != "") {
-        tB = true;
-    }
-    if(editBreaktime["wednesday"] != "") {
-        wB = true;
-    }
-    if(editBreaktime["thursday"] != "") {
-        tB = true;
-    }
-    if(editBreaktime["friday"] != "") {
-        fB = true;
-    }
-    if(editBreaktime["saturday"] != "") {
-        sB = true;
-    }
-
+    $('.dimmer').addClass("active");
     $.ajax({
         type: "post",
         url: 'admin/editSchedule',
@@ -1208,15 +1267,10 @@ function updateSchedule() {
             'fridaydifference[]': editBreaktime["friday"],
             'saturdaydifference[]': editBreaktime["saturday"],
             doctorID: $("#editing-schedule-modal").data("id"),
-            mB,
-            tB,
-            wB,
-            hB,
-            fB,
-            sB,
             defaultTime
         },
         success: (value) => {
+            $('.dimmer').removeClass("active");
             if(value) {
                 $("body").toast({
                     class: "success",
@@ -1230,6 +1284,13 @@ function updateSchedule() {
 }
 
 // MODALS
+$(".modal").modal({
+    onHidden: () => {
+        $('body').removeClass("dimmed");
+        $('.modals').removeClass("active");
+    }
+})
+
 $("#add").click(() => {
     $("#create-modal").modal("show");
 })
@@ -1237,21 +1298,29 @@ $("#add").click(() => {
 $("#add-schedule").click(() => {
     if($("#weekly")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        $(".ui .calendar").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false
-        })
         $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
+        $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
+        $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+        $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
         $("#adding-schedule-modal").modal("show");
     } else if($("#unavailable")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
+        var today = new Date();
+        $("#start-date").calendar('set date', moment().toDate(), true, false);
+        $("#end-date").calendar('set date', moment().toDate(), true, false);
         $("#start-date").calendar({
-            type: "date"
-        })
+            type: "date",
+            minDate: today,
+            today: true
+        });
         $("#end-date").calendar({
-            type: "date"
-        })
+            type: "date",
+            minDate: today,
+            today: true
+        });
+        $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
+        $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
+        $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
         $("#add-unavailable-modal").modal("show");
     }
 })
@@ -1329,6 +1398,26 @@ $("#reset-password-modal").modal({
 $("#adding-schedule-modal").modal({
     onShow: () => {
         accor_show = false;
+        $("#start-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#end-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#start-add-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#end-add-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
     },
     onHidden: () => {
         $(".ui .button").removeClass("active");
@@ -1342,11 +1431,33 @@ $("#adding-schedule-modal").modal({
         $("#schedule-modal").data("firstname", $("#adding-schedule-modal").data("firstname"));
         $("#schedule-modal").data("lastname", $("#adding-schedule-modal").data("lastname"));
         $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-        setDataTable();
+        setDataTable("weekly");
     }
 })
 
 $("#editing-schedule-modal").modal({
+    onShow: () => {
+        $("#edit-start-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#edit-end-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#edit-start-add-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+        $("#edit-end-add-field").calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false
+        })
+    },
     onHidden: () => {
         $(".ui .button").removeClass("active");
         $(".ui .checkbox").checkbox('uncheck');
@@ -1355,11 +1466,7 @@ $("#editing-schedule-modal").modal({
         })
         $("input").val("");
         accor_show = false;
-        $("#schedule-modal").data("id", $("#editing-schedule-modal").data("id"));
-        $("#schedule-modal").data("firstname", $("#editing-schedule-modal").data("firstname"));
-        $("#schedule-modal").data("lastname", $("#editing-schedule-modal").data("lastname"));
-        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-        setDataTable();
+        setDataTable("weekly");
     }
 })
 
@@ -1369,11 +1476,13 @@ $("#add-unavailable-modal").modal({
         $("#end-date-input").val("");
     },
     onHidden: () => {
-        $("#schedule-modal").data("id", $("#add-unavailable-modal").data("id"));
-        $("#schedule-modal").data("firstname", $("#add-unavailable-modal").data("firstname"));
-        $("#schedule-modal").data("lastname", $("#add-unavailable-modal").data("lastname"));
-        $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
-        setDataTable();
+        setDataTable("");
+    }
+})
+
+$("#confirmation-modal").modal({
+    onHidden: () => {
+        setDataTable("");
     }
 })
 
@@ -1388,6 +1497,7 @@ function setup() {
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
+    $(".dimmer").removeClass("active");
 }
 
 // SWITCH TAB
@@ -1442,8 +1552,12 @@ function updateTable(data) {
 }
 
 // Set data to table in modal
-function setDataTable() {
-    $("#weekly").click();
+function setDataTable(string) {
+    if(string == "weekly") {
+        $("#weekly").click();
+    } else {
+        $("#unavailable").click();
+    }
 }
 
 // Setting default button on modal when ENTER key is pressed
@@ -1490,8 +1604,12 @@ $(document).on("keydown", () => {
     $("#edit-password-field-dentist").removeClass("error");
     $("#edit-confirm-password-field-dentist").removeClass("error");
     $("#edit-procedure-field").removeClass("error");
+    $("#start-field").removeClass("error");
+    $("#end-field").removeClass("error");
     $("#start-add-field").removeClass("error");
     $("#end-add-field").removeClass("error");
+    $("#start-date").removeClass("error");
+    $("#end-date").removeClass("error");
 })
 
 // LOGOUT

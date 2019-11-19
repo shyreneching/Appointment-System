@@ -202,7 +202,7 @@
 
     {{!-- modal for deleting user --}}
     <div class="ui mini modal" id="delete-user-modal">
-      <div class="header">Delete User</div>
+      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete User</div>
       <div class="content">
           <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
       </div>
@@ -391,7 +391,7 @@
     <div class="ui small modal" id="schedule-modal">
       <i class="close icon deny"></i>
       <div class="header">Schedule</div>
-      <div class="content">
+      <div class="scrolling content">
         <div class="ui grid" style="padding: 10px;">
           <div class="thirteen wide column">
             <i class="big user md icon"></i>
@@ -403,15 +403,38 @@
           <div class="ui center aligned basic segment" style="padding: 0px">
             <button class="ui button" id="weekly">Weekly Schedule</button>
             <button class="ui button" id="unavailable">Unavailable Date</button>
-            <table class="ui stripped selectable celled fixed table">
+            <table class="ui stripped selectable celled fixed table" id="schedule-table">
               <tbody id="table-schedule">
                 
               </tbody>
+              <div class="ui inverted dimmer" id="table-dimmer">
+                <div class="ui elastic huge green loader"></div>
+              </div>
             </table>
+            <span id="table-detail"></span>
           </div>
         </div>
       </div>
       <div class="actions"></div>
+    </div>
+
+    {{!-- modal for confirmation --}}
+    <div class="ui mini modal" id="confirmation-modal">
+      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete Unavailable Date</div>
+      <div class="content">
+        <span id="modal-text-delete-unavailable" style="font-size: 15px; font-weight: bold;"></span><br>
+        <span style="font-size: 15px;">Are you sure you want to delete this date?</span>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon red button" id="remove-unavailable-button" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
+            CANCEL
+            <i class="cancel icon"></i>
+        </div>        
+      </div>
     </div>
 
     {{!-- modal for editing schedule --}}
@@ -504,11 +527,6 @@
       </div>
     </div>
 
-    {{!-- modal for confirmation --}}
-    <div class="ui mini modal" id="confirmation-modal">
-
-    </div>
-
     {{!-- modal for adding procedure --}}
     <div class="ui mini modal" id="procedure-modal">
       <i class="close icon deny"></i>
@@ -555,7 +573,7 @@
     
     {{!-- modal for deleting procedure --}}
     <div class="ui mini modal" id="delete-procedure-modal">
-      <div class="header">Delete Procedure</div>
+      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete Procedure</div>
       <div class="content">
           <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
       </div>
@@ -571,11 +589,15 @@
       </div>
     </div>
 
+    <div class="ui active inverted dimmer">
+        <div class="ui elastic massive green loader"></div>
+    </div>
     <script src="javascript/jquery.js"></script>
     <script src="semantic/dist/semantic.js"></script>
     <script src="javascript/jquery-data-table.js"></script>
     <script src="javascript/jquery-data-table-semanticui.js"></script>
     <script src="javascript/handlebars.js"></script>
+    <script src="javascript/moment.js"></script>
     <script src="javascript/admin.js"></script>
   </body>
 </html>
