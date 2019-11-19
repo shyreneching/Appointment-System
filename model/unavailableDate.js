@@ -46,7 +46,7 @@ unavailableDateSchema.statics.getDoctorUnavailableDates = async function(doctorI
         doctor:{
             "$in": [doctorID]
         }        
-    });
+    }).sort({'stringDate1': 1});
 };
 
 unavailableDateSchema.methods.populateDoctor = async function(){

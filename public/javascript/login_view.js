@@ -1,9 +1,30 @@
 var passwordChecker;
 
 $(document).ready(() => {
+    // validate username
+    $("#reset-username").focusout(() => {
+        $.ajax({
+            type: "post",
+            url: "/admin/validateUsername",
+            data:  {
+                username: $("#reset-username").val()
+            },
+            success: (value) => {
+                if(!value.message) {
+                    $("#reset-username-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Username does not exist"
+                    });
+                }
+            }
+        })
+    })
+
     $("#reset-password").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#new-password").val().match(check)) {
+        if(!$("#reset-password").val().match(check)) {
             $("#reset-password-field").addClass("error");
             $("body").toast({
                 class: "error",
@@ -11,7 +32,7 @@ $(document).ready(() => {
                 message: "Incorrect password format"
             })
             passwordChecker = false;
-        } else if($("#reset-password").val().length < 8) {
+        } else if($("#reset-password").val().length < 10) {
             $("#reset-password-field").addClass("error");
             $("body").toast({
                 class: "error",
