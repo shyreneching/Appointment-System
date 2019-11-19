@@ -1,0 +1,53 @@
+<div class="ui two column centered grid middle aligned" style="
+    height: 100%;
+    width: 100%;
+    position: absolute;">
+
+    <div class="row">
+        {{!-- <div class="five wide column"></div> --}}
+        <div class="column left aligned">
+
+            <div class='circular ui pink icon button' id='demoAdd'>
+                <i class='large plus icon'></i>
+            </div>
+            ← You can add appointments by clicking this (⏎ ENTER)
+        </div>
+    </div>
+
+    <div class="row">
+        {{!-- <div class="five wide column"></div> --}}
+        <div class="column left aligned">
+            <div class='ui calendar' id='demoStandard_calendar'>
+                <div class='ui input left icon'>
+                    <i class='calendar icon'></i>
+                    <input type='text' placeholder='Date/Time' disabled>
+                </div>
+                ← You can view appointments on a certain day by clicking this (C)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {{!-- <div class="five wide column"></div> --}}
+        <div class="column left aligned">
+            <div class='ui white button' id='demoToday'>
+                TODAY
+            </div>
+            ← You can view today's appointments by clicking this ( ⎵ SPACEBAR)
+        </div>
+    </div>
+
+    <div class="row">
+        {{!-- <div class="five wide column"></div> --}}
+        <div class="column left aligned">
+            <div class='ui icon buttons'>
+                <div class='ui button with tooltip' id='demoPrev-button'>
+                    <i class='angle left icon'></i>
+                </div>
+                <div class='ui button with tooltip' id='demoNext-button'>
+                    <i class='angle right icon'></i>
+                </div>
+            </div>
+            ← You can view adjacent date's appointments by clicking these (⇦|⇨)
+        </div>
+    </div>
+</div>
