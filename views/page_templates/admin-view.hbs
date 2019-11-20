@@ -229,11 +229,15 @@
           <div class="ui form">
               <div class="required field" id="firstname-field-dentist">
                   <label>First Name</label>
-                  <input type="text" name="firstname" id="add-firstname-dentist" autocomplete="false" placeholder="First Name">
+                  <div data-tooltip="Name should contain at least 2 characters" data-position="right center">
+                    <input type="text" name="firstname" id="add-firstname-dentist" autocomplete="false" placeholder="First Name">
+                  </div>
               </div>
               <div class="required field" id="lastname-field-dentist">
                   <label>Last Name</label>
-                  <input type="text" name="lastname" id="add-lastname-dentist" autocomplete="false" placeholder="Last Name">
+                  <div data-tooltip="Name should contain at least 2 characters" data-position="right center">
+                    <input type="text" name="lastname" id="add-lastname-dentist" autocomplete="false" placeholder="Last Name">
+                  </div>
               </div>
               <div class="required field" id="username-field-dentist">
                   <label>Username</label>
@@ -271,11 +275,15 @@
           <div class="ui form">
               <div class="required field" id="edit-firstname-field-dentist">
                   <label>First Name</label>
-                  <input type="text" name="firstname" id="edit-firstname-dentist" autocomplete="false" placeholder="First Name">
+                  <div data-tooltip="Name should contain at least 2 characters" data-position="right center">
+                    <input type="text" name="firstname" id="edit-firstname-dentist" autocomplete="false" placeholder="First Name">
+                  </div>
               </div>
               <div class="required field" id="edit-lastname-field-dentist">
                   <label>Last Name</label>
-                  <input type="text" name="lastname" id="edit-lastname-dentist" autocomplete="false" placeholder="Last Name">
+                  <div data-tooltip="Name should contain at least 2 characters" data-position="right center">
+                    <input type="text" name="lastname" id="edit-lastname-dentist" autocomplete="false" placeholder="Last Name">
+                  </div>
               </div>
               <div class="required field" id="edit-username-field-dentist">
                   <label>Username</label>
@@ -306,7 +314,7 @@
     {{!-- modal for adding dentist schedule --}}
     <div class="ui small modal" id="adding-schedule-modal">
       <i class="close icon deny"></i>
-      <div class="header">Add Schedule</div>
+      <div class="header" id="add-header">Add Schedule</div>
       <div class="content">
         <div class="ui center aligned basic segment">
           <i class="huge user md icon"></i><br>
@@ -319,7 +327,7 @@
             </div>
             <div class="ui checkbox" style="margin-top: 10px;" id="repeat-field">
               <input type="checkbox" id="repeat">
-              <label for="repeat" style="cursor: pointer">Customized Reccurence</label>
+              <label for="repeat" style="cursor: pointer">Customized Recurrence</label>
             </div>
           </div>
           <div class="ui checkbox" style="padding-top: 20px;" id="custom-field">
@@ -491,10 +499,14 @@
         </div>
       </div>
       <div class="actions">
-        {{!-- <i class="big trash icon link" style="padding-bottom: 0px; margin-bottom: 0px"></i> --}}
-        <div class="ui right floated labeled icon green button very padded" id="save-changes-schedule" style="margin-bottom: 15px;">
-            SAVE CHANGES
-            <i class="checkmark icon"></i>
+        <div class="ui grid very padded" style="display: inline-flex;">
+          <div class="ui right floated labeled icon green button very padded" id="save-changes-schedule">
+              SAVE CHANGES
+              <i class="checkmark icon"></i>
+          </div>
+          <div data-tooltip="Remove Schedule" data-position="right center">
+            <i class="big trash icon link" style="padding-top: 5px; padding-right: 5px; padding-left: 5px"></i>
+          </div>
         </div>
       </div>
     </div>

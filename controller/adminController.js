@@ -72,8 +72,9 @@ router.post("/deleteAccount", async (req, res) => {
         let appointments = await Appointment.getDoctorAppointment(account.doctorID);
         for (var i = 0; i < appointments.length; i++){
             let appID = appointments[i]._id;
-
-            await Appointment.delete(appID);
+            if(appID.doctor == "" || appID.doctor.length == 0) {
+                await Appointment.delete(appID);
+            }
         }
     } 
     Account.delete(req.body.accountID);
