@@ -459,7 +459,9 @@ async function initializeTHead(date) {
 
 
     //Initializes Add button-------------------------------------------
-    $("#add-button").on("click", addAppointmentModal);
+    $("#add-button").on("click", function(){
+        addAppointmentModal()
+    });
 
 
 
@@ -488,42 +490,36 @@ async function initializeTHead(date) {
 
 };
 
-var addAppointmentModal = function () {
+var resetModalState = function () {
+    $("#add-multiDoctor").dropdown("clear")
+    $("#add-multiProcedure").dropdown("clear")
+    $("#add-lastName").val("");
+    $("#add-firstName").val("");
+    $("#add-notes").val("");
+    $("#add-contact").val("");
 
+    $("#add-fieldProcedures").removeClass("error")
+    $("#add-fieldDoctors").removeClass("error")
+    $("#add-fieldContact").removeClass("error")
+    $("#add-fieldFirstName").removeClass("error")
+    $("#add-fieldLastName").removeClass("error")
+    //rebinding keydown
+    console.log("BIND SHORTCUTS")
+    initializeShortcutsMain();
+}
+
+$('#discard').on('click', function () {
+    resetModalState()
+})
+
+var addAppointmentModal = function () {
     $(document).unbind('keydown')
 
     $("#add-date_calendar").removeClass("disabled")
     $("#add-time_calendar").removeClass("disabled")
     // $('#add-appointment-modal').modal('toggle');
     // Initialize popup stuff
-    $("#add-date_calendar").calendar({
-        type: 'date',
-        today: 'true',
-        disabledDaysOfWeek: [0],
-        initialDate: moment().toDate(),
-    })
-
-    // $("#add-date_calendar").on('click', function(){
-    //     $("#add-date_calendar").calendar('popup', 'show')
-    // })
-    // $("#add-time_calendar").on('click', function(){
-    //     $("#add-time_calendar").calendar('popup','show')
-    // })
-
-
-    var minDate = new Date();
-    var maxDate = new Date();
-    minDate.setHours(8);
-    minDate.setMinutes(0);
-    maxDate.setHours(18);
-    maxDate.setMinutes(0);
-    $('#add-time_calendar').calendar({
-        type: 'time',
-        minTimeGap: 30,
-        maxDate: maxDate,
-        minDate: minDate,
-        initialDate: minDate
-    });
+    
 
 
 
@@ -557,25 +553,10 @@ var addAppointmentModal = function () {
         $("#add-fieldProcedures").removeClass("error")
     })
 
-    var resetModalState = function () {
-        $("#add-multiDoctor").dropdown("clear")
-        $("#add-multiProcedure").dropdown("clear")
-        $("#add-lastName").val("");
-        $("#add-firstName").val("");
-        $("#add-notes").val("");
-        $("#add-contact").val("");
-
-        $("#add-fieldProcedures").removeClass("error")
-        $("#add-fieldDoctors").removeClass("error")
-        $("#add-fieldContact").removeClass("error")
-        $("#add-fieldFirstName").removeClass("error")
-        $("#add-fieldLastName").removeClass("error")
-        //rebinding keydown
-        initializeShortcutsMain();
-
-    }
+    
 
     var unbindShorcuts = function () {
+        console.log("UNBINDED")
         $(document).unbind("keydown")
     }
 
@@ -588,7 +569,6 @@ var addAppointmentModal = function () {
         onApprove: async function () {
             var date = $('#add-date_calendar').calendar('get date')
             var time = $('#add-time_calendar').calendar('get date')
-
 
             var datetime = {
                 dateInput: date.toString(),
@@ -603,12 +583,10 @@ var addAppointmentModal = function () {
             });
         },
         onDeny: function () {
-            $('#cancelConfirmation').modal('toggle')
-            $('#discard').one('click', function () {
-                resetModalState()
-            })
-            $('#cancelDiscard').one('click', function () {
-                $("#add-appointment-date-modal").modal("toggle")
+            $('#cancelConfirmation').modal('show')
+            
+            $('#cancelDiscard').on('click', function () {
+                $("#add-appointment-date-modal").modal("show")
             })
         },
         onShow: function () {
@@ -625,6 +603,9 @@ var addAppointmentModal = function () {
         closable: false,
         duration: 500,
         queue: true,
+        onApprove: function(){
+            resetModalState()
+        },
         onShow: function () {
             unbindShorcuts()
             $(document).keydown(modalHandler)
@@ -633,13 +614,9 @@ var addAppointmentModal = function () {
             $(document).unbind('keydown', modalHandler)
         },
         onDeny: function () {
-            $('#cancelConfirmation').modal('toggle')
-
-            $('#discard').one('click', function () {
-                resetModalState()
-            })
-            $('#cancelDiscard').one('click', function () {
-                $("#add-appointment-modal").modal("toggle")
+            $('#cancelConfirmation').modal('show')
+            $('#cancelDiscard').on('click', function () {
+                $("#add-appointment-modal").modal("show")
             })
         }
     }).modal('attach events', '#add-appointment-date-modal #date-done')
@@ -650,9 +627,41 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
+    $('#add-back-button').on('click', function(){
+        $("#add-appointment-date-modal").modal('show')
+    })
+
+    $('#add-step-date').on('click', function(){
+        $("#add-appointment-date-modal").modal('show')
+    })
+
+
+    $("#add-date_calendar").calendar({
+        type: 'date',
+        today: 'true',
+        disabledDaysOfWeek: [0],
+        initialDate: moment().toDate(),
+        minDate: moment().toDate()
+    })
+   
+    var minDate = new Date();
+    var maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(18);
+    maxDate.setMinutes(0);
+    $('#add-time_calendar').calendar({
+        type: 'time',
+        minTimeGap: 30,
+        maxDate: maxDate,
+        minDate: minDate,
+        initialDate: minDate
+    });
+
     $('#add-appointment-date-modal').modal('show');
 
 }
+
 
 
 async function addAppointment() {
@@ -792,6 +801,7 @@ async function addAppointment() {
 
     // if all fields are filled
     if (isValid) {
+        resetModalState()
         let ajaxData = {
             firstName: firstName,
             lastName: lastName,
@@ -814,26 +824,27 @@ async function addAppointment() {
         initializeTHead(dateInput);
         updateTableRows(dateInput);
     }
+
     return isValid
 }
 
 async function openDetailsModal(appointmentID) {
-
-
     //open second modal on first modal buttons
-    $('.second.modal.confirmation').modal('attach events', '#edit-appointment-modal #edit-delete-button');
+    $('#deleteConfirmation').modal({
+        transition: "fly down"
+    }).modal('attach events', '#edit-appointment-modal #edit-delete-button');
     $('#edit-appointment-modal').modal('show');
 
     $('#edit-cancel-button').unbind('click');
     $('#edit-cancel-button').on('click', function () {
-        $('.second.modal.confirmation').modal('toggle');
+        $('#deleteConfirmation').modal('toggle');
         openDetailsModal(appointmentID);
     });
 
     $('#edit-continue-button').unbind('click');
     $('#edit-continue-button').on('click', function () {
         $.post("/secretary/delete", { appointmentID: appointmentID }, function (data) {
-            $('.second.modal.confirmation').modal('hide');
+            $('#deleteConfirmation').modal('hide');
             let date = $('#standard_calendar').calendar('get date');
             updateTableRows(date);
         });
@@ -944,7 +955,6 @@ async function openDetailsModal(appointmentID) {
         editAppointment(appointmentID, doctors);
     });
 
-    $('#edit-appointment-modal').modal('show');
 }
 
 function quickAdd(slot) {
@@ -955,7 +965,8 @@ function quickAdd(slot) {
         type: 'date',
         today: 'true',
         disabledDaysOfWeek: [0],
-        initialDate: moment(date).toDate()
+        initialDate: moment(date).toDate(),
+        minDate: moment().toDate()
     })
 
     $("#add-date_calendar").addClass("disabled")
@@ -1162,6 +1173,7 @@ async function editAppointment(appointmentID, initialDoctors) {
     }
 
 }
+ 
 
 function initializeShortcutsMain() {
     $(document).on('keydown', function (e) {
