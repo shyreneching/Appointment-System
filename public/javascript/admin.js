@@ -1,300 +1,420 @@
 var accountID, procedureID, accountUsername;
-var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show;;
-var editSchedule, editBreaktime, editDay;
+var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show, inputChecker, deleteSchedule;
+var editSchedule, editBreaktime, editDay, normal, breaktime;
 
 $(document).ready(() => {
     // switch page between users, dentist, and procedure
     $(".ui .item").on("click", switchPage);
 
+    $("input[type='text']").focusin(() => {
+        inputChecker = false;
+    })
+
     // validation if username exist
     $("#add-username-user").focusout(() => {
-        $.ajax({
-            type: "post",
-            url: "/admin/validateUsername",
-            data:  {
-                username: $("#add-username-user").val().trim()
-            },
-            success: (value) => {
-                if(value.message) {
-                    $("#username-field-user").addClass("error");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Username already taken"
-                    });
-                }
+        var check = /^[0-9a-zA-Z]+$/;
+        if(inputChecker) {
+            if(!$("#add-username-user").val().match(check)) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect username format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-user").val().length < 6) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username should be at least 6 alphanumeric characters"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-duser").val().length > 32) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username is too long"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
             }
-        })
+        }
+        if(nameChecker) {
+            $.ajax({
+                type: "post",
+                url: "/admin/validateUsername",
+                data:  {
+                    username: $("#add-username-user").val().trim()
+                },
+                success: (value) => {
+                    if(value.message) {
+                        $("#username-field-user").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Username already taken"
+                        });
+                        inputChecker = false;
+                    }
+                }
+            })
+        }
     })
     $("#add-username-dentist").focusout(() => {
-        $.ajax({
-            type: "post",
-            url: "/admin/validateUsername",
-            data:  {
-                username: $("#add-username-dentist").val().trim()
-            },
-            success: (value) => {
-                if(value.message) {
-                    $("#username-field-dentist").addClass("error");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Username already taken"
-                    });
-                }
+        var check = /^[0-9a-zA-Z]+$/;
+        if(inputChecker) {
+            if(!$("#add-username-dentist").val().match(check)) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect username format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-dentist").val().length < 6) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username should be at least 6 alphanumeric characters"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-dentist").val().length > 32) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username is too long"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
             }
-        })
+        }
+        if(nameChecker) {
+            $.ajax({
+                type: "post",
+                url: "/admin/validateUsername",
+                data:  {
+                    username: $("#add-username-dentist").val().trim()
+                },
+                success: (value) => {
+                    if(value.message) {
+                        $("#username-field-dentist").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Username already taken"
+                        });
+                        inputChecker = false;
+                    }
+                }
+            })
+        }
     })
     // validate firstname and lastname format
     $("#add-firstname-dentist").focusout(() => {
         var check = /^[a-zA-Z]+$/;
-        if($("#add-firstname-dentist").val().length < 2) {
-            $("#firstname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Name is too short"
-            })
-            nameChecker = false;
-        } else if(!$("#add-firstname-dentist").val().match(check)) {
-            $("#firstname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Invalid name format"
-            })
-            nameChecker = false;
-        } else {
-            nameChecker = true;
+        if(inputChecker) {
+            if($("#add-firstname-dentist").val().length < 2) {
+                $("#firstname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Name is too short"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if(!$("#add-firstname-dentist").val().match(check)) {
+                $("#firstname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Invalid name format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
         }
     })
     $("#add-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
-        if($("#add-lastname-dentist").val().length < 2) {
-            $("#lastname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Name is too short"
-            })
-            nameChecker = false;
-        } else if(!$("#add-lastname-dentist").val().match(check)) {
-            $("#lastname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Invalid name format"
-            })
-            nameChecker = false;
-        } else {
-            nameChecker = true;
+        var check = /^[a-zA-Z.\-_]+$/;
+        if(inputChecker) {
+            if($("#add-lastname-dentist").val().length < 2) {
+                $("#lastname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Name is too short"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if(!$("#add-lastname-dentist").val().match(check)) {
+                $("#lastname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Invalid name format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
         }
     })
     $("#edit-firstname-dentist").focusout(() => {
         var check = /^[a-zA-Z]+$/;
-        if($("#edit-firstname-dentist").val().length < 2) {
-            $("#edit-firstname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Name is too short"
-            })
-            nameChecker = false;
-        } else if(!$("#edit-firstname-dentist").val().match(check)) {
-            $("#edit-firstname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Invalid name format"
-            })
-            nameChecker = false;
-        } else {
-            nameChecker = true;
+        if(inputChecker) {
+            if($("#edit-firstname-dentist").val().length < 2) {
+                $("#edit-firstname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Name is too short"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if(!$("#edit-firstname-dentist").val().match(check)) {
+                $("#edit-firstname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Invalid name format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
         }
     })
     $("#edit-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
-        if($("#edit-lastname-dentist").val().length < 2) {
-            $("#edit-lastname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Name is too short"
-            })
-            nameChecker = false;
-        } else if(!$("#edit-lastname-dentist").val().match(check)) {
-            $("#edit-lastname-dentist-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Invalid name format"
-            })
-            nameChecker = false;
-        } else {
-            nameChecker = true;
+        var check = /^[a-zA-Z.\-_]+$/;
+        if(inputChecker) {
+            if($("#edit-lastname-dentist").val().length < 2) {
+                $("#edit-lastname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Name is too short"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if(!$("#edit-lastname-dentist").val().match(check)) {
+                $("#edit-lastname-dentist-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Invalid name format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
         }
     })
 
     // validate password format
     $("#current-password").focusout(() => {
-        if($("#current-password").val() != $("#current-password").data("password")) {
-            $("#current-password-field").addClass("error");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect current password"
-            });
+        if(inputChecker) {
+            if($("#current-password").val() != $("#current-password").data("password")) {
+                $("#current-password-field").addClass("error");
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect current password"
+                });   
+                inputChecker = false;
+                passwordChecker = false;
+            }
         }
-        passwordChecker = false;
     })
     $("#new-password").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#new-password").val().match(check)) {
-            $("#new-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#new-password").val().length < 10) {
-            $("#new-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#new-password").val().length > 32) {
-            $("#new-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#new-password").val().match(check)) {
+                $("#new-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#new-password").val().length < 10) {
+                $("#new-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#new-password").val().length > 32) {
+                $("#new-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
     $("#add-password-user").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#add-password-user").val().match(check)) {
-            $("#password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#add-password-user").val().length < 10) {
-            $("#password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#add-password-user").val().length > 32) {
-            $("#password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#add-password-user").val().match(check)) {
+                $("#password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#add-password-user").val().length < 10) {
+                $("#password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#add-password-user").val().length > 32) {
+                $("#password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
     $("#add-password-dentist").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#add-password-dentist").val().match(check)) {
-            $("#password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#add-password-dentist").val().length < 10) {
-            $("#password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#add-password-dentist").val().length > 32) {
-            $("#password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#add-password-dentist").val().match(check)) {
+                $("#password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#add-password-dentist").val().length < 10) {
+                $("#password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#add-password-dentist").val().length > 32) {
+                $("#password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
     $("#edit-password-user").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#edit-password-user").val().match(check)) {
-            $("#edit-password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#edit-password-user").val().length < 10) {
-            $("#edit-password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#edit-password-user").val().length > 32) {
-            $("#edit-password-field-user").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#edit-password-user").val().match(check)) {
+                $("#edit-password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#edit-password-user").val().length < 10) {
+                $("#edit-password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#edit-password-user").val().length > 32) {
+                $("#edit-password-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
     $("#edit-password-dentist").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#edit-password-dentist").val().match(check)) {
-            $("#edit-password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#edit-password-dentist").val().length < 10) {
-            $("#edit-password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#edit-password-dentist").val().length > 32) {
-            $("#edit-password-field-dentist").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#edit-password-dentist").val().match(check)) {
+                $("#edit-password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#edit-password-dentist").val().length < 10) {
+                $("#edit-password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#edit-password-dentist").val().length > 32) {
+                $("#edit-password-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
 
@@ -362,7 +482,7 @@ $(document).ready(() => {
             $("#confirmation-modal").data("id", $(temp).data("id"));
             $("#confirmation-modal").modal("show");
         } else {
-            editDay = $($(event.target)[0].parentNode).data("day").toLowerCase();
+            editDay = $($(event.target)[0].parentNode).data("day");
             $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
             $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
             $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
@@ -376,15 +496,15 @@ $(document).ready(() => {
                 success: (value) => {
                     editSchedule = value.docSched;
                     editBreaktime = value.breakTime;
-                    var normal = value.docSched[editDay];
-                    var breaktime = value.breakTime[editDay];
+                    normal = value.docSched[editDay.toLowerCase()];
+                    breaktime = value.breakTime[editDay.toLowerCase()];
                     if(normal != "") {
-                        $("#edit-start").val(normal[0]);
+                        $("#edit-start").val(normal[0].toLowerCase());
                         $("#edit-end").val(normal[1]);
                     } else {
                         $("input[type='text']").val("");
                     }
-                    if(breaktime != "") {   
+                    if(breaktime != "" && breaktime != undefined) {   
                         $("#edit-custom")[0]["checked"] = true;
                         $("#edit-start").val(normal[0]);
                         $("#edit-end").val(breaktime[0]);
@@ -393,8 +513,6 @@ $(document).ready(() => {
                         accor_show = true;
                         $("#edit-first-schedule").css({'color':'black'})
                         $("#edit-custom-schedule").slideToggle(500);
-                    } else {
-                        $("input[type='text']").val("");
                     }
                 }
             })
@@ -469,9 +587,13 @@ $(document).ready(() => {
         if($(temp).text().trim() != "" && temp.id != "filter-dropdown") {
             if(currTab == "Users") {    // accessing elements in users tab
                 if($(temp).text() == "Delete") {
+                    if($(temp).data("type") == "dentist") {
+                        $("#warning").css({'visibility':'visible'});
+                    } else if($(temp).data("type") == "secretary") {
+                        $("#warning").css({'visibility':'hidden'});
+                    }
                     $("#delete-user-modal").modal("show");
                     $("#modal-text-delete-user").text($(event.target).data("username"));
-
                     // setting temporary value
                     accountID = $(temp).data("id");
                     accountUsername = $(temp).data("username");
@@ -494,6 +616,12 @@ $(document).ready(() => {
                                 $("#edit-firstname-dentist").val(doctor.firstname);
                                 $("#edit-lastname-dentist").val(doctor.lastname);
                                 $("#edit-username-dentist").text(user.username);
+                                nameChecker = true;
+                                if(doctor.status == "active") {
+                                    $("#edit-status")[0]["checked"] = true;
+                                } else if(doctor.status == "inactive") {
+                                    $("#edit-status")[0]["checked"] = false;
+                                }
                             } else {
                                 $("#edit-user-modal").modal("show");
                                 $("#edit-username-user").text(user.username);
@@ -507,7 +635,6 @@ $(document).ready(() => {
                     $("#adding-schedule-modal").data("firstname", $(temp).data("firstname"));
                     $("#adding-schedule-modal").data("lastname", $(temp).data("lastname"));
                     $("#adding-schedule-modal").modal("show");    
-                    $("#add-header").text("Update Schedule");
                     $("#doctor-name").text("Dr. " + $(temp).data("firstname") + " " + $(temp).data("lastname"));
                 } else if($(temp).text() == "View") {
                     $("#schedule-modal").data("id", $(temp).data("id"));
@@ -762,7 +889,7 @@ $("#create-dentist-button").click(() => {
                 username: $("#add-username-dentist").val().trim(),
                 password: $("#add-password-dentist").val(),
                 type: "dentist",
-                status: "Available"
+                status: "active"
             },
             success: (value) => {
                 if(value.message) {
@@ -976,6 +1103,12 @@ $("#edit-dentist-button").click(() => {
     }
 
     if(done && passwordChecker && nameChecker) {
+        var status;
+        if($("#edit-status")[0].checked) {
+            status = "active";
+        } else {
+            status = "inactive";
+        }
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -983,7 +1116,8 @@ $("#edit-dentist-button").click(() => {
                 accountID,
                 firstname: $("#edit-firstname-dentist").val(),
                 lastname: $("#edit-lastname-dentist").val(),
-                password: $("#edit-password-dentist").val()
+                password: $("#edit-password-dentist").val(),
+                status
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");
@@ -995,23 +1129,6 @@ $("#edit-dentist-button").click(() => {
                 })
             }
         })
-    }
-    if(!passwordChecker) {
-        $("#edit-password-field-dentist").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Incorrect password format"
-        });
-    }
-    if(!nameChecker) {
-        $("#edit-firstname-dentist-field").addClass("error");
-        $("#edit-lastname-dentist-field").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Invalid name format"
-        });
     }
 })
 
@@ -1398,7 +1515,45 @@ $("#save-changes-schedule").click(() => {
     }
 })
 
-// Adding schedule without existing
+// DELETING DENTIST SCHEDULE
+$("#remove-schedule-button").click(() => {
+    editSchedule[editDay.toLowerCase()] = []
+    editBreaktime[editDay.toLowerCase()] = []
+    defaultTime = false;
+
+    $.ajax({
+        type: "post",
+        url: 'admin/editSchedule',
+        data: {
+            'monday[]': editSchedule["monday"],
+            'tuesday[]': editSchedule["tuesday"],
+            'wednesday[]': editSchedule["wednesday"],
+            'thursday[]': editSchedule["thursday"],
+            'friday[]': editSchedule["friday"],
+            'saturday[]': editSchedule["saturday"],
+            'mondaydifference[]': editBreaktime["monday"],
+            'tuesdaydifference[]': editBreaktime["tuesday"],
+            'wednesdaydifference[]': editBreaktime["wednesday"],
+            'thursdaydifference[]': editBreaktime["thursday"],
+            'fridaydifference[]': editBreaktime["friday"],
+            'saturdaydifference[]': editBreaktime["saturday"],
+            doctorID: $("#editing-schedule-modal").data("id"),
+            defaultTime
+        },
+        success: (value) => {
+            if(value) {
+                $("body").toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Dentist schedule successfully removed"
+                })
+                $("#remove-schedule-modal").modal("hide");
+            } 
+        }
+    })
+})
+
+// Adding schedule 
 function addSchedule() {
     let mon = [], tue = [], wed = [], thu = [], fri = [], sat = [];
     let monbreak = [], tuebreak = [], wedbreak = [], thubreak = [], fribreak = [], satbreak = [];
@@ -1510,32 +1665,32 @@ function updateSchedule() {
     let defaultTime = false;
 
     if($("#edit-start").val() == "" && $("#edit-end").val() == "") {
-        editSchedule[editDay] = [];
-        editBreaktime[editDay] = [];
+        editSchedule[editDay.toLowerCase()] = [];
+        editBreaktime[editDay.toLowerCase()] = [];
     } else {
         if($("#edit-start").val() != "") {
-            editSchedule[editDay][0] = $("#edit-start").val();
+            editSchedule[editDay.toLowerCase()][0] = $("#edit-start").val();
         }
         if($("#edit-end").val() != "") {
-            editSchedule[editDay][1] = $("#edit-end").val();
+            editSchedule[editDay.toLowerCase()][1] = $("#edit-end").val();
         }
-        editBreaktime[editDay] = [];
+        editBreaktime[editDay.toLowerCase()] = [];
     }
     if($("#edit-custom")[0].checked) {
         if($("#edit-start").val() != "") {
-            editSchedule[editDay][0] = $("#edit-start").val();
+            editSchedule[editDay.toLowerCase()][0] = $("#edit-start").val();
         }
         if($("#edit-end").val() != "") {
-            editBreaktime[editDay][0] = $("#edit-end").val();
+            editBreaktime[editDay.toLowerCase()][0] = $("#edit-end").val();
         }
         if($("#edit-start-add").val() != "") {
-            editBreaktime[editDay][1] = $("#edit-start-add").val();
+            editBreaktime[editDay.toLowerCase()][1] = $("#edit-start-add").val();
         }
         if($("#edit-end-add").val() != "") {
-            editSchedule[editDay][1] = $("#edit-end-add").val();
+            editSchedule[editDay.toLowerCase()][1] = $("#edit-end-add").val();
         }
     } else {
-        editBreaktime[editDay] = []
+        editBreaktime[editDay.toLowerCase()] = []
     }
     $.ajax({
         type: "post",
@@ -1585,7 +1740,6 @@ $("#add").click(() => {
 $("#add-schedule").click(() => {
     if($("#weekly")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        $("#add-header").text("Update Schedule");
         $("#doctor-name").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
         $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
         $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
@@ -1611,6 +1765,19 @@ $("#add-schedule").click(() => {
         $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
         $("#add-unavailable-modal").modal("show");
     }
+})
+
+$("#delete-schedule").click(() => {
+    deleteSchedule = true;
+    $("#modal-text-delete-day").text(editDay);
+    if(breaktime != "" && breaktime != undefined) {
+        $("#modal-text-delete-normal").text(normal[0] + " - " + breaktime[0]);
+        $("#modal-text-delete-break").text(breaktime[1] + " - " + normal[1]);
+    } else {
+        $("#modal-text-delete-normal").text(normal[0] + " - " + normal[1]);
+        $("#modal-text-delete-break").text("");
+    }
+    $("#remove-schedule-modal").modal("show");
 })
 
 $("#add-sec-button").click(() => {
@@ -1739,6 +1906,7 @@ $("#adding-schedule-modal").modal({
 
 $("#editing-schedule-modal").modal({
     onShow: () => {
+        deleteSchedule = false;
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
@@ -1783,8 +1951,24 @@ $("#editing-schedule-modal").modal({
         })
         $("input").val("");
         accor_show = false;
+        if(!deleteSchedule) {
+            setDataTable("weekly");
+        }
+    }
+})
+
+$("#remove-schedule-modal").modal({
+    closable: false,
+    onDeny: () => {
+        setDataTable("weekly");
+    },
+    onHidden: () => {
         setDataTable("weekly");
     }
+})
+
+$("#delete-user-modal").modal({
+    closable: false
 })
 
 $("#add-unavailable-modal").modal({
@@ -1897,6 +2081,10 @@ $(document).keypress((event) => {
             $("#add-schedule-button").click();
         }
     }
+})
+
+$(document).on("keyup", () => {
+    inputChecker = true;
 })
 
 // RESETTING ERRORS

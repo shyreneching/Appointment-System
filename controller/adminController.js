@@ -73,7 +73,7 @@ router.post("/deleteAccount", async (req, res) => {
         let appointments = await Appointment.getDoctorAppointment(account.doctorID);
         for (var i = 0; i < appointments.length; i++) {
             let appID = appointments[i]._id;
-            if(appID.doctor == "" || appID.doctor.length == 0) {
+            if(appointments[i].doctor == "" || appointments[i].doctor.length == 0) {
                 await Appointment.delete(appID);
             }
         }
@@ -94,7 +94,7 @@ router.post("/validateUsername", async (req, res) => {
 router.post("/editDentist", async (req, res) => {
     let account = await Account.findOne({ _id: req.body.accountID });
     Account.updateAccount(account.id, req.body.password);
-    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
+    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname, req.body.status);
     res.send(true);
 })
 

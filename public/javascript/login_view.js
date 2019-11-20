@@ -1,4 +1,4 @@
-var passwordChecker;
+var passwordChecker, inputChecker;
 
 $(document).ready(() => {
     // validate username
@@ -22,34 +22,43 @@ $(document).ready(() => {
         })
     })
 
+    $("input[type='text']").focusin(() => {
+        inputChecker = false;
+    })
+
     $("#reset-password").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
-        if(!$("#reset-password").val().match(check)) {
-            $("#reset-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Incorrect password format"
-            })
-            passwordChecker = false;
-        } else if($("#reset-password").val().length < 10) {
-            $("#reset-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too short"
-            })
-            passwordChecker = false;
-        } else if($("#reset-password").val().length > 32) {
-            $("#reset-password-field").addClass("error");
-            $("body").toast({
-                class: "error",
-                position: "top center",
-                message: "Password is too long"
-            })
-            passwordChecker = false;
-        } else {
-            passwordChecker = true;
+        if(inputChecker) {
+            if(!$("#reset-password").val().match(check)) {
+                $("#reset-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect password format"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#reset-password").val().length < 10) {
+                $("#reset-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too short"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else if($("#reset-password").val().length > 32) {
+                $("#reset-password-field").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Password is too long"
+                })
+                inputChecker = false;
+                passwordChecker = false;
+            } else {
+                passwordChecker = true;
+            }
         }
     })
 

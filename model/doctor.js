@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 var doctorSchema = new Schema({
     firstname: String,
     lastname: String,
+    status: String,
     schedule: {
         type: Schema.Types.ObjectId,
         ref: "Schedule"
@@ -34,12 +35,13 @@ doctorSchema.statics.delete = async function(doctorID){
     });
 }
 
-doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname){
+doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname, status){
     return await this.updateOne({
         _id: doctorID
     }, {
         firstname,
-        lastname
+        lastname,
+        status
     }, {
         new: true
     }); 
