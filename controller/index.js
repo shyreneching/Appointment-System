@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fs = require('fs');
-const {Account} = require("../model/account");
+const { Account } = require("../model/account");
 const initial = require("../model/file");
 
 router.use("/secretary", require("./secretaryController"));
@@ -11,7 +11,7 @@ router.use("/doctor", require("./doctorController"));
 router.get("/", async (req, res) => {
     //username is subject to change
     let account = await Account.getAccountByUsername("admin");
-    if(account == undefined) {
+    if (account == undefined) {
         Account.addAccount(new Account({
             username: "admin",
             password: initial.input,
@@ -20,33 +20,33 @@ router.get("/", async (req, res) => {
             lastLogin: ""
         }), (value) => {
             res.redirect("/login");
-        }, (err) => {
+        }, (err) => {   
             res.send(err);
         })
     } else {
-        if(req.session.username == null) {
+        if (req.session.username == null) {
             res.redirect("/login");
         } else {
             let account = await Account.getAccountByUsername(req.session.username);
-            if(account.accountType == "secretary") {
+            if (account.accountType == "secretary") {
                 res.redirect("/secretary");
-            } else if(account.accountType == "admin") {
+            } else if (account.accountType == "admin") {
                 res.redirect("/admin");
-            } else if(account.accountType == "doctor") {
+            } else if (account.accountType == "doctor") {
                 res.redirect("/doctor");
-            } 
+            }
         }
     }
 })
 
 router.get("/login", async (req, res) => {
     // req.session.username = "admin";
-    if(req.session.username != null) {
-        if(req.session.username == "secretary") {
+    if (req.session.username != null) {
+        if (req.session.username == "secretary") {
             res.redirect("/secretary");
-        } else if(req.session.username == "doctor") {
-    
-        } else if(req.session.username == "admin") {
+        } else if (req.session.username == "doctor") {
+
+        } else if (req.session.username == "admin") {
             res.redirect("/admin");
         }
     } else {
@@ -54,21 +54,22 @@ router.get("/login", async (req, res) => {
         res.render("page_templates/login_view.hbs", {
             account: JSON.stringify(acc)
         })
-    }   
+    }
 })
 
 router.post("/validateLogin", async (req, res) => {
-    let account = await Account.getAccountByUsername(req.body.username);
-    if(account == undefined) {
-        res.send({message: 0});
-    } else {
-        if(account.password != req.body.password) {
-            res.send({message: 2});
-        } else {
+    var account = await Account.getAccountByUsername(req.body.username);
+    if (account != undefined) {
+        account = await Account.authenticate(account.username, req.body.password, account.salt);
+        if (account != undefined) {
             req.session.username = account.accountType;
             Account.updateLogin(account.id, req.body.date);
-            res.send({message: 1});
+            res.send({ message: 1 });
+        } else {
+            res.send({ message: 2 })
         }
+    } else {
+        res.send({ message: 0 });
     }
 })
 

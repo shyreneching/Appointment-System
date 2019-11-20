@@ -818,22 +818,22 @@ async function addAppointment() {
 }
 
 async function openDetailsModal(appointmentID) {
-
-
     //open second modal on first modal buttons
-    $('.second.modal.confirmation').modal('attach events', '#edit-appointment-modal #edit-delete-button');
+    $('#deleteConfirmation').modal({
+        transition: "fly down"
+    }).modal('attach events', '#edit-appointment-modal #edit-delete-button');
     $('#edit-appointment-modal').modal('show');
 
     $('#edit-cancel-button').unbind('click');
     $('#edit-cancel-button').on('click', function () {
-        $('.second.modal.confirmation').modal('toggle');
+        $('#deleteConfirmation').modal('toggle');
         openDetailsModal(appointmentID);
     });
 
     $('#edit-continue-button').unbind('click');
     $('#edit-continue-button').on('click', function () {
         $.post("/secretary/delete", { appointmentID: appointmentID }, function (data) {
-            $('.second.modal.confirmation').modal('hide');
+            $('#deleteConfirmation').modal('hide');
             let date = $('#standard_calendar').calendar('get date');
             updateTableRows(date);
         });
@@ -944,7 +944,6 @@ async function openDetailsModal(appointmentID) {
         editAppointment(appointmentID, doctors);
     });
 
-    $('#edit-appointment-modal').modal('show');
 }
 
 function quickAdd(slot) {
