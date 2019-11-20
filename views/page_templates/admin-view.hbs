@@ -140,7 +140,7 @@
     {{!-- modal for adding user --}}
     <div class="ui mini modal" id="add-user-modal">
       <i class="close icon deny"></i>
-      <div class="header">New Secretary</div>
+      <div class="header"><i class="user plus icon" style="color: white"></i>&nbsp;&nbsp;New Secretary</div>
       <div class="content">
         <div class="ui form">
             <div class="required field" id="username-field-user">
@@ -174,7 +174,7 @@
     {{!-- modal for editing user --}}
     <div class="ui mini modal" id="edit-user-modal">
       <i class="close icon deny"></i>
-      <div class="header">Edit Secretary</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Secretary</div>
       <div class="content">
         <div class="ui form">
               <div class="required field" id="edit-username-field-user">
@@ -205,9 +205,13 @@
 
     {{!-- modal for deleting user --}}
     <div class="ui mini modal" id="delete-user-modal">
-      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete User</div>
+      <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete User</div>
       <div class="content">
-          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span><br><br>
+          <div style="display: flex;" id="warning">
+            <i class="info icon" style="color: red"></i>&nbsp;
+            <span id="delete-warning" style="color: red; font-size: 12px">All information and past appointments of the doctors will be deleted</span>
+          </div>
       </div>
       <div class="actions">
         <div class="ui right floated labeled icon red button" id="delete-user-button" style="margin-bottom: 15px;">
@@ -224,7 +228,7 @@
     {{!-- modal for adding dentist --}}
     <div class="ui mini modal" id="add-dentist-modal">
       <i class="close icon deny"></i>
-      <div class="header">New Dentist</div>
+      <div class="header"><i class="user md icon" style="color: white"></i>&nbsp;&nbsp;New Dentist</div>
       <div class="content">
           <div class="ui form">
               <div class="required field" id="firstname-field-dentist">
@@ -270,7 +274,7 @@
     {{!-- modal for editing dentist --}}
     <div class="ui mini modal" id="edit-dentist-modal">
       <i class="close icon deny"></i>
-      <div class="header">Edit Dentist</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Dentist</div>
       <div class="content">
           <div class="ui form">
               <div class="required field" id="edit-firstname-field-dentist">
@@ -314,12 +318,12 @@
     {{!-- modal for adding dentist schedule --}}
     <div class="ui small modal" id="adding-schedule-modal">
       <i class="close icon deny"></i>
-      <div class="header" id="add-header">Add Schedule</div>
+      <div class="header" id="add-header"><i class="empty calendar icon" style="color: white"></i>&nbsp;&nbsp;Update Schedule</div>
       <div class="content">
         <div class="ui center aligned basic segment">
           <i class="huge user md icon"></i><br>
           <span id="doctor-name" style="font-weight: bold; font-size: 25px"></span>
-          <div class="ui horizontal divider"> ● </div>
+          <div class="ui horizontal divider"> Customize your schedule </div>
           <div class="ui two column center aligned grid" style="padding-top: 10px; padding-bottom: 10px">
             <div class="ui checkbox" style="margin-top: 10px;" id="daily-field">
               <input type="checkbox" id="daily">
@@ -401,7 +405,7 @@
     {{!-- modal for showing dentist schedule --}}
     <div class="ui small modal" id="schedule-modal">
       <i class="close icon deny"></i>
-      <div class="header">Schedule</div>
+      <div class="header"><i class="calendar icon" style="color: white"></i>&nbsp;&nbsp;Schedule</div>
       <div class="scrolling content">
         <div class="ui grid" style="padding: 10px;">
           <div class="thirteen wide column">
@@ -429,9 +433,30 @@
       <div class="actions"></div>
     </div>
 
-    {{!-- modal for confirmation --}}
+    {{!-- modal for remove schedule --}}
+    <div class="ui mini modal" id="remove-schedule-modal">
+      <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Remove Schedule</div>
+      <div class="content">
+        <span id="modal-text-delete-day" style="font-size: 15px; font-weight: bold;"></span><br>
+        <span id="modal-text-delete-normal" style="font-size: 15px; font-weight: bold;"></span><br>
+        <span id="modal-text-delete-break" style="font-size: 15px; font-weight: bold;"></span><br><br>
+        <span style="font-size: 15px;">Are you sure you want to delete this schedule?</span>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon red button" id="remove-schedule-button" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+        <div class="ui right floated labeled icon button deny" style="margin-bottom: 15px;">
+            CANCEL
+            <i class="cancel icon"></i>
+        </div>        
+      </div>
+    </div>
+
+    {{!-- modal for remove unavailable date --}}
     <div class="ui mini modal" id="confirmation-modal">
-      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete Unavailable Date</div>
+      <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete Unavailable Date</div>
       <div class="content">
         <span id="modal-text-delete-unavailable" style="font-size: 15px; font-weight: bold;"></span><br>
         <span style="font-size: 15px;">Are you sure you want to delete this date?</span>
@@ -451,7 +476,7 @@
     {{!-- modal for editing schedule --}}
     <div class="ui tiny modal" id="editing-schedule-modal">
       <i class="close icon deny"></i>
-      <div class="header">Edit Schedule</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Schedule</div>
       <div class="content">
         <div class="ui center aligned basic segment">
           <h3>Working Hours</h3><br>
@@ -505,7 +530,7 @@
               <i class="checkmark icon"></i>
           </div>
           <div data-tooltip="Remove Schedule" data-position="right center">
-            <i class="big trash icon link" style="padding-top: 5px; padding-right: 5px; padding-left: 5px"></i>
+            <i class="big trash icon link" style="padding-top: 5px; padding-right: 5px; padding-left: 5px" id="delete-schedule"></i>
           </div>
         </div>
       </div>
@@ -514,7 +539,7 @@
     {{!-- modal for adding unavailable date --}}
     <div class="ui tiny modal" id="add-unavailable-modal">
       <i class="close icon deny"></i>
-      <div class="header">Add Unavailable Date</div>
+      <div class="header"><i class="empty calendar icon" style="color: white"></i>&nbsp;&nbsp;Add Unavailable Date</div>
       <div class="content">
         <div class="ui center aligned basic segment">
           <div class="ui two column center aligned grid">
@@ -545,7 +570,7 @@
     {{!-- modal for adding procedure --}}
     <div class="ui mini modal" id="procedure-modal">
       <i class="close icon deny"></i>
-      <div class="header">New Procedure</div>
+      <div class="header"><i class="clipboard icon" style="color: white"></i>&nbsp;&nbsp;New Procedure</div>
       <div class="content">
         <div class="ui form">
             <div class="required field" id="procedure-field">
@@ -565,7 +590,7 @@
     {{!-- modal for editing procedure --}}
     <div class="ui mini modal" id="edit-procedure-modal">
       <i class="close icon deny"></i>
-      <div class="header">Edit Procedure</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Procedure</div>
       <div class="content">
         <div class="ui form">
           <div class="required field" id="old-procedure-field">
@@ -588,7 +613,7 @@
     
     {{!-- modal for deleting procedure --}}
     <div class="ui mini modal" id="delete-procedure-modal">
-      <div class="header"><i class="question circle outline icon" style="color: white"></i>&nbsp;&nbsp;Delete Procedure</div>
+      <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete Procedure</div>
       <div class="content">
           <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
       </div>
