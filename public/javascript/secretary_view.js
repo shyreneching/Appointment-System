@@ -191,6 +191,7 @@ $(document).ready(function () {
 
     $('#shortcutsInfo').on('click', function () {
         page = 1;
+        $("#demoBack").addClass("disabled")
         $('#info-modal').modal('show')
     })
 
