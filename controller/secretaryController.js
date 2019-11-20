@@ -1073,7 +1073,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         })
         
         //Checks if the dentist is available based on schedule
-        if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == ""
+        if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "active"
         && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
             
             let data = {
