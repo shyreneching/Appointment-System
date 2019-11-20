@@ -628,6 +628,14 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
+    $('#add-back-button').on('click', function(){
+        $("#add-appointment-date-modal").modal('show')
+    })
+
+    $('#add-step-date').on('click', function(){
+        $("#add-appointment-date-modal").modal('show')
+    })
+
 
     $("#add-date_calendar").calendar({
         type: 'date',
