@@ -488,6 +488,28 @@ async function initializeTHead(date) {
 
 };
 
+var resetModalState = function () {
+    $("#add-multiDoctor").dropdown("clear")
+    $("#add-multiProcedure").dropdown("clear")
+    $("#add-lastName").val("");
+    $("#add-firstName").val("");
+    $("#add-notes").val("");
+    $("#add-contact").val("");
+
+    $("#add-fieldProcedures").removeClass("error")
+    $("#add-fieldDoctors").removeClass("error")
+    $("#add-fieldContact").removeClass("error")
+    $("#add-fieldFirstName").removeClass("error")
+    $("#add-fieldLastName").removeClass("error")
+    //rebinding keydown
+    console.log("BIND SHORTCUTS")
+    initializeShortcutsMain();
+}
+
+$('#discard').on('click', function () {
+    resetModalState()
+})
+
 var addAppointmentModal = function () {
     console.log("UNBINDED")
     $(document).unbind('keydown')
@@ -557,24 +579,7 @@ var addAppointmentModal = function () {
         $("#add-fieldProcedures").removeClass("error")
     })
 
-    var resetModalState = function () {
-        $("#add-multiDoctor").dropdown("clear")
-        $("#add-multiProcedure").dropdown("clear")
-        $("#add-lastName").val("");
-        $("#add-firstName").val("");
-        $("#add-notes").val("");
-        $("#add-contact").val("");
-
-        $("#add-fieldProcedures").removeClass("error")
-        $("#add-fieldDoctors").removeClass("error")
-        $("#add-fieldContact").removeClass("error")
-        $("#add-fieldFirstName").removeClass("error")
-        $("#add-fieldLastName").removeClass("error")
-        //rebinding keydown
-        console.log("BIND SHORTCUTS")
-        initializeShortcutsMain();
-
-    }
+    
 
     var unbindShorcuts = function () {
         console.log("UNBINDED")
@@ -624,6 +629,9 @@ var addAppointmentModal = function () {
         closable: false,
         duration: 500,
         queue: true,
+        onApprove: function(){
+            resetModalState()
+        },
         onShow: function () {
             unbindShorcuts()
             $(document).keydown(modalHandler)
@@ -633,7 +641,6 @@ var addAppointmentModal = function () {
         },
         onDeny: function () {
             $('#cancelConfirmation').modal('show')
-
             $('#cancelDiscard').on('click', function () {
                 $("#add-appointment-modal").modal("show")
             })
@@ -646,9 +653,7 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
-    $('#discard').on('click', function () {
-        resetModalState()
-    })
+ 
 
 
 
@@ -794,6 +799,7 @@ async function addAppointment() {
 
     // if all fields are filled
     if (isValid) {
+        resetModalState()
         let ajaxData = {
             firstName: firstName,
             lastName: lastName,
@@ -816,6 +822,7 @@ async function addAppointment() {
         initializeTHead(dateInput);
         updateTableRows(dateInput);
     }
+
     return isValid
 }
 
