@@ -17,8 +17,7 @@ $(document).ready(function () {
             setViewToDay();
             initializeTHead(date);
             updateTableRows(date);
-        },
-        minDate: moment().toDate()
+        }
     });
 
     // Set view chooser
