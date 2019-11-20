@@ -489,7 +489,7 @@ async function initializeTHead(date) {
 };
 
 var addAppointmentModal = function () {
-
+    console.log("UNBINDED")
     $(document).unbind('keydown')
 
     $("#add-date_calendar").removeClass("disabled")
@@ -571,11 +571,13 @@ var addAppointmentModal = function () {
         $("#add-fieldFirstName").removeClass("error")
         $("#add-fieldLastName").removeClass("error")
         //rebinding keydown
+        console.log("BIND SHORTCUTS")
         initializeShortcutsMain();
 
     }
 
     var unbindShorcuts = function () {
+        console.log("UNBINDED")
         $(document).unbind("keydown")
     }
 
@@ -588,7 +590,6 @@ var addAppointmentModal = function () {
         onApprove: async function () {
             var date = $('#add-date_calendar').calendar('get date')
             var time = $('#add-time_calendar').calendar('get date')
-
 
             var datetime = {
                 dateInput: date.toString(),
@@ -603,12 +604,10 @@ var addAppointmentModal = function () {
             });
         },
         onDeny: function () {
-            $('#cancelConfirmation').modal('toggle')
-            $('#discard').one('click', function () {
-                resetModalState()
-            })
-            $('#cancelDiscard').one('click', function () {
-                $("#add-appointment-date-modal").modal("toggle")
+            $('#cancelConfirmation').modal('show')
+            
+            $('#cancelDiscard').on('click', function () {
+                $("#add-appointment-date-modal").modal("show")
             })
         },
         onShow: function () {
@@ -633,13 +632,10 @@ var addAppointmentModal = function () {
             $(document).unbind('keydown', modalHandler)
         },
         onDeny: function () {
-            $('#cancelConfirmation').modal('toggle')
+            $('#cancelConfirmation').modal('show')
 
-            $('#discard').one('click', function () {
-                resetModalState()
-            })
-            $('#cancelDiscard').one('click', function () {
-                $("#add-appointment-modal").modal("toggle")
+            $('#cancelDiscard').on('click', function () {
+                $("#add-appointment-modal").modal("show")
             })
         }
     }).modal('attach events', '#add-appointment-date-modal #date-done')
@@ -649,6 +645,12 @@ var addAppointmentModal = function () {
         closable: false,
         duration: 400
     })
+
+    $('#discard').on('click', function () {
+        resetModalState()
+    })
+
+
 
     $('#add-appointment-date-modal').modal('show');
 
@@ -1161,6 +1163,7 @@ async function editAppointment(appointmentID, initialDoctors) {
     }
 
 }
+ 
 
 function initializeShortcutsMain() {
     $(document).on('keydown', function (e) {
