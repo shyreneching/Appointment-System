@@ -6,15 +6,46 @@ $(document).ready(() => {
     // switch page between users, dentist, and procedure
     $(".ui .item").on("click", switchPage);
 
-    if(!$("#editing-schedule-modal")[0].className.includes("active")) {
-        $("input[type='text']").focusin(() => {
-            inputChecker = false;
-        })
-    }
+    $("input[type='text']").focusin(() => {
+        inputChecker = false;
+    })
 
     // validation if username exist
     $("#add-username-user").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
         if(inputChecker) {
+            if(!$("#add-username-user").val().match(check)) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect username format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-user").val().length < 6) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username should be at least 6 alphanumeric characters"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-duser").val().length > 32) {
+                $("#username-field-user").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username is too long"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
+        }
+        if(nameChecker) {
             $.ajax({
                 type: "post",
                 url: "/admin/validateUsername",
@@ -36,7 +67,40 @@ $(document).ready(() => {
         }
     })
     $("#add-username-dentist").focusout(() => {
+        var check = /^[0-9a-zA-Z]+$/;
         if(inputChecker) {
+            if(!$("#add-username-dentist").val().match(check)) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Incorrect username format"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-dentist").val().length < 6) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username should be at least 6 alphanumeric characters"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else if($("#add-username-dentist").val().length > 32) {
+                $("#username-field-dentist").addClass("error");
+                $("body").toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username is too long"
+                })
+                inputChecker = false;
+                nameChecker = false;
+            } else {
+                nameChecker = true;
+            }
+        }
+        if(nameChecker) {
             $.ajax({
                 type: "post",
                 url: "/admin/validateUsername",
@@ -85,7 +149,7 @@ $(document).ready(() => {
         }
     })
     $("#add-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
+        var check = /^[a-zA-Z.\-_]+$/;
         if(inputChecker) {
             if($("#add-lastname-dentist").val().length < 2) {
                 $("#lastname-dentist-field").addClass("error");
@@ -137,7 +201,7 @@ $(document).ready(() => {
         }
     })
     $("#edit-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
+        var check = /^[a-zA-Z.\-_]+$/;
         if(inputChecker) {
             if($("#edit-lastname-dentist").val().length < 2) {
                 $("#edit-lastname-dentist-field").addClass("error");
@@ -552,6 +616,12 @@ $(document).ready(() => {
                                 $("#edit-firstname-dentist").val(doctor.firstname);
                                 $("#edit-lastname-dentist").val(doctor.lastname);
                                 $("#edit-username-dentist").text(user.username);
+                                nameChecker = true;
+                                if(doctor.status == "active") {
+                                    $("#edit-status")[0]["checked"] = true;
+                                } else if(doctor.status == "inactive") {
+                                    $("#edit-status")[0]["checked"] = false;
+                                }
                             } else {
                                 $("#edit-user-modal").modal("show");
                                 $("#edit-username-user").text(user.username);
@@ -819,7 +889,7 @@ $("#create-dentist-button").click(() => {
                 username: $("#add-username-dentist").val().trim(),
                 password: $("#add-password-dentist").val(),
                 type: "dentist",
-                status: "Available"
+                status: "active"
             },
             success: (value) => {
                 if(value.message) {
@@ -1033,6 +1103,12 @@ $("#edit-dentist-button").click(() => {
     }
 
     if(done && passwordChecker && nameChecker) {
+        var status;
+        if($("#edit-status")[0].checked) {
+            status = "active";
+        } else {
+            status = "inactive";
+        }
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -1040,7 +1116,8 @@ $("#edit-dentist-button").click(() => {
                 accountID,
                 firstname: $("#edit-firstname-dentist").val(),
                 lastname: $("#edit-lastname-dentist").val(),
-                password: $("#edit-password-dentist").val()
+                password: $("#edit-password-dentist").val(),
+                status
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");

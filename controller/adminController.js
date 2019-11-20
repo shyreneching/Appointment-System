@@ -94,7 +94,7 @@ router.post("/validateUsername", async (req, res) => {
 router.post("/editDentist", async (req, res) => {
     let account = await Account.findOne({ _id: req.body.accountID });
     Account.updateAccount(account.id, req.body.password);
-    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
+    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname, req.body.status);
     res.send(true);
 })
 
