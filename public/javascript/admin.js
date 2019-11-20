@@ -1130,23 +1130,6 @@ $("#edit-dentist-button").click(() => {
             }
         })
     }
-    if(!passwordChecker) {
-        $("#edit-password-field-dentist").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Incorrect password format"
-        });
-    }
-    if(!nameChecker) {
-        $("#edit-firstname-dentist-field").addClass("error");
-        $("#edit-lastname-dentist-field").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Invalid name format"
-        });
-    }
 })
 
 // EDITING PROCEDURE
