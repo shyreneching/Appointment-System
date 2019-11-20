@@ -7,7 +7,7 @@ $(document).ready(() => {
             type: "post",
             url: "/admin/validateUsername",
             data:  {
-                username: $("#reset-username").val()
+                username: $("#reset-username").val().trim()
             },
             success: (value) => {
                 if(!value.message) {
@@ -58,7 +58,7 @@ $(document).ready(() => {
             type: "post",
             url: "/validateLogin",
             data: {
-                username: $("#username").val(),
+                username: $("#username").val().trim(),
                 password: $("#password").val(),
                 date: getDate()
             },
@@ -119,14 +119,14 @@ $("#forgot-modal").modal({
 
 $("#reset-button").click(() => {
     var done = true;
-    if($("#reset-username").val() == "" || $("#reset-username").val() == "admin") {
+    if($("#reset-username").val().trim() == "" || $("#reset-username").val().trim() == "admin") {
         $('body').toast({
             class: "error",
             position: "top center",
             message: "Please input a valid username"
         });
         $("#reset-username-field").addClass("error");
-        if($("#reset-username").val() == "admin") {
+        if($("#reset-username").val().trim() == "admin") {
             $("#reset-username").val("");
         }
         done = false;
@@ -166,7 +166,7 @@ $("#reset-button").click(() => {
             type: "post",
             url: "/admin/updateAccountPassword",
             data: {
-                username: $("#reset-username").val(),
+                username: $("#reset-username").val().trim(),
                 newPassword: $("#reset-password").val()
             },
             success: (value) => {

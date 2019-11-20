@@ -1,6 +1,7 @@
 var accountID, procedureID, accountUsername;
 var defaultButton, currTab, userType, days = [], passwordChecker, accor_show;;
 var editSchedule, editBreaktime, editDay;
+var timeRange = ["8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
 
 $(document).ready(() => {
     // switch page between users, dentist, and procedure
@@ -12,7 +13,7 @@ $(document).ready(() => {
             type: "post",
             url: "/admin/validateUsername",
             data:  {
-                username: $("#add-username-user").val()
+                username: $("#add-username-user").val().trim()
             },
             success: (value) => {
                 if(value.message) {
@@ -31,7 +32,7 @@ $(document).ready(() => {
             type: "post",
             url: "/admin/validateUsername",
             data:  {
-                username: $("#add-username-dentist").val()
+                username: $("#add-username-dentist").val().trim()
             },
             success: (value) => {
                 if(value.message) {
@@ -127,7 +128,7 @@ $(document).ready(() => {
                 message: "Incorrect password format"
             })
             passwordChecker = false;
-        } else if($("#add-password-dentist").val().length < 8) {
+        } else if($("#add-password-dentist").val().length < 10) {
             $("#password-field-dentist").addClass("error");
             $("body").toast({
                 class: "error",
@@ -509,7 +510,7 @@ $("#create-user-button").click(() => {
     var done = true;
 
     // ERROR CHECKING
-    if($("#add-username-user").val() == "") {
+    if($("#add-username-user").val().trim() == "") {
         $("#username-field-user").addClass("error");
         $('body').toast({ 
             class: "error",
@@ -552,7 +553,7 @@ $("#create-user-button").click(() => {
             type: "post",
             url: "/admin/addAccount",
             data: {
-                username: $("#add-username-user").val(),
+                username: $("#add-username-user").val().trim(),
                 password: $("#add-password-user").val(),
                 type: "secretary",
                 doctorID: ""
@@ -617,7 +618,7 @@ $("#create-dentist-button").click(() => {
         });
         done = false;
     }
-    if($("#add-username-dentist").val() == "") {
+    if($("#add-username-dentist").val().trim() == "") {
         $("#username-field-dentist").addClass("error");
         $('body').toast({
             class: "error",
@@ -660,9 +661,9 @@ $("#create-dentist-button").click(() => {
             type: "post",
             url: "/admin/addDentist",
             data: {
-                firstname: $("#add-firstname-dentist").val(), 
-                lastname: $("#add-lastname-dentist").val(), 
-                username: $("#add-username-dentist").val(),
+                firstname: $("#add-firstname-dentist").val().trim(), 
+                lastname: $("#add-lastname-dentist").val().trim(), 
+                username: $("#add-username-dentist").val().trim(),
                 password: $("#add-password-dentist").val(),
                 type: "dentist",
                 status: "Available"
@@ -1079,6 +1080,68 @@ $("#add-schedule-button").click(() => {
             message: "Please input a valid time"
         })
         done = false;
+    } else {
+        var start = moment($("#start").val(), "HH:mm");
+        var end = moment($("#end").val(), "HH:mm");
+        var sn_start = moment($("#start-add").val(), "HH:mm");
+        var sn_end = moment($("#end-add").val(), "HH:mm");
+
+        if($("#custom")[0].checked) {
+            if($("#start").val() == $("#end").val() || $("#start-add").val() == $("#end-add").val()) {
+                if($("#start").val() == $("#end").val()) {
+                    $("#start-field").addClass("error");
+                    $("#end-field").addClass("error");
+                }
+                if($("#start-add").val() == $("#end-add").val()) {
+                    $("#start-add-field").addClass("error");
+                    $("#end-add-field").addClass("error");
+                }
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Time interval is too short"
+                })
+                done = false;
+            } else {
+                
+                if(!(start.isBefore(end) && sn_start.isBefore(sn_end) && end.isBefore(sn_start))) {
+                    $("#start-field").addClass("error");
+                    $("#end-field").addClass("error");
+                    $("#start-add-field").addClass("error");
+                    $("#end-add-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid time interval"
+                    })  
+                    done = false;
+                }
+            }
+        } else {
+            if($("#start").val() == $("#end").val()) {
+                if($("#start").val() == $("#end").val()) {
+                    $("#start-field").addClass("error");
+                    $("#end-field").addClass("error");
+                }
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Time interval is too short"
+                })
+                done = false;
+            } else {
+                if(!(start.isBefore(end))) {
+                    $("#start-field").addClass("error");
+                    $("#end-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid time interval"
+                    })  
+                    done = false;
+                }
+            }
+        }
     }
     if($("#custom")[0].checked && ($("#start-add").val() == "" || $("#end-add").val() == "") && done) {
         if($("#start-add").val() == "") {
@@ -1094,7 +1157,7 @@ $("#add-schedule-button").click(() => {
         })
         done = false;
     }
-    if($("#repeat")[0].checked && days[0] == undefined) {
+    if($("#repeat")[0].checked && (days.length == 0 || days == [undefined] || days == "")) {
         $("body").toast({
             class: "error",
             position: "top center",
@@ -1144,6 +1207,67 @@ $("#save-changes-schedule").click(() => {
             message: "Please input a valid time"
         })
         done = false;
+    } else {
+        var start = moment($("#edit-start").val(), "HH:mm");
+        var end = moment($("#edit-end").val(), "HH:mm");
+        var sn_start = moment($("#edit-start-add").val(), "HH:mm");
+        var sn_end = moment($("#edit-end-add").val(), "HH:mm");
+
+        if($("#edit-custom")[0].checked) {
+            if($("#edit-start").val() == $("#edit-end").val() || $("#edit-start-add").val() == $("#edit-end-add").val()) {
+                if($("#edit-start").val() == $("#edit-end").val()) {
+                    $("#edit-start-field").addClass("error");
+                    $("#edit-end-field").addClass("error");
+                }
+                if($("#editstart-add").val() == $("#edit-end-add").val()) {
+                    $("#edit-start-add-field").addClass("error");
+                    $("#edit-end-add-field").addClass("error");
+                }
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Time interval is too short"
+                })
+                done = false;
+            } else {
+                if(!(start.isBefore(end) && sn_start.isBefore(sn_end) && end.isBefore(sn_start))) {
+                    $("#edit-start-field").addClass("error");
+                    $("#edit-end-field").addClass("error");
+                    $("#edit-start-add-field").addClass("error");
+                    $("#edit-end-add-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid time interval"
+                    })  
+                    done = false;
+                }
+            }
+        } else {
+            if($("#edit-start").val() == $("#edit-end").val()) {
+                if($("#edit-start").val() == $("#edit-end").val()) {
+                    $("#edit-start-field").addClass("error");
+                    $("#edit-end-field").addClass("error");
+                }
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Time interval is too short"
+                })
+                done = false;
+            } else {
+                if(!(start.isBefore(end))) {
+                    $("#edit-start-field").addClass("error");
+                    $("#edit-end-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Invalid time interval"
+                    })  
+                    done = false;
+                }
+            }
+        }
     }
 
     if(done) {
@@ -1438,26 +1562,41 @@ $("#reset-password-modal").modal({
 $("#adding-schedule-modal").modal({
     onShow: () => {
         accor_show = false;
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        minDate.setMinutes(0);
+        maxDate.setHours(18);
+        maxDate.setMinutes(0);
         $("#start-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#end-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#start-add-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#end-add-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
+        $('input[type="text"]').val("");
     },
     onHidden: () => {
         $(".ui .button").removeClass("active");
@@ -1465,7 +1604,6 @@ $("#adding-schedule-modal").modal({
         $(".accordion .content").css({
             display: 'none'
         })
-        $("input").val("");
         accor_show = false;
         $("#schedule-modal").data("id", $("#adding-schedule-modal").data("id"));
         $("#schedule-modal").data("firstname", $("#adding-schedule-modal").data("firstname"));
@@ -1477,26 +1615,41 @@ $("#adding-schedule-modal").modal({
 
 $("#editing-schedule-modal").modal({
     onShow: () => {
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        minDate.setMinutes(0);
+        maxDate.setHours(18);
+        maxDate.setMinutes(0);
         $("#edit-start-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#edit-end-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#edit-start-add-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
         $("#edit-end-add-field").calendar({
             type: "time",
             minTimeGap: 30,
-            ampm: false
+            ampm: false,
+            minDate,
+            maxDate
         })
+        $('input[type="text"]').val("");
     },
     onHidden: () => {
         $(".ui .button").removeClass("active");
