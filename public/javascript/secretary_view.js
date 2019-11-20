@@ -17,7 +17,8 @@ $(document).ready(function () {
             setViewToDay();
             initializeTHead(date);
             updateTableRows(date);
-        }
+        },
+        minDate: moment().toDate()
     });
 
     // Set view chooser
@@ -459,7 +460,9 @@ async function initializeTHead(date) {
 
 
     //Initializes Add button-------------------------------------------
-    $("#add-button").on("click", addAppointmentModal);
+    $("#add-button").on("click", function(){
+        addAppointmentModal()
+    });
 
 
 
@@ -511,41 +514,13 @@ $('#discard').on('click', function () {
 })
 
 var addAppointmentModal = function () {
-    console.log("UNBINDED")
     $(document).unbind('keydown')
 
     $("#add-date_calendar").removeClass("disabled")
     $("#add-time_calendar").removeClass("disabled")
     // $('#add-appointment-modal').modal('toggle');
     // Initialize popup stuff
-    $("#add-date_calendar").calendar({
-        type: 'date',
-        today: 'true',
-        disabledDaysOfWeek: [0],
-        initialDate: moment().toDate(),
-    })
-
-    // $("#add-date_calendar").on('click', function(){
-    //     $("#add-date_calendar").calendar('popup', 'show')
-    // })
-    // $("#add-time_calendar").on('click', function(){
-    //     $("#add-time_calendar").calendar('popup','show')
-    // })
-
-
-    var minDate = new Date();
-    var maxDate = new Date();
-    minDate.setHours(8);
-    minDate.setMinutes(0);
-    maxDate.setHours(18);
-    maxDate.setMinutes(0);
-    $('#add-time_calendar').calendar({
-        type: 'time',
-        minTimeGap: 30,
-        maxDate: maxDate,
-        minDate: minDate,
-        initialDate: minDate
-    });
+    
 
 
 
@@ -653,13 +628,33 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
- 
 
-
+    $("#add-date_calendar").calendar({
+        type: 'date',
+        today: 'true',
+        disabledDaysOfWeek: [0],
+        initialDate: moment().toDate(),
+        minDate: moment().toDate()
+    })
+   
+    var minDate = new Date();
+    var maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(18);
+    maxDate.setMinutes(0);
+    $('#add-time_calendar').calendar({
+        type: 'time',
+        minTimeGap: 30,
+        maxDate: maxDate,
+        minDate: minDate,
+        initialDate: minDate
+    });
 
     $('#add-appointment-date-modal').modal('show');
 
 }
+
 
 
 async function addAppointment() {
@@ -963,7 +958,8 @@ function quickAdd(slot) {
         type: 'date',
         today: 'true',
         disabledDaysOfWeek: [0],
-        initialDate: moment(date).toDate()
+        initialDate: moment(date).toDate(),
+        minDate: moment().toDate()
     })
 
     $("#add-date_calendar").addClass("disabled")
