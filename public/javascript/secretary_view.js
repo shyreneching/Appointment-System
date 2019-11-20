@@ -138,6 +138,10 @@ $(document).ready(function () {
     $("#info-modal").modal({
         onVisible: function () {
             getInfoShortcuts()
+            $(document).unbind('keydown')
+        },
+        onHide: function(){
+            initializeShortcutsMain()
         },
         onApprove: function () {
             page++
