@@ -959,9 +959,10 @@ $("#create-dentist-button").click(() => {
 // ADDING PROCEDURE
 $("#create-procedure-button").click(() => {
     var done = true;
-
+    var check = /^[0-9a-zA-Z]+$/;
     // ERROR CHECKING
-    if($("#procedure-name").val() == "") {
+    var check
+    if($("#procedure-name").val().trim() == "" || $("#procedure-name").val().trim().match(check)) {
         $("#procedure-field").addClass("error");
         $('body').toast({
             class: "error",
@@ -977,7 +978,7 @@ $("#create-procedure-button").click(() => {
             type: "post",
             url: "/admin/addProcess",
             data: {
-                name: $("#procedure-name").val()
+                name: $("#procedure-name").val().trim()
             },
             success: (value) => {
                 if(value.message) {
