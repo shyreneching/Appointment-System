@@ -1,4 +1,6 @@
 var passwordChecker, inputChecker;
+var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
+var checkPassword = /^[0-9a-zA-Z]+$/;
 
 $(document).ready(() => {
     // validate username
@@ -26,42 +28,6 @@ $(document).ready(() => {
 
     $("input[type='text']").focusin(() => {
         inputChecker = false;
-    })
-
-    $("#reset-password").focusout(() => {
-        var check = /^[0-9a-zA-Z]+$/;
-        if(inputChecker) {
-            if(!$("#reset-password").val().match(check)) {
-                $("#reset-password-field").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Incorrect password format"
-                })
-                inputChecker = false;
-                passwordChecker = false;
-            } else if($("#reset-password").val().length < 10) {
-                $("#reset-password-field").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Password is too short"
-                })
-                inputChecker = false;
-                passwordChecker = false;
-            } else if($("#reset-password").val().length > 32) {
-                $("#reset-password-field").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Password is too long"
-                })
-                inputChecker = false;
-                passwordChecker = false;
-            } else {
-                passwordChecker = true;
-            }
-        }
     })
 
     $("#submit").click(() => { 
@@ -146,6 +112,31 @@ $("#reset-button").click(() => {
         }
         done = false;
     }
+    if(!$("#reset-password").val().match(checkPassword) || !validateSpecialChar($("#reset-password").val())) {
+        $("#reset-password-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Incorrect password format"
+        })
+        done = false;
+    } else if($("#reset-password").val().length < 10) {
+        $("#reset-password-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Password is too short"
+        })
+        done = false;
+    } else if($("#reset-password").val().length > 32) {
+        $("#reset-password-field").addClass("error");
+        $("body").toast({
+            class: "error",
+            position: "top center",
+            message: "Password is too long"
+        })
+        done = false;
+    }
     if($("#reset-password").val() == "" || $("#reset-confirm-password").val() == "") {
         if($("#reset-password").val() == "") {
             $("#reset-password-field").addClass("error");
@@ -221,4 +212,15 @@ function getDate() {
 
 function setup() {
     $("#form").form("clear");
+}
+
+// Validate special characters
+function validateSpecialChar(password) {
+    var temp = invalidChar.filter((value) => {
+        return password.includes(value);
+    })
+    if(temp == "") {
+        return true;
+    }
+    return false;
 }
