@@ -961,7 +961,7 @@ $("#create-procedure-button").click(() => {
     var done = true;
 
     // ERROR CHECKING
-    if($("#procedure-name").val() == "") {
+    if($("#procedure-name").val().trim() == "") {
         $("#procedure-field").addClass("error");
         $('body').toast({
             class: "error",
@@ -969,6 +969,17 @@ $("#create-procedure-button").click(() => {
             message: "Please input a valid procedure name"
         });
         done = false;
+    }else{
+        var valid = new RegExp("^[a-zA-Z]*$").test($("#procedure-name").val().trim())
+        if(!valid){
+            $("#procedure-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "No special characters or numbers allowed"
+            });
+            done = false;
+        }
     }
 
     if(done) {
