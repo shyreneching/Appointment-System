@@ -623,6 +623,7 @@ var addAppointmentModal = function () {
 
             $('#cancelDiscard').on('click', function () {
                 $("#add-appointment-date-modal").modal("show")
+                $('#cancelDiscard').unbind('click')
             })
         },
         onShow: function () {
@@ -653,6 +654,7 @@ var addAppointmentModal = function () {
             $('#cancelConfirmation').modal('show')
             $('#cancelDiscard').on('click', function () {
                 $("#add-appointment-modal").modal("show")
+                $('#cancelDiscard').unbind('click')
             })
         }
     }).modal('attach events', '#add-appointment-date-modal #date-done')
@@ -663,9 +665,7 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
-    $('#add-back-button').on('click', function () {
-        $("#add-appointment-date-modal").modal('show')
-    })
+  
 
     $('#add-step-date').on('click', function () {
         $("#add-appointment-date-modal").modal('show')
@@ -698,7 +698,9 @@ var addAppointmentModal = function () {
 
 }
 
-
+$('#add-back-button').on('click', function () {
+    $("#add-appointment-date-modal").modal('show')
+})
 
 async function addAppointment() {
     let firstName = $('#add-firstName').val();
@@ -722,13 +724,13 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9 ]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
         if (!valid) {
             $("#add-fieldFirstName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'First Name should only be Alphanumeric and contain at least 2 characters',
+                    message: 'First Name should only be alphabet and contain at least 2 characters',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -745,13 +747,13 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
         if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'Last Name should only be Alphanumeric.',
+                    message: 'Last Name should only be alphabet.',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -1076,13 +1078,13 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
         if (!valid) {
             $("#edit-fieldFirstName").addClass("error");
             $('#edit-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'First Name should only be Alphanumeric.',
+                    message: 'First Name should only contain letters.',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -1099,13 +1101,13 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
         if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'Last Name should only be Alphanumeric.',
+                    message: 'Last Name should only contain letters.',
                     position: 'bottom right'
                 });
             isValid = false;
