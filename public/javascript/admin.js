@@ -1137,7 +1137,7 @@ $("#edit-procedure-button").click(() => {
     var done = true;
 
     // ERROR CHECKING
-    if($("#edit-procedure-name") == "") {
+    if($("#edit-procedure-name").val() == "") {
         $("#edit-procedure-field").addClass("error");
         $('body').toast({
             class: "error",
