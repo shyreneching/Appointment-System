@@ -26,6 +26,16 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.post("/checkCurrentAdminPassword", async (req, res) => {
+    let admin = await Account.getAccountByUsername("admin");
+    var temp = await Account.authenticate(admin.username, req.body.newPassword, admin.salt);
+    if(temp != undefined) {
+        res.send(true);
+    } else {
+        res.send(false);
+    }
+})
+
 router.post("/updateAccountPassword", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.username);
     if (req.body.username == "admin") {

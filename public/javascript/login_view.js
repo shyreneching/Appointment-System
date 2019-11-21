@@ -3,23 +3,25 @@ var passwordChecker, inputChecker;
 $(document).ready(() => {
     // validate username
     $("#reset-username").focusout(() => {
-        $.ajax({
-            type: "post",
-            url: "/admin/validateUsername",
-            data:  {
-                username: $("#reset-username").val().trim()
-            },
-            success: (value) => {
-                if(!value.message) {
-                    $("#reset-username-field").addClass("error");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Username does not exist"
-                    });
+        if(inputChecker) {
+            $.ajax({
+                type: "post",
+                url: "/admin/validateUsername",
+                data:  {
+                    username: $("#reset-username").val().trim()
+                },
+                success: (value) => {
+                    if(!value.message) {
+                        $("#reset-username-field").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Username does not exist"
+                        });
+                    }
                 }
-            }
-        })
+            })
+        }
     })
 
     $("input[type='text']").focusin(() => {
@@ -113,6 +115,10 @@ $(document).on("keypress", (event) => {
     $("#reset-username-field").removeClass("error");
     $("#reset-password-field").removeClass("error");
     $("#reset-confirm-password-field").removeClass("error");
+})
+
+$(document).on("keyup", () => {
+    inputChecker = true;
 })
 
 $("#forgot").click(() => {
