@@ -1010,7 +1010,7 @@ $("#create-procedure-button").click(() => {
                     $('body').toast({
                         class: "error",
                         position: "top center",
-                        message: "Procedure already exist"
+                        message: "Procedure already exists"
                     });
                 }
                 $("#list-dimmer").removeClass("active");
