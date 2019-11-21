@@ -1064,7 +1064,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
                   };
                   
                   // Usage
-                  dates.add(getDates(new Date(startformattedDate), new Date(endformattedDate)));                                                                                                           
+                  dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
             }  
         }
 
