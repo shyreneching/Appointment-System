@@ -722,13 +722,13 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z0-9 ]{2,}$").test(firstName);
         if (!valid) {
             $("#add-fieldFirstName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'First Name should only be Alphanumeric.',
+                    message: 'First Name should only be Alphanumeric and contain at least 2 characters',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -745,7 +745,7 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9-]*$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z0-9-]{2,}$").test(lastName);
         if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
@@ -782,7 +782,7 @@ async function addAppointment() {
 
     if (contact != "") {
         // "[+]?[\\d]"
-        let regex = /^[+-]?\d+$/;
+        let regex = /^[+-]?\d{7,12}$/;
         let test = regex.test(contact);
 
         if (!test) {
@@ -814,7 +814,6 @@ async function addAppointment() {
             doctors: doctors
         };
 
-        console.log("checking flag");
         await $.post("/secretary/check_app_exists", checkData, function (data) {
 
             if (data == true) {
@@ -980,21 +979,27 @@ async function openDetailsModal(appointmentID) {
                 $("#edit-fieldFirstName").removeClass("error")
                 $("#edit-fieldLastName").removeClass("error")
                 $("#edit-fieldContact").removeClass("error")
-
+            },
+            onVisible: function () {
+                $(document).unbind('keydown')
             }
         });
 
 
         let doctors = $("#edit-multiDoctor").dropdown("get value");
-
-        $('#edit-save-button').unbind('click');
+        $('#edit-save-button').unbind('click')
         $('#edit-save-button').on('click', function () {
-            editAppointment(appointmentID, doctors);
+            if (editAppointment(appointmentID, doctors)) {
+                initializeShortcutsMain()
+            }
         });
+
     }
 
 
 }
+
+
 
 function quickAdd(slot) {
     if (!isPast()) {
@@ -1059,7 +1064,7 @@ async function editAppointment(appointmentID, initialDoctors) {
     let procedures = $("#edit-multiProcedure").dropdown("get value");
     let notes = $("#edit-notes").val();
 
-    var flag = true;
+    var isValid = true;
 
     if (firstName == "") {
         $("#edit-fieldFirstName").addClass("error");
@@ -1069,9 +1074,9 @@ async function editAppointment(appointmentID, initialDoctors) {
                 message: 'Missing First Name!',
                 position: 'bottom right'
             });
-        flag = false;
+        isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z0-9]{2,}$").test(firstName);
         if (!valid) {
             $("#edit-fieldFirstName").addClass("error");
             $('#edit-appointment-modal')
@@ -1080,7 +1085,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                     message: 'First Name should only be Alphanumeric.',
                     position: 'bottom right'
                 });
-            flag = false;
+            isValid = false;
         }
     }
 
@@ -1092,9 +1097,9 @@ async function editAppointment(appointmentID, initialDoctors) {
                 message: 'Missing Last Name',
                 position: 'bottom right'
             });
-        flag = false;
+        isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9-]*$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z0-9-]{2,}$").test(lastName);
         if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
@@ -1103,7 +1108,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                     message: 'Last Name should only be Alphanumeric.',
                     position: 'bottom right'
                 });
-            flag = false;
+            isValid = false;
         }
     }
 
@@ -1115,7 +1120,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 message: 'An appointment needs at least one doctor',
                 position: 'bottom right'
             });
-        flag = false;
+        isValid = false;
     }
 
     if (procedures === undefined || procedures.length == 0) {
@@ -1126,12 +1131,12 @@ async function editAppointment(appointmentID, initialDoctors) {
                 message: 'An appointment needs at least one procedure',
                 position: 'bottom right'
             });
-        flag = false;
+        isValid = false;
     }
 
     if (contact != "") {
         // "[+]?[\\d]"
-        let regex = /^[+-]?\d+$/;
+        let regex = /^[+-]?\d{7,12}$/;
         let test = regex.test(contact);
 
         if (!test) {
@@ -1143,11 +1148,21 @@ async function editAppointment(appointmentID, initialDoctors) {
                     position: 'bottom right'
                 });
 
-            flag = false;
+            isValid = false;
         }
+    } else {
+        $("#edit-fieldContact").addClass("error");
+        $('#edit-appointment-modal')
+            .toast({
+                class: 'error',
+                message: 'Missing contact details',
+                position: 'bottom right'
+            });
+
+        isValid = false;
     }
 
-    if (flag) {
+    if (isValid) {
 
         if (!arraysEqual(doctors, initialDoctors)) {
 
@@ -1178,9 +1193,9 @@ async function editAppointment(appointmentID, initialDoctors) {
                             position: 'bottom right'
                         });
 
-                    flag = false;
+                    isValid = false;
                 } else {
-                    flag = true;
+                    isValid = true;
                 }
 
             });
@@ -1188,7 +1203,7 @@ async function editAppointment(appointmentID, initialDoctors) {
     }
 
     // if all fields are filled
-    if (flag) {
+    if (isValid) {
         let ajaxData = {
             appointmentID: appointmentID,
             firstName: firstName,
@@ -1211,6 +1226,7 @@ async function editAppointment(appointmentID, initialDoctors) {
 
         });
     }
+    return isValid
 
 }
 
