@@ -230,16 +230,25 @@ $(document).ready(() => {
     // validate password format
     $("#current-password").focusout(() => {
         if(inputChecker) {
-            if($("#current-password").val() != $("#current-password").data("password")) {
-                $("#current-password-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Incorrect current password"
-                });   
-                inputChecker = false;
-                passwordChecker = false;
-            }
+            $.ajax({
+                type: "post",
+                url: "admin/checkCurrentAdminPassword",
+                data: {
+                    newPassword: $("#current-password").val().trim()
+                },
+                success: (value) => {
+                    if(!value) {
+                        $("#current-password-field").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Incorrect current password"
+                        });   
+                        inputChecker = false;
+                        passwordChecker = false;
+                    }
+                }
+            })
         }
     })
     $("#new-password").focusout(() => {
@@ -1137,7 +1146,7 @@ $("#edit-procedure-button").click(() => {
     var done = true;
 
     // ERROR CHECKING
-    if($("#edit-procedure-name").val() == "") {
+    if($("#edit-procedure-name").val().trim() == "") {
         $("#edit-procedure-field").addClass("error");
         $('body').toast({
             class: "error",
@@ -1153,7 +1162,7 @@ $("#edit-procedure-button").click(() => {
             url: "/admin/editProcess",
             data: {
                 procedureID,
-                name: $("#edit-procedure-name").val()
+                name: $("#edit-procedure-name").val().trim()
             },
             success: (value) => {
                 if(value.message) {
