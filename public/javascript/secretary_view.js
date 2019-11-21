@@ -140,7 +140,7 @@ $(document).ready(function () {
             getInfoShortcuts()
             $(document).unbind('keydown')
         },
-        onHide: function(){
+        onHide: function () {
             initializeShortcutsMain()
         },
         onApprove: function () {
@@ -262,7 +262,7 @@ function updateTableRows(date) {
             $.post("/secretary/week_all", weekData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
-
+                console.log(data.data)
                 $(".slot.in.week").each(function () {
                     let oneSlot = this;
                     $(oneSlot).find(".less-cell-count").each(function () {
@@ -272,6 +272,18 @@ function updateTableRows(date) {
                 })
 
                 $('.active.dimmer').toggle();
+
+                // $(".hoverable.swa").popup({
+                //     inline: true,
+                //     delay: {
+                //         show: 500,
+                //         hide: 50
+                //     },
+                //     boundary: ".hoverable.swa",
+                //     position: "right center",
+                //     lastResort: "right center"
+
+                // })
 
             });
         }
@@ -469,12 +481,7 @@ async function initializeTHead(date) {
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
-    $(".with.tooltip").popup({
-        delay: {
-            show: 500,
-            hide: 50
-        }
-    })
+
 
 
 
@@ -482,6 +489,13 @@ async function initializeTHead(date) {
     $("#add-button").on("click", function () {
         addAppointmentModal()
     });
+
+    $(".with.tooltip").popup({
+        delay: {
+            show: 500,
+            hide: 50
+        }
+    })
 
 
 
@@ -509,6 +523,8 @@ async function initializeTHead(date) {
     }
 
 };
+
+
 
 var resetModalState = function () {
     $("#add-multiDoctor").dropdown("clear")
@@ -729,7 +745,7 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z0-9-]*$").test(lastName);
         if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
@@ -1078,7 +1094,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         flag = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z0-9 ]*$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z0-9-]*$").test(lastName);
         if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
