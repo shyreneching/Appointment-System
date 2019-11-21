@@ -782,7 +782,7 @@ async function addAppointment() {
 
     if (contact != "") {
         // "[+]?[\\d]"
-        let regex = /^[+-]?\d+$/;
+        let regex = /^[+-]?\d{6,}$/;
         let test = regex.test(contact);
 
         if (!test) {
@@ -814,7 +814,6 @@ async function addAppointment() {
             doctors: doctors
         };
 
-        console.log("checking flag");
         await $.post("/secretary/check_app_exists", checkData, function (data) {
 
             if (data == true) {
