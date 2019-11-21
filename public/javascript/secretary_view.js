@@ -730,7 +730,7 @@ async function addAppointment() {
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'First Name should only be alphabet and contain at least 2 characters',
+                    message: 'First Name should only  contain letters and contain at least 2 characters',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -753,7 +753,7 @@ async function addAppointment() {
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'Last Name should only be alphabet.',
+                    message: 'Last Name should only only contain letters.',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -1254,7 +1254,7 @@ function initializeShortcutsMain() {
                 $("#add-button").trigger('click');
                 break;
             case C:
-                $("#standard_calendar").calendar('popup', 'show')
+                $("#standard_calendar").calendar('popup', 'toggle')
                 break;
         }
 
