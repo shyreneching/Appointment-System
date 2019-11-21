@@ -970,7 +970,7 @@ $("#create-procedure-button").click(() => {
         });
         done = false;
     }else{
-        var valid = new RegExp("^[a-zA-Z]*$").test($("#procedure-name").val().trim())
+        var valid = new RegExp("^[a-zA-Z ]*$").test($("#procedure-name").val().trim())
         if(!valid){
             $("#procedure-field").addClass("error");
             $('body').toast({

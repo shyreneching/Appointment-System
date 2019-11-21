@@ -724,7 +724,7 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z ]{2,}$").test(firstName);
         if (!valid) {
             $("#add-fieldFirstName").addClass("error");
             $('#add-appointment-modal')
@@ -747,7 +747,7 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z- ]{2,}$").test(lastName);
         if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
@@ -1078,7 +1078,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z ]{2,}$").test(firstName);
         if (!valid) {
             $("#edit-fieldFirstName").addClass("error");
             $('#edit-appointment-modal')
@@ -1101,7 +1101,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z- ]{2,}$").test(lastName);
         if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
