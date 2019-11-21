@@ -195,14 +195,7 @@ $("#reset-button").click(() => {
                 }
             }
         })
-    } else {
-        $("#reset-password-field").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Incorrect password format"
-        });
-    }
+    } 
 })
 
 function getDate() {

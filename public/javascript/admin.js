@@ -35,7 +35,7 @@ $(document).ready(() => {
                 })
                 inputChecker = false;
                 nameChecker = false;
-            } else if($("#add-username-duser").val().length > 32) {
+            } else if($("#add-username-user").val().length > 32) {
                 $("#username-field-user").addClass("error");
                 $("body").toast({
                     class: "error",
@@ -648,7 +648,7 @@ $("#create-user-button").click(() => {
             $("#confirm-password-user").val("");
             $('body').toast({ 
                 class: "error",
-                position: "center",
+                position: "top center",
                 message: "Password do not match"
             });
             done = false;
