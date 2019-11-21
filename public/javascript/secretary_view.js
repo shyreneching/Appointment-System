@@ -136,12 +136,15 @@ $(document).ready(function () {
     var page = 1
     var maxPages = 4;
     $("#info-modal").modal({
+        closable: false,
         onVisible: function () {
             getInfoShortcuts()
             $(document).unbind('keydown')
         },
         onHide: function () {
+
             initializeShortcutsMain()
+
         },
         onApprove: function () {
             page++
@@ -173,6 +176,7 @@ $(document).ready(function () {
         onDeny: function () {
             page--
             if (page == 1) { $("#demoBack").addClass("disabled") }
+
             if (page == maxPages) {
                 $("#demoNext>").remove()
                 $("#demoNext").text("")
@@ -193,12 +197,17 @@ $(document).ready(function () {
     $('#demoExit').on('click', function () {
         $('#info-modal').modal('hide')
         $('#infoContainer>').remove();
+
     })
 
     $('#shortcutsInfo').on('click', function () {
         page = 1;
         $("#demoBack").addClass("disabled")
         $('#info-modal').modal('show')
+        $("#demoNext>").remove()
+        $("#demoNext").text("")
+        $("#demoNext").append("Next")
+        $("#demoNext").append("<i class='chevron right icon'></i>")
     })
 
     $('#shortcutsInfo').hover(function () {
@@ -665,7 +674,7 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
-  
+
 
     $('#add-step-date').on('click', function () {
         $("#add-appointment-date-modal").modal('show')
