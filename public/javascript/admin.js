@@ -848,6 +848,17 @@ $("#create-procedure-button").click(() => {
             message: "Please input a valid procedure name"
         });
         done = false;
+    }else{
+        var valid = new RegExp("^[a-zA-Z ]*$").test($("#procedure-name").val().trim())
+        if(!valid){
+            $("#procedure-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "No special characters or numbers allowed"
+            });
+            done = false;
+        }
     }
 
     if(done) {
@@ -878,7 +889,7 @@ $("#create-procedure-button").click(() => {
                     $('body').toast({
                         class: "error",
                         position: "top center",
-                        message: "Procedure already exist"
+                        message: "Procedure already exists"
                     });
                 }
                 $("#list-dimmer").removeClass("active");

@@ -136,12 +136,15 @@ $(document).ready(function () {
     var page = 1
     var maxPages = 4;
     $("#info-modal").modal({
+        closable: false,
         onVisible: function () {
             getInfoShortcuts()
             $(document).unbind('keydown')
         },
         onHide: function () {
+
             initializeShortcutsMain()
+
         },
         onApprove: function () {
             page++
@@ -173,6 +176,7 @@ $(document).ready(function () {
         onDeny: function () {
             page--
             if (page == 1) { $("#demoBack").addClass("disabled") }
+
             if (page == maxPages) {
                 $("#demoNext>").remove()
                 $("#demoNext").text("")
@@ -193,12 +197,17 @@ $(document).ready(function () {
     $('#demoExit').on('click', function () {
         $('#info-modal').modal('hide')
         $('#infoContainer>').remove();
+
     })
 
     $('#shortcutsInfo').on('click', function () {
         page = 1;
         $("#demoBack").addClass("disabled")
         $('#info-modal').modal('show')
+        $("#demoNext>").remove()
+        $("#demoNext").text("")
+        $("#demoNext").append("Next")
+        $("#demoNext").append("<i class='chevron right icon'></i>")
     })
 
     $('#shortcutsInfo').hover(function () {
@@ -665,7 +674,7 @@ var addAppointmentModal = function () {
         duration: 400
     })
 
-  
+
 
     $('#add-step-date').on('click', function () {
         $("#add-appointment-date-modal").modal('show')
@@ -724,13 +733,13 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z ]{2,}$").test(firstName);
         if (!valid) {
             $("#add-fieldFirstName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'First Name should only be alphabet and contain at least 2 characters',
+                    message: 'First Name should only  contain letters and contain at least 2 characters',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -747,13 +756,13 @@ async function addAppointment() {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z- ]{2,}$").test(lastName);
         if (!valid) {
             $("#add-fieldLastName").addClass("error");
             $('#add-appointment-modal')
                 .toast({
                     class: 'error',
-                    message: 'Last Name should only be alphabet.',
+                    message: 'Last Name should only only contain letters.',
                     position: 'bottom right'
                 });
             isValid = false;
@@ -1078,7 +1087,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z]{2,}$").test(firstName);
+        var valid = new RegExp("^[a-zA-Z ]{2,}$").test(firstName);
         if (!valid) {
             $("#edit-fieldFirstName").addClass("error");
             $('#edit-appointment-modal')
@@ -1101,7 +1110,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             });
         isValid = false;
     } else {
-        var valid = new RegExp("^[a-zA-Z-]{2,}$").test(lastName);
+        var valid = new RegExp("^[a-zA-Z- ]{2,}$").test(lastName);
         if (!valid) {
             $("#edit-fieldLastName").addClass("error");
             $('#edit-appointment-modal')
@@ -1254,7 +1263,7 @@ function initializeShortcutsMain() {
                 $("#add-button").trigger('click');
                 break;
             case C:
-                $("#standard_calendar").calendar('popup', 'show')
+                $("#standard_calendar").calendar('popup', 'toggle')
                 break;
         }
 
