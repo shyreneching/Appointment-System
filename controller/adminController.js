@@ -15,6 +15,7 @@ const { Schedule } = require("../model/schedule");
 const { BreakTime } = require("../model/breaktime");
 const { UnavailableDate } = require("../model/unavailableDate");
 
+// GET ADMIN PAGE
 router.get("/", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
     if (req.session.username == "admin") {
@@ -26,6 +27,7 @@ router.get("/", async (req, res) => {
     }
 })
 
+// VALIDATION
 router.post("/checkCurrentAdminPassword", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
     var temp = await Account.authenticate(admin.username, req.body.newPassword, admin.salt);
@@ -36,6 +38,16 @@ router.post("/checkCurrentAdminPassword", async (req, res) => {
     }
 })
 
+router.post("/validateUsername", async (req, res) => {
+    let account = await Account.getAccountByUsername(req.body.username);
+    if (account == undefined) {
+        res.send({ message: false });
+    } else {
+        res.send({ message: true });
+    }
+})
+
+// ALL ACCOUNT SETTING
 router.post("/updateAccountPassword", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.username);
     if (req.body.username == "admin") {
@@ -49,12 +61,6 @@ router.post("/updateAccountPassword", async (req, res) => {
             res.send({ message: true });
         }
     }
-})
-
-router.post("/editAccount", (req, res) => {
-
-    Account.updateAccount(req.body.accountID, req.body.accountPassword);
-    res.send(true);
 })
 
 router.post("/addAccount", async (req, res) => {
@@ -74,6 +80,12 @@ router.post("/addAccount", async (req, res) => {
     } else {
         res.send({ message: false });
     }
+})
+
+router.post("/editAccount", (req, res) => {
+
+    Account.updateAccount(req.body.accountID, req.body.accountPassword);
+    res.send(true);
 })
 
 router.post("/deleteAccount", async (req, res) => {
@@ -100,22 +112,7 @@ router.post("/deleteAccount", async (req, res) => {
     res.send({ message: true });
 })
 
-router.post("/validateUsername", async (req, res) => {
-    let account = await Account.getAccountByUsername(req.body.username);
-    if (account == undefined) {
-        res.send({ message: false });
-    } else {
-        res.send({ message: true });
-    }
-})
-
-router.post("/editDentist", async (req, res) => {
-    let account = await Account.findOne({ _id: req.body.accountID });
-    Account.updateAccount(account.id, req.body.password);
-    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname, req.body.status);
-    res.send(true);
-})
-
+// DENTIST SETTING
 router.post("/addDentist", async (req, res) => {
     let user = await Account.getAccountByUsername(req.body.username);
     if (user == undefined) {
@@ -176,16 +173,15 @@ router.post("/addDentist", async (req, res) => {
     }
 })
 
-router.post("/editProcess", async (req, res) => {
-    let process = await Process.findOne({ processname: req.body.name });
-    if (process == undefined || process._id == req.body.procedureID) {
-        Process.updateProcess(req.body.procedureID, req.body.name);
-        res.send({ message: true });
-    } else {
-        res.send({ message: false });
-    }
+router.post("/editDentist", async (req, res) => {
+    let account = await Account.findOne({ _id: req.body.accountID });
+    Account.updateAccount(account.id, req.body.password);
+    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname, req.body.status);
+    res.send(true);
 })
 
+
+// ADD PROCESS
 router.post("/addProcess", async (req, res) => {
     let process = await Process.findOne({
         processname: req.body.name
@@ -201,11 +197,22 @@ router.post("/addProcess", async (req, res) => {
     }
 })
 
+router.post("/editProcess", async (req, res) => {
+    let process = await Process.findOne({ processname: req.body.name });
+    if (process == undefined || process._id == req.body.procedureID) {
+        Process.updateProcess(req.body.procedureID, req.body.name);
+        res.send({ message: true });
+    } else {
+        res.send({ message: false });
+    }
+})
+
 router.post("/deleteProcess", (req, res) => {
     Process.delete(req.body.processID);
     res.send({ message: true });
 })
 
+// GET USER BY USERNAME
 router.post("/getUser", async (req, res) => {
     let user = await Account.findOne({ username: req.body.username });
     let doctor;
@@ -218,6 +225,7 @@ router.post("/getUser", async (req, res) => {
     });
 })
 
+// GET SPECIFIC TYPE OF USER
 router.post("/filterUser", async (req, res) => {
     let account;
     if (req.body.userType == "all") {
@@ -237,6 +245,7 @@ router.post("/filterUser", async (req, res) => {
     })
 })
 
+// LOAD TABLES FOR ALL USERS
 router.get("/adminUsers", urlencoder, async (req, res) => {
     let accounts = await Account.getAccountWithoutAdmin();
     let table = fs.readFileSync('./views/module_templates/admin-users-table.hbs', 'utf-8');
@@ -252,6 +261,7 @@ router.get("/adminUsers", urlencoder, async (req, res) => {
 
 })
 
+// LOAD TABLES FOR ALL DENTISTS
 router.get("/adminDentist", urlencoder, async (req, res) => {
     let doctors = await Doctor.getAllDoctors();
     let table = fs.readFileSync('./views/module_templates/admin-dentist-table.hbs', 'utf-8');
@@ -266,6 +276,7 @@ router.get("/adminDentist", urlencoder, async (req, res) => {
     })
 })
 
+// LOAD TABLES FOR ALL PROCEDURES
 router.get("/adminProcedure", urlencoder, async (req, res) => {
     let processes = await Process.getAllProcesses();
     let table = fs.readFileSync('./views/module_templates/admin-procedure-table.hbs', 'utf-8');
@@ -280,6 +291,7 @@ router.get("/adminProcedure", urlencoder, async (req, res) => {
     })
 })
 
+// DENTIST SCHEDULE SETTING
 router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
@@ -584,7 +596,5 @@ router.post("/editUnavailableDates", urlencoder, async (req, res) => {
 
     UnavailableDate.updateUnavailableDate(unavailableDateID, unavailableDate);
 })
-
-
 
 module.exports = router;
