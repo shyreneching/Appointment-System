@@ -520,12 +520,17 @@ function getObject(object, breakTime) {
 }
 
 router.post("/addUnavailableDates", urlencoder, async (req, res) => {
-    let doctorID = req.body.doctorID;
 
-    var start = new Date(req.body.startdate);
-    let startformattedDate = moment(start).format("YYYY-MM-DD");
-    var end = new Date(req.body.enddate);
-    let endformattedDate = moment(end).format("YYYY-MM-DD");
+    let doctorID = req.body.doctorID;
+    let startDate = req.body.startdate;
+    let endDate = req.body.enddate;
+
+    let startnewDate = Date.parse(startDate);
+    let startformattedDate = moment(startnewDate).format("YYYY-MM-DD");
+    let endnewDate = Date.parse(endDate);
+    let endformattedDate = moment(endnewDate).format("YYYY-MM-DD");
+
+    let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
 
     let unavailableDate = new UnavailableDate({
         momentDate1: req.body.startdate,
@@ -535,12 +540,29 @@ router.post("/addUnavailableDates", urlencoder, async (req, res) => {
         doctor: doctorID
     })
 
-    UnavailableDate.addUnavailableDate(unavailableDate, function (val) {
-        res.send(true);
-    }, (error) => {
-        res.send(error);
-    })
+    if (doctorUnAvail != "") {
+        var check = true;
+        for(var k = 0; k < doctorUnAvail.length && check; k++) {
+            var start = new Date(doctorUnAvail[k].stringDate1);
+            let starttemp = moment(start).format("YYYY-MM-DD");
+            var end = new Date(doctorUnAvail[k].stringDate2);
+            let endtemp = moment(end).format("YYYY-MM-DD");
 
+            if(moment(startformattedDate).isBefore(starttemp) && moment(endformattedDate).isAfter(endtemp)) {
+                await UnavailableDate.updateUnavailableDate(doctorUnAvail[k]._id, unavailableDate);
+                check = false;
+            }
+        }
+        if(check) {
+            await UnavailableDate.addUnavailableDate(unavailableDate, function (val) {
+                res.send(true);
+            }, (error) => {
+                res.send(error);
+            })
+        } else {
+            res.send(true);
+        }
+    }
 })
 
 router.post("/getUnavailableDates", urlencoder, async (req, res) => {
@@ -682,47 +704,6 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
     } 
 
     res.send(dates);
-})
-
-
-router.post("/combineIfOverarching", urlencoder, async (req, res) => {
-
-    let doctorID = req.body.doctorID;
-    let startDate = req.body.startInput;
-    let endDate = req.body.endInput;
-
-    let startnewDate = Date.parse(startDate);
-    let startformattedDate = moment(startnewDate).format("YYYY-MM-DD");
-    let endnewDate = Date.parse(endDate);
-    let endformattedDate = moment(endnewDate).format("YYYY-MM-DD");
-
-    let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
-
-    if (doctorUnAvail != "") {
-        for(var k = 0; k < doctorUnAvail.length; k++){
-            var start = new Date(doctorUnAvail[k].stringDate1);
-            let starttemp = moment(start).format("YYYY-MM-DD");
-            var end = new Date(doctorUnAvail[k].stringDate2);
-            let endtemp = moment(end).format("YYYY-MM-DD");
-
-            if(moment(startformattedDate).isSameOrBefore(starttemp) && moment(endformattedDate).isSameOrAfter(endtemp)){
-                let addstart = moment(start)("MMM D YYYY");
-                let addend = moment(end).format("MMM D YYYY");
-
-                let temp =  new UnavailableDate({
-                    momentDate1: addstart,
-                    stringDate1: startformattedDate,
-                    momentDate2: addend,
-                    stringDate2: endformattedDate,
-                    doctor: doctorID
-                })
-
-                await UnavailableDate.updateUnavailableDate(doctorUnAvail[k]._id, temp);
-                res.send("changed");
-            }
-
-        }
-    }
 })
 
 module.exports = router;

@@ -190,40 +190,42 @@ $(document).ready(() => {
             $("#confirmation-modal").data("id", $(temp).data("id"));
             $("#confirmation-modal").modal("show");
         } else {
-            editDay = $($(event.target)[0].parentNode).data("day");
-            $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
-            $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
-            $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
-            $("#editing-schedule-modal").modal("show");    
-            $.ajax({
-                type: "post",
-                url: "admin/getDoctorSchedule",
-                data: {
-                    doctorID: $("#editing-schedule-modal").data("id")
-                },
-                success: (value) => {
-                    editSchedule = value.docSched;
-                    editBreaktime = value.breakTime;
-                    normal = value.docSched[editDay.toLowerCase()];
-                    breaktime = value.breakTime[editDay.toLowerCase()];
-                    if(normal != "") {
-                        $("#edit-start").val(normal[0].toLowerCase());
-                        $("#edit-end").val(normal[1]);
-                    } else {
-                        $("input[type='text']").val("");
+            if($("#weekly")[0].className.includes("green")) {
+                editDay = $($(event.target)[0].parentNode).data("day");
+                $("#editing-schedule-modal").data("id", $("#schedule-modal").data("id"));
+                $("#editing-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
+                $("#editing-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+                $("#editing-schedule-modal").modal("show");    
+                $.ajax({
+                    type: "post",
+                    url: "admin/getDoctorSchedule",
+                    data: {
+                        doctorID: $("#editing-schedule-modal").data("id")
+                    },
+                    success: (value) => {
+                        editSchedule = value.docSched;
+                        editBreaktime = value.breakTime;
+                        normal = value.docSched[editDay.toLowerCase()];
+                        breaktime = value.breakTime[editDay.toLowerCase()];
+                        if(normal != "") {
+                            $("#edit-start").val(normal[0].toLowerCase());
+                            $("#edit-end").val(normal[1]);
+                        } else {
+                            $("input[type='text']").val("");
+                        }
+                        if(breaktime != "" && breaktime != undefined) {   
+                            $("#edit-custom")[0]["checked"] = true;
+                            $("#edit-start").val(normal[0]);
+                            $("#edit-end").val(breaktime[0]);
+                            $("#edit-start-add").val(breaktime[1]);
+                            $("#edit-end-add").val(normal[1]);
+                            accor_show = true;
+                            $("#edit-first-schedule").css({'color':'black'})
+                            $("#edit-custom-schedule").slideToggle(500);
+                        }
                     }
-                    if(breaktime != "" && breaktime != undefined) {   
-                        $("#edit-custom")[0]["checked"] = true;
-                        $("#edit-start").val(normal[0]);
-                        $("#edit-end").val(breaktime[0]);
-                        $("#edit-start-add").val(breaktime[1]);
-                        $("#edit-end-add").val(normal[1]);
-                        accor_show = true;
-                        $("#edit-first-schedule").css({'color':'black'})
-                        $("#edit-custom-schedule").slideToggle(500);
-                    }
-                }
-            })
+                })
+            }
         }
     })
 
