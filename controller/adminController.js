@@ -181,7 +181,7 @@ router.post("/editDentist", async (req, res) => {
 })
 
 router.post("/updateDentistStatus", async (req, res) => {
-    Doctor.updateDoctorStatus(req.body.doctorID, status);
+    Doctor.updateDoctorStatus(req.body.doctorID, req.body.status);
 })
 
 // ADD PROCESS

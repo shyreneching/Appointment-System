@@ -52,7 +52,7 @@ $(document).ready(() => {
         if(nameChecker) {
             $.ajax({
                 type: "post",
-                url: "/admin/validateUsername",
+                url: "admin/validateUsername",
                 data:  {
                     username: $("#add-username-user").val().trim()
                 },
@@ -341,9 +341,25 @@ $(document).ready(() => {
                 } else if($(temp).text() == "Active") {
                     $(temp).removeClass("active");
                     $(temp).text("Inactive");
+                    $.ajax({
+                        type: "post",
+                        url: "admin/updateDentistStatus",
+                        data: {
+                            doctorID: $(temp)[0].id,
+                            status: "Inactive"
+                        }
+                    })
                 } else if($(temp).text() == "Inactive") {
                     $(temp).addClass("active");
                     $(temp).text("Active");
+                    $.ajax({
+                        type: "post",
+                        url: "admin/updateDentistStatus",
+                        data: {
+                            doctorID: $(temp)[0].id,
+                            status: "Active"
+                        }
+                    })
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(temp).text() == "Delete") {
@@ -450,7 +466,7 @@ $("#save-password").click(() => {
     if(done) {
         $.ajax({
             type: "post",
-            url: "/admin/updateAccountPassword",
+            url: "admin/updateAccountPassword",
             data: {
                 username: "admin",
                 newPassword: $("#new-password").val()
@@ -548,7 +564,7 @@ $("#create-user-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addAccount",
+            url: "admin/addAccount",
             data: {
                 username: $("#add-username-user").val().trim(),
                 password: $("#add-password-user").val(),
@@ -560,12 +576,12 @@ $("#create-user-button").click(() => {
                     $("#add-user-modal").modal("hide");
                     $('#add-user-modal').form("clear");
                     if(currTab == "Users") {
-                        $.get("/admin/adminUsers", (data) => {
+                        $.get("admin/adminUsers", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
                     } else if(currTab == "Dentist") {
-                        $.get("/admin/adminDentist", (data) => {
+                        $.get("admin/adminDentist", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
@@ -718,7 +734,7 @@ $("#create-dentist-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addDentist",
+            url: "admin/addDentist",
             data: {
                 firstname: $("#add-firstname-dentist").val().trim(), 
                 lastname: $("#add-lastname-dentist").val().trim(), 
@@ -732,12 +748,12 @@ $("#create-dentist-button").click(() => {
                     $("#add-dentist-modal").modal("hide");
                     $('#add-dentist-modal').form("clear");
                     if(currTab == "Dentist") {
-                        $.get("/admin/adminDentist", (data) => {
+                        $.get("admin/adminDentist", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
                     } else if(currTab == "Users") {
-                        $.get("/admin/adminUsers", (data) => {
+                        $.get("admin/adminUsers", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
@@ -802,7 +818,7 @@ $("#create-procedure-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addProcess",
+            url: "admin/addProcess",
             data: {
                 name: $("#procedure-name").val().trim()
             },
@@ -811,7 +827,7 @@ $("#create-procedure-button").click(() => {
                     $("#procedure-modal").modal("hide");
                     $('#procedure-modal').form("clear");
                     if(currTab == "Procedure") {
-                        $.get("/admin/adminProcedure", (data) => {
+                        $.get("admin/adminProcedure", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data); 
                         });
@@ -898,7 +914,7 @@ $("#edit-user-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/editAccount",
+            url: "admin/editAccount",
             data: {
                 accountID,
                 accountUsername,
@@ -1075,7 +1091,7 @@ $("#edit-procedure-button").click(() => {
     if(done) {
         $.ajax({
             type: "post",
-            url: "/admin/editProcess",
+            url: "admin/editProcess",
             data: {
                 procedureID,
                 name: $("#edit-procedure-name").val().trim()
@@ -1084,7 +1100,7 @@ $("#edit-procedure-button").click(() => {
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
                     $("#edit-procedure-modal").form("clear");
-                    $.get("/admin/adminProcedure", (data) => {
+                    $.get("admin/adminProcedure", (data) => {
                         $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
@@ -1110,14 +1126,14 @@ $("#edit-procedure-button").click(() => {
 $("#delete-user-button").click(() => {
     $.ajax({
         type: "post",
-        url: "/admin/deleteAccount",
+        url: "admin/deleteAccount",
         data: {
             accountID: accountID,
             accountUsername: accountUsername
         },
         success: (value) => {
             $("#delete-user-modal").modal("hide");
-            $.get("/admin/adminUsers", (data) => {
+            $.get("admin/adminUsers", (data) => {
                 $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
@@ -1134,13 +1150,13 @@ $("#delete-user-button").click(() => {
 $("#delete-procedure-button").click(() => {
     $.ajax({
         type: "post",
-        url: "/admin/deleteProcess",
+        url: "admin/deleteProcess",
         data: {
             processID: procedureID
         },
         success: (value) => {
             $("#delete-procedure-modal").modal("hide");
-            $.get("/admin/adminProcedure", (data) => {
+            $.get("admin/adminProcedure", (data) => {
                 $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
@@ -1923,7 +1939,7 @@ $("#confirmation-modal").modal({
 // Initialization
 function setup() {
     // load the list of users
-    $.get("/admin/adminUsers", (data) => {
+    $.get("admin/adminUsers", (data) => {
         updateTable(data);
     });
 
@@ -1936,17 +1952,17 @@ function setup() {
 
 function resizePage() {
     if(currTab == "Users") {
-        $.get("/admin/adminUsers", (data) => {
+        $.get("admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
         });
     } else if(currTab == "Dentist") {
-        $.get("/admin/adminDentist", (data) => {
+        $.get("admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
         });
     } else if(currTab == "Procedure") {
-        $.get("/admin/adminProcedure", (data) => {
+        $.get("admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
         });
@@ -1963,7 +1979,7 @@ function switchPage() {
         $(this).addClass("active");
         $("#list-dimmer").addClass("active");
         currTab = "Users";
-        $.get("/admin/adminUsers", (data) => {
+        $.get("admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
             $("#list-dimmer").removeClass("active");
@@ -1975,7 +1991,7 @@ function switchPage() {
         $(this).css({'background-color':'#ebebeb'});
         $("#list-dimmer").addClass("active");
         currTab = "Dentist";
-        $.get("/admin/adminDentist", (data) => {
+        $.get("admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
             $("#list-dimmer").removeClass("active");
@@ -1987,7 +2003,7 @@ function switchPage() {
         $(this).css({'background-color':'#ebebeb'});
         $("#list-dimmer").addClass("active");
         currTab = "Procedure";
-        $.get("/admin/adminProcedure", (data) => {
+        $.get("admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
             $("#list-dimmer").removeClass("active");
