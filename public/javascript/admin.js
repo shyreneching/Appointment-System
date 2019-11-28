@@ -1938,7 +1938,6 @@ $("#editing-schedule-modal").modal({
     },
     onHidden: () => {
         $('input[type="text"]').val("");
-        $(".ui .button").removeClass("active");
         $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
             display: 'none'
