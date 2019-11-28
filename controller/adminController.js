@@ -648,4 +648,69 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
     res.send(dates);
 })
 
+
+router.post("/combineIfOverarching", urlencoder, async (req, res) => {
+
+    let doctorID = req.body.doctorID;
+    let startDate = req.body.startInput;
+    let endDate = req.body.endInput;
+
+    let newDate = Date.parse(startDate);
+    let startformattedDate = moment(newDate).format("YYYY-MM-DD");
+    let newDate = Date.parse(endDate);
+    let endformattedDate = moment(newDate).format("YYYY-MM-DD");
+
+    let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
+
+    if (doctorUnAvail != "") {
+        for(var k = 0; k < doctorUnAvail.length; k++){
+            var start = new Date(doctorUnAvail[k].stringDate1);
+            let starttemp = moment(start).format("YYYY-MM-DD");
+            var end = new Date(doctorUnAvail[k].stringDate2);
+            let endtemp = moment(end).format("YYYY-MM-DD");
+
+            if(moment(startformattedDate).isSameOrBefore(starttemp) && moment(endformattedDate).isSameOrAfter(endtemp)){
+                let addstart = moment(start)("MMM D YYYY");
+                let addend = moment(end).format("MMM D YYYY");
+
+                let temp =  new UnavailableDate({
+                    momentDate1: addstart,
+                    stringDate1: startformattedDate,
+                    momentDate2: addend,
+                    stringDate2: endformattedDate,
+                    doctor: doctorID
+                })
+
+                await UnavailableDate.updateUnavailableDate(doctorUnAvail[k]._id, temp);
+                res.send("changed");
+            }
+
+        }
+    }
+})
+
+router.post("/unavailableTaken", urlencoder, async (req, res) => {
+
+    let doctorID = req.body.doctorID;
+   
+    let appointments = await Appointment.getDoctorAppointment(doctorID);
+
+    var dates = []; 
+    if (appointments != "") {
+        for(var k = 0; k < appointments.length; k++){
+            var araw = new Date(appointments[k].date);
+            let formattedDate = moment(araw).format("YYYY-MM-DD");
+
+            var something = dates.filter((value) => {
+                return moment(value).format("YYYY-MM-DD") == formattedDate;
+            })
+
+            if(something == ""){
+                dates.add(formattedDate);
+            }
+        }
+    }
+    res.send(dates);
+})
+
 module.exports = router;

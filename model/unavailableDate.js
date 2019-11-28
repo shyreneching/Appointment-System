@@ -32,10 +32,10 @@ unavailableDateSchema.statics.updateUnavailableDate = async function(unavailable
     return await this.updateOne({
         _id: unavailableDateID
     }, {
-        momentDate1,
-        stringDate1,
-        momentDate2,
-        stringDate2
+        momentDate1: updated.momentDate1,
+        stringDate1: updated.stringDate1,
+        momentDate2: updated.momentDate2,
+        stringDate2: updated.stringDate2
     }, {
         new: true
     }); 
