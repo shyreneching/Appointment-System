@@ -744,7 +744,7 @@ $("#create-dentist-button").click(() => {
                 username: $("#add-username-dentist").val().trim(),
                 password: $("#add-password-dentist").val(),
                 type: "dentist",
-                status: "Active"
+                status: "active"
             },
             success: (value) => {
                 if(value.message) {
@@ -1866,7 +1866,12 @@ $("#adding-schedule-modal").modal({
         if(modalReset) {
             $("input[type='text']").val("");
             $(".ui .checkbox").checkbox('uncheck');
-            $(".ui .button").removeClass("active");
+            $("#mon").removeClass("active");
+            $("#tue").removeClass("active");
+            $("#wed").removeClass("active");
+            $("#thu").removeClass("active");
+            $("#fri").removeClass("active");
+            $("#sat").removeClass("active");
             $(".accordion .content").css({
                 display: 'none'
             })
@@ -1874,7 +1879,12 @@ $("#adding-schedule-modal").modal({
     },
     onHidden: () => {
         $("input[type='text']").val("");
-        $(".ui .button").removeClass("active");
+        $("#mon").removeClass("active");
+        $("#tue").removeClass("active");
+        $("#wed").removeClass("active");
+        $("#thu").removeClass("active");
+        $("#fri").removeClass("active");
+        $("#sat").removeClass("active");
         $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
             display: 'none'
