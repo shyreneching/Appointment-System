@@ -1,4 +1,4 @@
-var accountID, procedureID, accountUsername;
+var accountID, procedureID, accountUsername, showToast;
 var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show, inputChecker, deleteSchedule;
 var editSchedule, editBreaktime, editDay, normal, breaktime, modalReset;
 
@@ -384,12 +384,18 @@ $("#save-password").click(() => {
     // ERROR CHECKING
     if($("#current-password").val() == "") {
         $("#current-password-field").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Please input your current password"
-        });
-        done = false;
+        if(!showToast) {
+            showToast = true;
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Please input your current password",
+                onHidden: () => {
+                    showToast = false;
+                }
+            });
+            done = false;
+        }
     } else {
         $.ajax({
             type: "post",
@@ -418,7 +424,8 @@ $("#save-password").click(() => {
             message: "Incorrect password format"
         })
         done = false;
-    } else if($("#new-password").val().length < 10) {
+    }
+    if($("#new-password").val().length < 10) {
         $("#new-password-field").addClass("error");
         $("body").toast({
             class: "error",
@@ -427,7 +434,8 @@ $("#save-password").click(() => {
         })
         inputChecker = false;
         passwordChecker = false;
-    } else if($("#new-password").val().length > 32) {
+    }
+    if($("#new-password").val().length > 32) {
         $("#new-password-field").addClass("error");
         $("body").toast({
             class: "error",
@@ -481,13 +489,6 @@ $("#save-password").click(() => {
                 });
             }
         })
-    } else {
-        $("#new-password-field").addClass("error");
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Incorrect password format"
-        });
     }
 })
 
@@ -1977,6 +1978,7 @@ function setup() {
 
     accor_show = false;
     modalReset = false;
+    showToast = false;
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});

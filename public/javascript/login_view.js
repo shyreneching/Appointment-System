@@ -1,4 +1,4 @@
-var passwordChecker, inputChecker, showToast;
+var passwordChecker, inputChecker, showToast, newPassword, username;
 var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
 var checkPassword = /^[0-9a-zA-Z]+$/;
 
@@ -86,6 +86,8 @@ $(document).on("keypress", (event) => {
     if(event.keyCode == 13) {
         if($("#forgot-modal")[0].className.includes("active")) {
             $("#reset-button").click();
+        } else if($("#confirm-admin-modal")[0].className.includes("active")) {
+            $("#reset-button-admin").click();
         } else {
             $("#submit").click();
         }
@@ -93,6 +95,7 @@ $(document).on("keypress", (event) => {
     $("#reset-username-field").removeClass("error");
     $("#reset-password-field").removeClass("error");
     $("#reset-confirm-password-field").removeClass("error");
+    $("#admin-input-field").removeClass("error");
 })
 
 $(document).on("keyup", () => {
@@ -113,14 +116,20 @@ $("#forgot-modal").modal({
 $("#reset-button").click(() => {
     var done = true;
     if($("#reset-username").val().trim() == "" || $("#reset-username").val().trim() == "admin") {
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Please input a valid username"
-        });
         $("#reset-username-field").addClass("error");
         if($("#reset-username").val().trim() == "admin") {
             $("#reset-username").val("");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Invalid access"
+            });
+        } else {
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Please input a valid username"
+            });
         }
         done = false;
     }
@@ -132,7 +141,8 @@ $("#reset-button").click(() => {
             message: "Incorrect password format"
         })
         done = false;
-    } else if($("#reset-password").val().length < 10) {
+    }
+    if($("#reset-password").val().length < 10) {
         $("#reset-password-field").addClass("error");
         $("body").toast({
             class: "error",
@@ -140,7 +150,8 @@ $("#reset-button").click(() => {
             message: "Password is too short"
         })
         done = false;
-    } else if($("#reset-password").val().length > 32) {
+    } 
+    if($("#reset-password").val().length > 32) {
         $("#reset-password-field").addClass("error");
         $("body").toast({
             class: "error",
@@ -180,35 +191,90 @@ $("#reset-button").click(() => {
     }
 
     if(done && passwordChecker) {
+        $("#forgot-modal").modal("deny");
+        username = $("#reset-username").val().trim();
+        newPassword = $("#reset-password").val();
+        $("#confirm-admin-modal").modal("show");
+    } 
+})
+
+$("#reset-button-admin").click(() => {
+    var done = true;
+    if($("#admin-input").val() == "") {
+        $("#admin-input-field").addClass("error");
+        if(!showToast) {
+            showToast = true;
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Please input admin password",
+                onHidden: () => {
+                    showToast = false;
+                }
+            });
+            done = false;
+        }
+    } else {
         $.ajax({
             type: "post",
-            url: "/admin/updateAccountPassword",
+            url: "admin/checkCurrentAdminPassword",
             data: {
-                username: $("#reset-username").val().trim(),
-                newPassword: $("#reset-password").val()
+                newPassword: $("#admin-input").val().trim()
             },
             success: (value) => {
-                if(value.message) {
-                    $("#forgot-modal").modal("hide");
-                    $('body').toast({
-                        class: "success",
-                        position: "top center",
-                        message: "Password successfully reset"
-                    });
+                if(!value) {
+                    if(!showToast) {
+                        showToast = true;
+                        $("#admin-input-field").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Incorrect admin password",
+                            onHidden: () => {
+                                showToast = false;
+                            }
+                        });   
+                        done = false;
+                    }
                 } else {
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Username not found"
-                    });
-                    $("#reset-username-field").addClass("error");
-                    $("#reset-password").val("");
-                    $("#reset-confirm-password").val("");
+                    if(done) {
+                        resetPassword();
+                    }
                 }
             }
         })
-    } 
+    }
 })
+
+function resetPassword() {
+    $.ajax({
+        type: "post",
+        url: "/admin/updateAccountPassword",
+        data: {
+            username: $("#reset-username").val().trim(),
+            newPassword: $("#reset-password").val()
+        },
+        success: (value) => {
+            if(value.message) {
+                $("#confirm-admin-modal").modal("hide");
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Password successfully reset"
+                });
+            } else {
+                $('body').toast({
+                    class: "error",
+                    position: "top center",
+                    message: "Username not found"
+                });
+                $("#reset-username-field").addClass("error");
+                $("#reset-password").val("");
+                $("#reset-confirm-password").val("");
+            }
+        }
+    })
+}
 
 function getDate() {
     var date = new Date();

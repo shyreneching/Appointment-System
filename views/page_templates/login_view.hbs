@@ -19,6 +19,10 @@
         .column {
           max-width: 300px;
         }
+        .ui.modal > .header {
+            background-color: #cc1445 !important;
+            color: white !important;
+        }
       </style>
 </head>
 
@@ -46,9 +50,10 @@
             </form>   
         </div>
     </div>
+
     {{!-- modal for resetting password --}}
     <div class="ui mini modal" id="forgot-modal">
-        <div class="header">Reset Password</div>
+        <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Reset Password</div>
         <div class="content">
             <div class="ui form">
                 <div class="required field" id="reset-username-field">
@@ -71,6 +76,29 @@
         </div>
         <div class="actions">
             <div class="ui right aligned floated labeled icon green button" id="reset-button">
+                CONFIRM
+                <i class="checkmark icon"></i>
+            </div>
+            <div class="ui right labeled icon cancel button">
+                CANCEL
+                <i class="cancel icon"></i>
+            </div>
+        </div>
+    </div>
+
+    {{!-- modal for clarification --}}
+    <div class="ui mini modal" id="confirm-admin-modal">
+        <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Reset Password</div>
+        <div class="content">
+            <div class="ui form">
+                <div class="required field" id="admin-input-field">
+                    <label>Please input admin password</label>
+                    <input type="password" name="admin" id="admin-input" placeholder="Admin Password">
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui right aligned floated labeled icon green button" id="reset-button-admin">
                 CONFIRM
                 <i class="checkmark icon"></i>
             </div>
