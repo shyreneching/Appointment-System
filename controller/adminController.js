@@ -627,6 +627,7 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
     let doctorID = req.body.doctorID;
 
     let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
+    let appointments = await Appointment.getDoctorAppointment(doctorID);
 
     var dates = []; 
     if (doctorUnAvail != "") {
@@ -662,6 +663,23 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
             dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
         }  
     }
+    if (appointments != "") {
+        for(var k = 0; k < appointments.length; k++){
+            var araw = new Date(appointments[k].date);
+            let formattedDate = moment(araw).format("YYYY-MM-DD");
+
+            var something = dates.filter((value) => {
+                return moment(value).format("YYYY-MM-DD") == formattedDate;
+            })
+
+            if(something == ""){
+                dates.push(new Object({
+                    date: formattedDate,
+                    message: "Doctor has appointment"
+                }));
+            }
+        }
+    } 
 
     res.send(dates);
 })
@@ -673,10 +691,10 @@ router.post("/combineIfOverarching", urlencoder, async (req, res) => {
     let startDate = req.body.startInput;
     let endDate = req.body.endInput;
 
-    let newDate = Date.parse(startDate);
-    let startformattedDate = moment(newDate).format("YYYY-MM-DD");
-    let newDate = Date.parse(endDate);
-    let endformattedDate = moment(newDate).format("YYYY-MM-DD");
+    let startnewDate = Date.parse(startDate);
+    let startformattedDate = moment(startnewDate).format("YYYY-MM-DD");
+    let endnewDate = Date.parse(endDate);
+    let endformattedDate = moment(endnewDate).format("YYYY-MM-DD");
 
     let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
 
@@ -705,30 +723,6 @@ router.post("/combineIfOverarching", urlencoder, async (req, res) => {
 
         }
     }
-})
-
-router.post("/unavailableTaken", urlencoder, async (req, res) => {
-
-    let doctorID = req.body.doctorID;
-   
-    let appointments = await Appointment.getDoctorAppointment(doctorID);
-
-    var dates = []; 
-    if (appointments != "") {
-        for(var k = 0; k < appointments.length; k++){
-            var araw = new Date(appointments[k].date);
-            let formattedDate = moment(araw).format("YYYY-MM-DD");
-
-            var something = dates.filter((value) => {
-                return moment(value).format("YYYY-MM-DD") == formattedDate;
-            })
-
-            if(something == ""){
-                dates.add(formattedDate);
-            }
-        }
-    }
-    res.send(dates);
 })
 
 module.exports = router;
