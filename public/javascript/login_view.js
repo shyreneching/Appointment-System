@@ -1,4 +1,4 @@
-var passwordChecker, inputChecker;
+var passwordChecker, inputChecker, showToast;
 var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
 var checkPassword = /^[0-9a-zA-Z]+$/;
 
@@ -43,20 +43,32 @@ $(document).ready(() => {
                 if(value.message == 0) {
                     $("#username-input").addClass("error");
                     $("#password").val("");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Invalid username"
-                    });
+                    if(!showToast) {
+                        showToast = true;
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Invalid username",
+                            onHidden: () => {
+                                showToast = false;
+                            }
+                        });
+                    }
                 } else if(value.message == 2) {
                     $("#username-input").addClass("error");
                     $("#password-input").addClass("error");
                     $("#password").val("");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Invalid password"
-                    });
+                    if(!showToast) {
+                        showToast = true;
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Invalid password",
+                            onHidden: () => {
+                                showToast = false;
+                            }
+                        });
+                    }
                 } else if(value.message == 1) {
                     window.location.href="/login"
                 }
@@ -205,6 +217,7 @@ function getDate() {
 
 function setup() {
     $("#form").form("clear");
+    showToast = false;
 }
 
 // Validate special characters

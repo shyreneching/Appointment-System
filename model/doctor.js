@@ -35,17 +35,24 @@ doctorSchema.statics.delete = async function(doctorID){
     });
 }
 
-doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname, status){
+doctorSchema.statics.updateDoctor = async function(doctorID, firstname, lastname){
     return await this.updateOne({
         _id: doctorID
     }, {
         firstname,
         lastname,
-        status
     }, {
         new: true
     }); 
 };
+
+doctorSchema.statics.updateDoctorStatus = async function(doctorID, status) {
+    return await this.updateOne({
+        _id: doctorID
+    }, {
+        status
+    });
+}
 
 doctorSchema.statics.updateDoctorSchedule = async function(doctorID, schedule){
     return await this.updateOne({

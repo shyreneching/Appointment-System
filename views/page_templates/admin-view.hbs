@@ -108,7 +108,7 @@
     {{!-- modal for resetting admin password --}}
     <div class="ui mini modal" id="reset-password-modal">
       <i class="close icon deny"></i>
-      <div class="header">Edit Admin Password</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Admin Password</div>
       <div class="content">
         <div class="ui form">
           <div class="required field" id="current-password-field">
@@ -306,12 +306,6 @@
                   </div>
               </div>
           </div>
-          <div class="ui center aligned basic segment">
-            <div class="ui checkbox" id="edit-status-field">
-              <input type="checkbox" id="edit-status">
-              <label for="edit-status" style="cursor: pointer; font-weight: bold">Active</label>
-            </div>
-          </div>
       </div>
       <div class="actions">
         <div class="ui right floated labeled icon green button very padded" id="edit-dentist-button" style="margin-bottom: 15px;">
@@ -324,7 +318,7 @@
     {{!-- modal for adding dentist schedule --}}
     <div class="ui small modal" id="adding-schedule-modal">
       <i class="close icon deny"></i>
-      <div class="header" id="add-header"><i class="empty calendar icon" style="color: white"></i>&nbsp;&nbsp;Update Schedule</div>
+      <div class="header" id="add-header"><i class="empty calendar icon" style="color: white"></i>&nbsp;&nbsp;Reset Schedule</div>
       <div class="content">
         <div class="ui center aligned basic segment">
           <i class="huge user md icon"></i><br>
@@ -424,7 +418,7 @@
           <div class="ui center aligned basic segment" style="padding: 0px">
             <button class="ui button" id="weekly">Weekly Schedule</button>
             <button class="ui button" id="unavailable">Unavailable Date</button>
-            <table class="ui stripped selectable celled fixed table" id="schedule-table">
+            <table class="ui striped selectable fixed table" id="schedule-table">
               <tbody id="table-schedule">
                 
               </tbody>

@@ -1,8 +1,9 @@
 <thead>
     <tr>
-        <th style="background-color: #b8b6b6; cursor: pointer; width: 30%">First Name</th>
-        <th style="background-color: #b8b6b6; cursor: pointer; width: 30%">Last Name</th>
-        <th class="center aligned" style="background-color: #b8b6b6; width: 40%">Schedule</th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;First Name</th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;Last Name</th>
+        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;Status</th>
+        <th class="center aligned" style="background-color: #b8b6b6; width: 25%">Schedule</th>
     </tr>
 </thead>
 <tbody class="fixed sticky">
@@ -10,8 +11,14 @@
         <tr>
             <td>{{firstname}}</td>
             <td>{{lastname}}</td>
+            <td>
+                {{#ifEquals status "Active"}}
+                    <button class="ui toggle button active" id="{{_id}}">Active</button>
+                {{else}}
+                    <button class="ui toggle button" id="{{_id}}">Inactive</button>
+                {{/ifEquals}}
+            </td>
             <td class="center aligned">
-                <button class="ui green button" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}">Update</button>
                 <button class="ui green button" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}">View</button>
             </td>
         </tr>

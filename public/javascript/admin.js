@@ -1,14 +1,15 @@
 var accountID, procedureID, accountUsername;
 var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show, inputChecker, deleteSchedule;
-var editSchedule, editBreaktime, editDay, normal, breaktime;
+var editSchedule, editBreaktime, editDay, normal, breaktime, modalReset;
 
 var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
 var checkPassword = /^[0-9a-zA-Z]+$/;
 
+window.onresize = resizePage;
+
 $(document).ready(() => {
     // switch page between users, dentist, and procedure
     $(".ui .item").on("click", switchPage);
-
     $("input[type='text']").focusin(() => {
         inputChecker = false;
     })
@@ -51,7 +52,7 @@ $(document).ready(() => {
         if(nameChecker) {
             $.ajax({
                 type: "post",
-                url: "/admin/validateUsername",
+                url: "admin/validateUsername",
                 data:  {
                     username: $("#add-username-user").val().trim()
                 },
@@ -124,116 +125,10 @@ $(document).ready(() => {
             })
         }
     })
-    // validate firstname and lastname format
-    $("#add-firstname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
-        if(inputChecker) {
-            if($("#add-firstname-dentist").val().length < 2) {
-                $("#firstname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Name is too short"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if(!$("#add-firstname-dentist").val().match(check)) {
-                $("#firstname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Invalid name format"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else {
-                nameChecker = true;
-            }
-        }
-    })
-    $("#add-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z.\-_]+$/;
-        if(inputChecker) {
-            if($("#add-lastname-dentist").val().length < 2) {
-                $("#lastname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Name is too short"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if(!$("#add-lastname-dentist").val().match(check)) {
-                $("#lastname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Invalid name format"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else {
-                nameChecker = true;
-            }
-        }
-    })
-    $("#edit-firstname-dentist").focusout(() => {
-        var check = /^[a-zA-Z]+$/;
-        if(inputChecker) {
-            if($("#edit-firstname-dentist").val().length < 2) {
-                $("#edit-firstname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Name is too short"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if(!$("#edit-firstname-dentist").val().match(check)) {
-                $("#edit-firstname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Invalid name format"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else {
-                nameChecker = true;
-            }
-        }
-    })
-    $("#edit-lastname-dentist").focusout(() => {
-        var check = /^[a-zA-Z.\-_]+$/;
-        if(inputChecker) {
-            if($("#edit-lastname-dentist").val().length < 2) {
-                $("#edit-lastname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Name is too short"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if(!$("#edit-lastname-dentist").val().match(check)) {
-                $("#edit-lastname-dentist-field").addClass("error");
-                $('body').toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Invalid name format"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else {
-                nameChecker = true;
-            }
-        }
-    })
-
 
     // Switch between weekly and unavailable
     $("#weekly").click(() => {
-        $("#add-schedule").text("Update");
+        $("#add-schedule").text("Reset");
         $("#weekly").addClass("green");
         $("#unavailable").removeClass("green");
         $('#table-dimmer').addClass("active");
@@ -429,12 +324,6 @@ $(document).ready(() => {
                                 $("#edit-firstname-dentist").val(doctor.firstname);
                                 $("#edit-lastname-dentist").val(doctor.lastname);
                                 $("#edit-username-dentist").text(user.username);
-                                nameChecker = true;
-                                if(doctor.status == "active") {
-                                    $("#edit-status")[0]["checked"] = true;
-                                } else if(doctor.status == "inactive") {
-                                    $("#edit-status")[0]["checked"] = false;
-                                }
                             } else {
                                 $("#edit-user-modal").modal("show");
                                 $("#edit-username-user").text(user.username);
@@ -443,18 +332,34 @@ $(document).ready(() => {
                     })
                 }
             } else if(currTab == "Dentist") {   // accessing elements in dentist tab
-                if($(temp).text() == "Update") {
-                    $("#adding-schedule-modal").data("id", $(temp).data("id"));
-                    $("#adding-schedule-modal").data("firstname", $(temp).data("firstname"));
-                    $("#adding-schedule-modal").data("lastname", $(temp).data("lastname"));
-                    $("#adding-schedule-modal").modal("show");    
-                    $("#doctor-name").text("Dr. " + $(temp).data("firstname") + " " + $(temp).data("lastname"));
-                } else if($(temp).text() == "View") {
+                if($(temp).text() == "View") {
                     $("#schedule-modal").data("id", $(temp).data("id"));
                     $("#schedule-modal").data("firstname", $(temp).data("firstname"));
                     $("#schedule-modal").data("lastname", $(temp).data("lastname"));
                     $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
                     setDataTable("weekly");
+                } else if($(temp).text() == "Active") {
+                    $(temp).removeClass("active");
+                    $(temp).text("Inactive");
+                    $.ajax({
+                        type: "post",
+                        url: "admin/updateDentistStatus",
+                        data: {
+                            doctorID: $(temp)[0].id,
+                            status: "Inactive"
+                        }
+                    })
+                } else if($(temp).text() == "Inactive") {
+                    $(temp).addClass("active");
+                    $(temp).text("Active");
+                    $.ajax({
+                        type: "post",
+                        url: "admin/updateDentistStatus",
+                        data: {
+                            doctorID: $(temp)[0].id,
+                            status: "Active"
+                        }
+                    })
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(temp).text() == "Delete") {
@@ -561,7 +466,7 @@ $("#save-password").click(() => {
     if(done) {
         $.ajax({
             type: "post",
-            url: "/admin/updateAccountPassword",
+            url: "admin/updateAccountPassword",
             data: {
                 username: "admin",
                 newPassword: $("#new-password").val()
@@ -659,7 +564,7 @@ $("#create-user-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addAccount",
+            url: "admin/addAccount",
             data: {
                 username: $("#add-username-user").val().trim(),
                 password: $("#add-password-user").val(),
@@ -671,12 +576,12 @@ $("#create-user-button").click(() => {
                     $("#add-user-modal").modal("hide");
                     $('#add-user-modal').form("clear");
                     if(currTab == "Users") {
-                        $.get("/admin/adminUsers", (data) => {
+                        $.get("admin/adminUsers", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
                     } else if(currTab == "Dentist") {
-                        $.get("/admin/adminDentist", (data) => {
+                        $.get("admin/adminDentist", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
@@ -718,6 +623,48 @@ $("#create-dentist-button").click(() => {
             message: "Please input a valid name"
         });
         done = false;
+    } else {
+        var checkfirst = /^[a-zA-Z]+$/;
+        if($("#add-firstname-dentist").val().length < 2) {
+            $("#firstname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Name is too short"
+            })
+            nameChecker = false;
+        } else if(!$("#add-firstname-dentist").val().match(checkfirst)) {
+            $("#firstname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Invalid name format"
+            })
+            nameChecker = false;
+        } else {
+            nameChecker = true;
+        }
+
+        var checklast = /^[a-zA-Z.\-_]+$/;
+        if($("#add-lastname-dentist").val().length < 2) {
+            $("#lastname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Name is too short"
+            })
+            nameChecker = false;
+        } else if(!$("#add-lastname-dentist").val().match(checklast)) {
+            $("#lastname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Invalid name format"
+            })
+            nameChecker = false;
+        } else {
+            nameChecker = true;
+        }
     }
     if(!$("#add-password-dentist").val().match(checkPassword) || !validateSpecialChar($("#add-password-dentist").val().trim())) {
         $("#password-field-dentist").addClass("error");
@@ -787,7 +734,7 @@ $("#create-dentist-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addDentist",
+            url: "admin/addDentist",
             data: {
                 firstname: $("#add-firstname-dentist").val().trim(), 
                 lastname: $("#add-lastname-dentist").val().trim(), 
@@ -801,12 +748,12 @@ $("#create-dentist-button").click(() => {
                     $("#add-dentist-modal").modal("hide");
                     $('#add-dentist-modal').form("clear");
                     if(currTab == "Dentist") {
-                        $.get("/admin/adminDentist", (data) => {
+                        $.get("admin/adminDentist", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
                     } else if(currTab == "Users") {
-                        $.get("/admin/adminUsers", (data) => {
+                        $.get("admin/adminUsers", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data);
                         });
@@ -820,6 +767,12 @@ $("#create-dentist-button").click(() => {
                     $("#adding-schedule-modal").data("firstname", value.doctor.firstname);
                     $("#adding-schedule-modal").data("lastname", value.doctor.lastname);
                     $("#doctor-name").text("Dr. " + value.doctor.firstname + " " + value.doctor.lastname);
+                    $("#daily")[0]["checked"] = true;
+                    $("#start").val("8:00");
+                    $("#end").val("18:00");
+                    $("#repeat-field").addClass("disabled");
+                    $("#repeat").attr("disabled", "disabled");
+                    modalReset = false;
                     $("#adding-schedule-modal").modal("show");
                 } else {
                     $("#username-field-dentist").addClass("error");
@@ -865,7 +818,7 @@ $("#create-procedure-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/addProcess",
+            url: "admin/addProcess",
             data: {
                 name: $("#procedure-name").val().trim()
             },
@@ -874,7 +827,7 @@ $("#create-procedure-button").click(() => {
                     $("#procedure-modal").modal("hide");
                     $('#procedure-modal').form("clear");
                     if(currTab == "Procedure") {
-                        $.get("/admin/adminProcedure", (data) => {
+                        $.get("admin/adminProcedure", (data) => {
                             $("#table").DataTable().destroy();
                             updateTable(data); 
                         });
@@ -961,7 +914,7 @@ $("#edit-user-button").click(() => {
         $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "/admin/editAccount",
+            url: "admin/editAccount",
             data: {
                 accountID,
                 accountUsername,
@@ -999,6 +952,47 @@ $("#edit-dentist-button").click(() => {
             message: "Please input a valid name"
         });
         done = false;
+    } else {
+        var checkfirst = /^[a-zA-Z]+$/;
+        if($("#edit-firstname-dentist").val().length < 2) {
+            $("#edit-firstname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Name is too short"
+            })
+            nameChecker = false;
+        } else if(!$("#edit-firstname-dentist").val().match(checkfirst)) {
+            $("#edit-firstname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Invalid name format"
+            })
+            nameChecker = false;
+        } else {
+            nameChecker = true;
+        }
+        var checklast = /^[a-zA-Z.\-_]+$/;
+        if($("#edit-lastname-dentist").val().length < 2) {
+            $("#edit-lastname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Name is too short"
+            })
+            nameChecker = false;
+        } else if(!$("#edit-lastname-dentist").val().match(checklast)) {
+            $("#edit-lastname-dentist-field").addClass("error");
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Invalid name format"
+            })
+            nameChecker = false;
+        } else {
+            nameChecker = true;
+        }
     }
     if(!$("#edit-password-dentist").val().match(checkPassword) || !validateSpecialChar($("#edit-password-dentist").val().trim())) {
         $("#edit-password-field-dentist").addClass("error");
@@ -1056,12 +1050,6 @@ $("#edit-dentist-button").click(() => {
     }
 
     if(done && nameChecker) {
-        var status;
-        if($("#edit-status")[0].checked) {
-            status = "active";
-        } else {
-            status = "inactive";
-        }
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -1070,7 +1058,6 @@ $("#edit-dentist-button").click(() => {
                 firstname: $("#edit-firstname-dentist").val(),
                 lastname: $("#edit-lastname-dentist").val(),
                 password: $("#edit-password-dentist").val(),
-                status
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");
@@ -1104,7 +1091,7 @@ $("#edit-procedure-button").click(() => {
     if(done) {
         $.ajax({
             type: "post",
-            url: "/admin/editProcess",
+            url: "admin/editProcess",
             data: {
                 procedureID,
                 name: $("#edit-procedure-name").val().trim()
@@ -1113,7 +1100,7 @@ $("#edit-procedure-button").click(() => {
                 if(value.message) {
                     $("#edit-procedure-modal").modal("hide");
                     $("#edit-procedure-modal").form("clear");
-                    $.get("/admin/adminProcedure", (data) => {
+                    $.get("admin/adminProcedure", (data) => {
                         $("#table").DataTable().destroy();
                         updateTable(data);
                         $('body').toast({
@@ -1139,14 +1126,14 @@ $("#edit-procedure-button").click(() => {
 $("#delete-user-button").click(() => {
     $.ajax({
         type: "post",
-        url: "/admin/deleteAccount",
+        url: "admin/deleteAccount",
         data: {
             accountID: accountID,
             accountUsername: accountUsername
         },
         success: (value) => {
             $("#delete-user-modal").modal("hide");
-            $.get("/admin/adminUsers", (data) => {
+            $.get("admin/adminUsers", (data) => {
                 $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
@@ -1163,13 +1150,13 @@ $("#delete-user-button").click(() => {
 $("#delete-procedure-button").click(() => {
     $.ajax({
         type: "post",
-        url: "/admin/deleteProcess",
+        url: "admin/deleteProcess",
         data: {
             processID: procedureID
         },
         success: (value) => {
             $("#delete-procedure-modal").modal("hide");
-            $.get("/admin/adminProcedure", (data) => {
+            $.get("admin/adminProcedure", (data) => {
                 $("#table").DataTable().destroy();
                 updateTable(data);
                 $('body').toast({
@@ -1202,6 +1189,28 @@ $("#add-unavailable-button").click(() => {
             message: "Please input a valid date"
         })
         done = false;
+    } else {
+        $.ajax({
+            type: "post",
+            url: "admin/doctorHasAppointment",
+            data: {
+                doctorID: $("#add-unavailable-modal").data("id"),
+                startDate: start,
+                endDate: end
+            }, 
+            success: (value) => {
+                if(value) {
+                    $("#start-date").addClass("error");
+                    $("#end-date").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "The chosen date has appointment/s"
+                    })
+                    done = false;
+                }
+            }
+        })
     }
 
     if(done) {
@@ -1698,26 +1707,37 @@ $("#add-schedule").click(() => {
         $("#adding-schedule-modal").data("id", $("#schedule-modal").data("id"));
         $("#adding-schedule-modal").data("firstname", $("#schedule-modal").data("firstname"));
         $("#adding-schedule-modal").data("lastname", $("#schedule-modal").data("lastname"));
+        modalReset = true;
         $("#adding-schedule-modal").modal("show");
     } else if($("#unavailable")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        var today = new Date();
-        $("#start-date").calendar('set date', moment().toDate(), true, false);
-        $("#end-date").calendar('set date', moment().toDate(), true, false);
-        $("#start-date").calendar({
-            type: "date",
-            minDate: today,
-            today: true
-        });
-        $("#end-date").calendar({
-            type: "date",
-            minDate: today,
-            today: true
-        });
-        $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
-        $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
-        $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
-        $("#add-unavailable-modal").modal("show");
+        $.ajax({
+            type: "post",
+            url: "admin/unavailableTaken",
+            data: {
+                doctorID: $("#schedule-modal").data("id")
+            }, success: (value) => {
+                var today = new Date();
+                $("#start-date").calendar('set date', moment().toDate(), true, false);
+                $("#end-date").calendar('set date', moment().toDate(), true, false);
+                $("#start-date").calendar({
+                    type: "date",
+                    minDate: today,
+                    today: true,
+                    disabledDates: value
+                });
+                $("#end-date").calendar({
+                    type: "date",
+                    minDate: today,
+                    today: true,
+                    disabledDates: value
+                });
+                $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
+                $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
+                $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
+                $("#add-unavailable-modal").modal("show");
+            }
+        })
     }
 })
 
@@ -1840,10 +1860,17 @@ $("#adding-schedule-modal").modal({
             minDate,
             maxDate
         })
-        $("input[type='text']").val("");
+        if(modalReset) {
+            $("input[type='text']").val("");
+            $(".ui .checkbox").checkbox('uncheck');
+            $(".ui .button").removeClass("active");
+            $(".accordion .content").css({
+                display: 'none'
+            })
+        }
     },
     onHidden: () => {
-        $('input[type="text"]').val("");
+        $("input[type='text']").val("");
         $(".ui .button").removeClass("active");
         $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
@@ -1944,14 +1971,34 @@ $("#confirmation-modal").modal({
 // Initialization
 function setup() {
     // load the list of users
-    $.get("/admin/adminUsers", (data) => {
+    $.get("admin/adminUsers", (data) => {
         updateTable(data);
     });
 
     accor_show = false;
+    modalReset = false;
     currTab = "Users";
     $(".ui .item:contains('Users')").addClass("active");
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
+}
+
+function resizePage() {
+    if(currTab == "Users") {
+        $.get("admin/adminUsers", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    } else if(currTab == "Dentist") {
+        $.get("admin/adminDentist", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    } else if(currTab == "Procedure") {
+        $.get("admin/adminProcedure", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    }
 }
 
 // SWITCH TAB
@@ -1962,30 +2009,36 @@ function switchPage() {
         $(".ui .item").css({'background-color':''});
         $(this).css({'background-color':'#ebebeb'});
         $(this).addClass("active");
+        $("#list-dimmer").addClass("active");
         currTab = "Users";
-        $.get("/admin/adminUsers", (data) => {
+        $.get("admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
         $(this).css({'background-color':'#ebebeb'});
+        $("#list-dimmer").addClass("active");
         currTab = "Dentist";
-        $.get("/admin/adminDentist", (data) => {
+        $.get("admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Procedure") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
         $(this).css({'background-color':'#ebebeb'});
+        $("#list-dimmer").addClass("active");
         currTab = "Procedure";
-        $.get("/admin/adminProcedure", (data) => {
+        $.get("admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Reset Password") {
         $("#reset-password-modal").modal("show");
@@ -2085,3 +2138,7 @@ function validateSpecialChar(password) {
 $("#logout").click(() => {
     window.location.href="/logout";
 })
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
