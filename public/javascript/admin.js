@@ -5,10 +5,11 @@ var editSchedule, editBreaktime, editDay, normal, breaktime, modalReset;
 var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
 var checkPassword = /^[0-9a-zA-Z]+$/;
 
+window.onresize = resizePage;
+
 $(document).ready(() => {
     // switch page between users, dentist, and procedure
     $(".ui .item").on("click", switchPage);
-
     $("input[type='text']").focusin(() => {
         inputChecker = false;
     })
@@ -343,6 +344,12 @@ $(document).ready(() => {
                     $("#schedule-modal").data("lastname", $(temp).data("lastname"));
                     $("#doctor-name-schedule").text("Dr. " + $("#schedule-modal").data("firstname") + " " + $("#schedule-modal").data("lastname"));
                     setDataTable("weekly");
+                } else if($(temp).text() == "Active") {
+                    $(temp).removeClass("active");
+                    $(temp).text("Inactive");
+                } else if($(temp).text() == "Inactive") {
+                    $(temp).addClass("active");
+                    $(temp).text("Active");
                 }
             } else if(currTab == "Procedure") { // accessing elements in procedure tab
                 if($(temp).text() == "Delete") {
@@ -753,6 +760,8 @@ $("#create-dentist-button").click(() => {
                     $("#daily")[0]["checked"] = true;
                     $("#start").val("8:00");
                     $("#end").val("18:00");
+                    $("#repeat-field").addClass("disabled");
+                    $("#repeat").attr("disabled", "disabled");
                     modalReset = false;
                     $("#adding-schedule-modal").modal("show");
                 } else {
@@ -1938,6 +1947,25 @@ function setup() {
     $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
 }
 
+function resizePage() {
+    if(currTab == "Users") {
+        $.get("/admin/adminUsers", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    } else if(currTab == "Dentist") {
+        $.get("/admin/adminDentist", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    } else if(currTab == "Procedure") {
+        $.get("/admin/adminProcedure", (data) => {
+            $("#table").DataTable().destroy();
+            updateTable(data);
+        });
+    }
+}
+
 // SWITCH TAB
 function switchPage() {
     let page = $(this).text().trim();
@@ -1946,30 +1974,36 @@ function switchPage() {
         $(".ui .item").css({'background-color':''});
         $(this).css({'background-color':'#ebebeb'});
         $(this).addClass("active");
+        $("#list-dimmer").addClass("active");
         currTab = "Users";
         $.get("/admin/adminUsers", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
         $(this).css({'background-color':'#ebebeb'});
+        $("#list-dimmer").addClass("active");
         currTab = "Dentist";
         $.get("/admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Procedure") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
         $(this).css({'background-color':'#ebebeb'});
+        $("#list-dimmer").addClass("active");
         currTab = "Procedure";
         $.get("/admin/adminProcedure", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
+            $("#list-dimmer").removeClass("active");
         });
     } else if(page == "Reset Password") {
         $("#reset-password-modal").modal("show");
@@ -2069,3 +2103,7 @@ function validateSpecialChar(password) {
 $("#logout").click(() => {
     window.location.href="/logout";
 })
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
