@@ -79,7 +79,15 @@ router.post("/addAccount", async (req, res) => {
 router.post("/deleteAccount", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.accountUsername);
     if (account.accountType == "dentist") {
-        Doctor.delete(account.doctorID);
+        let unavailableDate = await UnavailableDate.getDoctorUnavailableDates(account.doctorID);
+        for (var i = 0; i < unavailableDate.length; i++) {
+            let unAvID = unavailableDate[i]._id;
+            await UnavailableDate.delete(unAvID);
+        }
+        let doctor = Doctor.getDoctorByID(account.doctorID);
+        await BreakTime.delete(doctor.breaktime);
+        await Schedule.delete(doctor.schedule);
+        await Doctor.delete(account.doctorID);
         let appointments = await Appointment.getDoctorAppointment(account.doctorID);
         for (var i = 0; i < appointments.length; i++) {
             let appID = appointments[i]._id;
