@@ -1,10 +1,11 @@
 {{#each sched}}
     <tr data-day="{{name}}">
-        <td class="center aligned" style="font-weight: bold;">{{name}}</td>
-        <td class="center aligned">
+        <td  class="center aligned" style="font-weight: bold;" data-day="{{name}}">{{name}}</td>
+        <td class="center aligned" data-day="{{name}}">
             {{#each time}}
                 {{range}}<br>
             {{/each}}
+            <i class="large edit icon" data-day="{{name}}"></i>
         </td>
     </tr>
 {{/each}}
