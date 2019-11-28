@@ -1189,6 +1189,28 @@ $("#add-unavailable-button").click(() => {
             message: "Please input a valid date"
         })
         done = false;
+    } else {
+        $.ajax({
+            type: "post",
+            url: "admin/doctorHasAppointment",
+            data: {
+                doctorID: $("#add-unavailable-modal").data("id"),
+                startDate: start,
+                endDate: end
+            }, 
+            success: (value) => {
+                if(value) {
+                    $("#start-date").addClass("error");
+                    $("#end-date").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "The chosen date has appointment/s"
+                    })
+                    done = false;
+                }
+            }
+        })
     }
 
     if(done) {
@@ -1689,23 +1711,33 @@ $("#add-schedule").click(() => {
         $("#adding-schedule-modal").modal("show");
     } else if($("#unavailable")[0].className.includes("green")) {
         $("#schedule-modal").modal("deny");
-        var today = new Date();
-        $("#start-date").calendar('set date', moment().toDate(), true, false);
-        $("#end-date").calendar('set date', moment().toDate(), true, false);
-        $("#start-date").calendar({
-            type: "date",
-            minDate: today,
-            today: true
-        });
-        $("#end-date").calendar({
-            type: "date",
-            minDate: today,
-            today: true
-        });
-        $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
-        $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
-        $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
-        $("#add-unavailable-modal").modal("show");
+        $.ajax({
+            type: "post",
+            url: "admin/unavailableTaken",
+            data: {
+                doctorID: $("#schedule-modal").data("id")
+            }, success: (value) => {
+                var today = new Date();
+                $("#start-date").calendar('set date', moment().toDate(), true, false);
+                $("#end-date").calendar('set date', moment().toDate(), true, false);
+                $("#start-date").calendar({
+                    type: "date",
+                    minDate: today,
+                    today: true,
+                    disabledDates: value
+                });
+                $("#end-date").calendar({
+                    type: "date",
+                    minDate: today,
+                    today: true,
+                    disabledDates: value
+                });
+                $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
+                $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
+                $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
+                $("#add-unavailable-modal").modal("show");
+            }
+        })
     }
 })
 

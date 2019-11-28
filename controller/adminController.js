@@ -603,21 +603,21 @@ router.post("/editUnavailableDates", urlencoder, async (req, res) => {
 router.post("/doctorHasAppointment", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
-    let date = req.body.dateInput;
+    let startdate = req.body.startDate;
+    let enddate = req.body.endDate
 
-    let newDate = Date.parse(date);
-    let formattedDate = moment(newDate).format("MMM D YYYY");
+    let startnewDate = Date.parse(startdate);
+    let startformattedDate = moment(startnewDate).format("MMM D YYYY");
+    let endnewDate = Date.parse(enddate);
+    let endformattedDate = moment(endnewDate).format("MMM D YYYY");
 
-    let appointments = await Appointment.getAppByDoctorandDate(doctorID, formattedDate);
+    let startappointments = await Appointment.getAppByDoctorandDate(doctorID, startformattedDate);
+    let endappointments = await Appointment.getAppByDoctorandDate(doctorID, endformattedDate);
 
-    if(appointments == ""){
-        res.send({
-            data: "false"
-        })
-    }else{
-        res.send({
-            data: "true"
-        })
+    if(startappointments == "" || endappointments == ""){
+        res.send(false)
+    } else {
+        res.send(true)
     }
 
 })
@@ -649,7 +649,10 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
                         return date;
                     };
                 while (currentDate <= endDate) {
-                    datesget.push(currentDate);
+                    datesget.push(new Object({
+                        date: currentDate,
+                        message: "Doctor is not available"
+                    }));
                     currentDate = addDays.call(currentDate, 1);
                 }
                 return datesget;
