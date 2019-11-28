@@ -600,4 +600,67 @@ router.post("/editUnavailableDates", urlencoder, async (req, res) => {
     UnavailableDate.updateUnavailableDate(unavailableDateID, unavailableDate);
 })
 
+router.post("/doctorHasAppointment", urlencoder, async (req, res) => {
+
+    let doctorID = req.body.doctorID;
+    let date = req.body.dateInput;
+
+    let newDate = Date.parse(date);
+    let formattedDate = moment(newDate).format("MMM D YYYY");
+
+    let appointments = await Appointment.getAppByDoctorandDate(doctorID, formattedDate);
+
+    if(appointments == ""){
+        res.send({
+            data: "false"
+        })
+    }else{
+        res.send({
+            data: "true"
+        })
+    }
+
+})
+
+router.post("/unavailableTaken", urlencoder, async (req, res) => {
+
+    let doctorID = req.body.doctorID;
+
+    let doctorUnAvail = await UnavailableDate.getDoctorUnavailableDates(doctorID);
+
+    var dates = []; 
+    if (doctorUnAvail != "") {
+        for(var k = 0; k < doctorUnAvail.length; k++){
+            var start = new Date(doctorUnAvail[k].stringDate1);
+            let startformattedDate = moment(start).format("YYYY-MM-DD");
+            var end = new Date(doctorUnAvail[k].stringDate2);
+            let endformattedDate = moment(end).format("YYYY-MM-DD");
+
+            var getDates = function(startDate, endDate) {
+                var datesget = [];
+                if(dates != ""){
+                    datesget = dates;
+                }
+
+                var currentDate = startDate,
+                    addDays = function(days) {
+                        var date = new Date(this.valueOf());
+                        date.setDate(date.getDate() + days);
+                        return date;
+                    };
+                while (currentDate <= endDate) {
+                    datesget.push(currentDate);
+                    currentDate = addDays.call(currentDate, 1);
+                }
+                return datesget;
+            };
+                
+            // Usage
+            dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
+        }  
+    }
+
+    res.send(dates);
+})
+
 module.exports = router;

@@ -51,6 +51,15 @@ appointmentSchema.statics.getAppByDoctorandDateandTime = async function(doctorID
     });
 };
 
+appointmentSchema.statics.getAppByDoctorandDate = async function(doctorID, date){
+    return await this.find({
+        date: date,
+        doctor:{
+            "$in": [doctorID]
+        }
+    });
+};
+
 appointmentSchema.statics.getOneAppByDoctorandDateandTime = async function(doctorID, date, time){
     return await this.findOne({
         time, time,
