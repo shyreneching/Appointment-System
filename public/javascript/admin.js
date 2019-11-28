@@ -324,12 +324,6 @@ $(document).ready(() => {
                                 $("#edit-firstname-dentist").val(doctor.firstname);
                                 $("#edit-lastname-dentist").val(doctor.lastname);
                                 $("#edit-username-dentist").text(user.username);
-                                nameChecker = true;
-                                if(doctor.status == "active") {
-                                    $("#edit-status")[0]["checked"] = true;
-                                } else if(doctor.status == "inactive") {
-                                    $("#edit-status")[0]["checked"] = false;
-                                }
                             } else {
                                 $("#edit-user-modal").modal("show");
                                 $("#edit-username-user").text(user.username);
@@ -1040,12 +1034,6 @@ $("#edit-dentist-button").click(() => {
     }
 
     if(done && nameChecker) {
-        var status;
-        if($("#edit-status")[0].checked) {
-            status = "active";
-        } else {
-            status = "inactive";
-        }
         $.ajax({
             type: "post",
             url: "admin/editDentist",
@@ -1054,7 +1042,6 @@ $("#edit-dentist-button").click(() => {
                 firstname: $("#edit-firstname-dentist").val(),
                 lastname: $("#edit-lastname-dentist").val(),
                 password: $("#edit-password-dentist").val(),
-                status
             },
             success: (value) => {
                 $("#edit-dentist-modal").modal("hide");

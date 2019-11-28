@@ -176,10 +176,13 @@ router.post("/addDentist", async (req, res) => {
 router.post("/editDentist", async (req, res) => {
     let account = await Account.findOne({ _id: req.body.accountID });
     Account.updateAccount(account.id, req.body.password);
-    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname, req.body.status);
+    Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
     res.send(true);
 })
 
+router.post("/updateDentistStatus", async (req, res) => {
+    Doctor.updateDoctorStatus(req.body.doctorID, status);
+})
 
 // ADD PROCESS
 router.post("/addProcess", async (req, res) => {
