@@ -777,19 +777,23 @@ router.get("/getAvailable", async (req, res) => {
             // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
             // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
             var getDates = function(startDate, endDate) {
-                var dates = [],
-                    currentDate = startDate,
-                    addDays = function(days) {
-                        var date = new Date(this.valueOf());
-                        date.setDate(date.getDate() + days);
-                        return date;
-                    };
-                while (currentDate <= endDate) {
-                    dates.push(currentDate);
-                    currentDate = addDays.call(currentDate, 1);
-                }
-                return dates;
-                };
+                var datesget = [];
+                    if(dates != ""){
+                        datesget = dates;
+                    }
+
+                    var currentDate = startDate,
+                        addDays = function(days) {
+                          var date = new Date(this.valueOf());
+                          date.setDate(date.getDate() + days);
+                          return date;
+                        };
+                    while (currentDate <= endDate) {
+                      datesget.push(currentDate);
+                      currentDate = addDays.call(currentDate, 1);
+                    }
+                return datesget;
+            };
                 
                 // Usage
                 dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
@@ -909,19 +913,23 @@ router.get("/getUnavailable", async (req, res) => {
             // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
             // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
             var getDates = function(startDate, endDate) {
-                var dates = [],
-                    currentDate = startDate,
-                    addDays = function(days) {
-                        var date = new Date(this.valueOf());
-                        date.setDate(date.getDate() + days);
-                        return date;
-                    };
-                while (currentDate <= endDate) {
-                    dates.push(currentDate);
-                    currentDate = addDays.call(currentDate, 1);
-                }
-                return dates;
-                };
+                var datesget = [];
+                    if(dates != ""){
+                        datesget = dates;
+                    }
+
+                    var currentDate = startDate,
+                        addDays = function(days) {
+                          var date = new Date(this.valueOf());
+                          date.setDate(date.getDate() + days);
+                          return date;
+                        };
+                    while (currentDate <= endDate) {
+                      datesget.push(currentDate);
+                      currentDate = addDays.call(currentDate, 1);
+                    }
+                return datesget;
+            };
                 
                 // Usage
                 dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
@@ -1049,18 +1057,22 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
                 // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
                 // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
                 var getDates = function(startDate, endDate) {
-                    var dates = [],
-                        currentDate = startDate,
+                    var datesget = [];
+                    if(dates != ""){
+                        datesget = dates;
+                    }
+
+                    var currentDate = startDate,
                         addDays = function(days) {
                           var date = new Date(this.valueOf());
                           date.setDate(date.getDate() + days);
                           return date;
                         };
                     while (currentDate <= endDate) {
-                      dates.push(currentDate);
+                      datesget.push(currentDate);
                       currentDate = addDays.call(currentDate, 1);
                     }
-                    return dates;
+                    return datesget;
                   };
                   
                   // Usage
