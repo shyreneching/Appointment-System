@@ -794,9 +794,9 @@ $("#create-dentist-button").click(() => {
 // ADDING PROCEDURE
 $("#create-procedure-button").click(() => {
     var done = true;
-    var check = /^[0-9a-zA-Z]+$/;
+    var check = /^[a-z A-Z]+$/;
     // ERROR CHECKING
-    if($("#procedure-name").val().trim() == "" || $("#procedure-name").val().trim().match(check)) {
+    if($("#procedure-name").val().trim() == "" || !$("#procedure-name").val().trim().match(check)) {
         $("#procedure-field").addClass("error");
         $('body').toast({
             class: "error",
@@ -1078,7 +1078,7 @@ $("#edit-dentist-button").click(() => {
 // EDITING PROCEDURE
 $("#edit-procedure-button").click(() => {
     var done = true;
-    var check = /^[0-9a-zA-Z]+$/;
+    var check = /^[a-z A-Z]+$/;
 
     // ERROR CHECKING
     if($("#edit-procedure-name").val().trim() == "" || $("#procedure-name").val().trim().match(check)) {
