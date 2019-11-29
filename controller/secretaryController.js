@@ -817,7 +817,7 @@ router.get("/getAvailable", async (req, res) => {
             let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
 
             // if working time of dentist and the time is not in the 'break time' adds to the list of available times
-            if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == ""
+            if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "Active"
             && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
                 let data = {
                     slot: timeSlot,
@@ -955,7 +955,7 @@ router.get("/getUnavailable", async (req, res) => {
             let appointment = await Appointment.getOneAppByDoctorandDateandTime(doctorID, formattedDate, formattedTime);
 
             //checks if the time is not working time or in between break adds to the unavailable times
-            if (!moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() || something == ""
+            if (!moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() || something == "" || doctor.status != "Active"
             && (moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) || appointment != "") {
                 let data = {
                     slot: timeSlot,
@@ -1084,8 +1084,9 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
             return moment(value).format("YYYY-MM-DD") == formattedDate;
         })
         
+        
         //Checks if the dentist is available based on schedule
-        if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "active"
+        if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "Active"
         && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
             
             let data = {
