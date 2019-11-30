@@ -562,6 +562,12 @@ router.post("/addUnavailableDates", urlencoder, async (req, res) => {
         } else {
             res.send(true);
         }
+    } else {
+        await UnavailableDate.addUnavailableDate(unavailableDate, function (val) {
+            res.send(true);
+        }, (error) => {
+            res.send(error);
+        })
     }
 })
 
