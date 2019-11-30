@@ -744,7 +744,7 @@ $("#create-dentist-button").click(() => {
                 username: $("#add-username-dentist").val().trim(),
                 password: $("#add-password-dentist").val(),
                 type: "dentist",
-                status: "active"
+                status: "Active"
             },
             success: (value) => {
                 if(value.message) {
