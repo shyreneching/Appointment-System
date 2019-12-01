@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Access Dental Clinic | Dentist</title>
+        <link rel="stylesheet" href="semantic/dist/semantic.min.css">
+        <link rel="stylesheet" href="/css/dentist_view.css">
+
+    </head>
+    <body onload="onLoad">
+        <div class="ui top fixed sticky borderless menu" id="main-menu" data-id="{{id}}">
+        <div class="item ">
+            <div class="ui calendar" id="standard_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text" placeholder="Date/Time">
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="ui basic button with tooltip" data-title="Today (SPACEBAR)"
+                data-content="Moves focus date to today" data-variation="basic" data-position="bottom center"
+                id="today">
+                TODAY
+            </div>
+
+        </div>
+        <div class="item ">
+            <div class="ui icon basic buttons">
+                <div class="ui button with tooltip" data-title="Previous (←)"
+                    data-content="Moves focused date to yesterday" data-position="bottom center" data-inverted=""
+                    data-variation="basic" id="prev-button">
+                    <i class="angle left icon"></i>
+                </div>
+                <div class="ui button with tooltip" data-title="Next (→)" data-content="Moves focused date to tomorrow"
+                    data-position="bottom center" data-inverted="" data-variation="basic" id="next-button">
+                    <i class="angle right icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="item ">
+            <span class="ui large text" id="focus-date-header">
+            </span>
+        </div>
+        <div class="right borderless menu">
+            <div class="item">
+                <div class="ui fluid selection dropdown" id="view-chooser">
+                    <div class="default text">View</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="week-view">WEEKLY</div>
+                        <div class="item" data-value="month-view">MONTHLY</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui item">
+                <div class="ui selection very long dropdown" id="filter-dropdown">
+                    <div class="default text">Filter</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="available">AVAILABLE</div>
+                        <div class="item" data-value="unavailable">UNAVAILABLE</div>
+                    </div>
+                </div>
+            </div>
+            <div class="item ">
+                <i id="logoutButton" class="large sign out icon link"></i>
+            </div>
+        </div>
+    </div>
+    <div class="ui fluid container" id="schedule-table">
+        <table class="ui basic compact fixed collapsible celled structured unstackable table main">
+            <thead id="the-header">
+
+            </thead>
+            <tbody id="the-body">
+
+            </tbody>
+
+
+        </table>
+    </div>
+    <div class="ui inverted  dimmer">
+        <div class="ui elastic massive green loader"></div>
+    </div>
+
+        <script src="javascript/jquery.js"></script>
+        <script src="semantic/dist/semantic.js"></script>
+        <script src="javascript/jquery-data-table.js"></script>
+        <script src="javascript/jquery-data-table-semanticui.js"></script>
+        <script src="javascript/handlebars.js"></script>
+        <script src="javascript/moment.js"></script>
+        <script src="javascript/dentist.js"></script>
+    </body>
+</html>

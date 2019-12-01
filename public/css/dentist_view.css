@@ -1,0 +1,176 @@
+/*
+    HEADER STUFF
+*/
+
+#main-menu{
+    margin-bottom: 0;
+    border-width: 0;
+    border-radius: 0;
+}
+
+#today{
+    /* background: #fff; */
+    color: black;
+    margin-left: 0em;
+    font-weight: 700;
+}
+
+#add-button{
+    margin-right: 0;
+}
+
+.ui.tiny.header.dates.smaller-marbottom, .ui.small.header.dates.smaller-marbottom{
+    margin-bottom: 0.25em;
+}
+
+.massive.circular.label{
+    margin-left: 0;
+}
+
+/*
+    For nested dropdown in doctors filter
+*/
+.ui.selection.dropdown .menu {
+    overflow: visible !important;
+}
+
+/*
+    Adjusting circular labels to make them more circle like
+*/
+
+.ui.large.circular.doctor.label{
+    margin: 0px 0px 0.2em 0px;
+}
+
+.ui.huge.circular.button.fat{
+    padding: 0.575em 0.5em;
+    margin-right: 0em !important;
+}
+
+.ui.huge.circular.button.thin{
+    padding: 0.575em 0.790em;
+    margin-right: 0em !important;
+}
+
+.ui.huge.tertiary.button{
+    margin: 0em !important;
+    padding: 0.655em;
+}
+
+/*
+    Daily Appointment Cells
+*/
+td.daily.appointment.cell{
+    padding: 0 !important;
+}
+
+.side.colored.colored.colored.colored.strip{
+    border-left: 5px solid;
+}
+
+#the-header th, #the-body td{
+    border: 1px rgba(0,0,0,0.6) solid;
+}
+
+#slots-table.table th, #slots-table.table td{
+    border: none;
+}
+
+.side.colored.colored.colored.colored.strip{
+    border-left: 5px solid !important;
+    cursor: pointer;
+}
+
+/*
+    Borderless labels for the popup
+*/
+.borderless.ui.basic.label{
+    border-width: 0;
+    border: none;
+}
+
+/*
+    Week view components
+*/
+
+/*
+    BLUE BLUE BLUE-------------------------------
+*/
+
+td.blue.pastel.colored.cell{
+    color: #00202c;
+}
+
+td.light.blue.pastel.colored.cell{
+    background-color: #f8fdff;
+}
+
+td.dark.blue.pastel.colored.cell{
+    background-color: #dff6ff;
+}
+
+/*
+    YELLOW YELLOW YELLOW-------------------------------
+*/
+
+td.yellow.pastel.colored.cell{
+    color: #252500;
+}
+
+td.light.yellow.pastel.colored.cell{
+    background-color: #ffffcb;
+}
+
+td.dark.yellow.pastel.colored.cell{
+    background-color: #ffffa5;
+}
+
+/*
+    RED RED RED-------------------------------
+*/
+
+td.red.pastel.colored.cell{
+    color: #230100;
+}
+
+td.light.red.pastel.colored.cell{
+    background-color: #ffefee;
+}
+
+td.dark.red.pastel.colored.cell{
+    background-color: #ffd7d5;
+}
+
+/*
+    GREEN GREEN GREEN-------------------------------
+*/
+
+td.green.pastel.colored.cell{
+    color: #022105;
+}
+
+td.light.green.pastel.colored.cell{
+    background-color: #f0fef1;
+}
+
+td.dark.green.pastel.colored.cell{
+    background-color: #d7fddc;
+}
+
+.ui.form.date.container{
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+
+.hoverable:hover{
+
+    cursor: pointer;
+}
+#timeSlotDayAll.hoverable:hover,#timeSlotDayOne.hoverable:hover{
+    background-color: #c2ceb5;
+    cursor: pointer;
+}

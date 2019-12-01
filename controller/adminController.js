@@ -19,7 +19,7 @@ const { UnavailableDate } = require("../model/unavailableDate");
 router.get("/", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
     if (req.session.username == "admin") {
-        res.render("page_templates/admin-view.hbs", {
+        res.render("page_templates/admin_view.hbs", {
             password: admin.password
         });
     } else {

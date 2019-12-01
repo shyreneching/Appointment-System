@@ -6,7 +6,7 @@ const initial = require("../model/file");
 
 router.use("/secretary", require("./secretaryController"));
 router.use("/admin", require("./adminController"));
-router.use("/doctor", require("./doctorController"));
+router.use("/dentist", require("./dentistController"));
 
 router.get("/", async (req, res) => {
     //username is subject to change
@@ -32,8 +32,8 @@ router.get("/", async (req, res) => {
                 res.redirect("/secretary");
             } else if (account.accountType == "admin") {
                 res.redirect("/admin");
-            } else if (account.accountType == "doctor") {
-                res.redirect("/doctor");
+            } else if (account.accountType == "dentist") {
+                res.redirect("/dentist");
             }
         }
     }
@@ -44,8 +44,8 @@ router.get("/login", async (req, res) => {
     if (req.session.username != null) {
         if (req.session.username == "secretary") {
             res.redirect("/secretary");
-        } else if (req.session.username == "doctor") {
-
+        } else if (req.session.username == "dentist") {
+            res.redirect("/dentist");
         } else if (req.session.username == "admin") {
             res.redirect("/admin");
         }
@@ -63,6 +63,7 @@ router.post("/validateLogin", async (req, res) => {
         account = await Account.authenticate(account.username, req.body.password, account.salt);
         if (account != undefined) {
             req.session.username = account.accountType;
+            req.session.doctorUsername = req.body.username;
             Account.updateLogin(account.id, req.body.date);
             res.send({ message: 1 });
         } else {
@@ -75,6 +76,7 @@ router.post("/validateLogin", async (req, res) => {
 
 router.get("/logout", (req, res) => {
     req.session.username = null;
+    req.session.doctorUsername = null;
     res.header("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
     res.redirect("/login");
 })
