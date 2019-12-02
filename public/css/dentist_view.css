@@ -38,23 +38,26 @@
     Adjusting circular labels to make them more circle like
 */
 
-.ui.large.circular.doctor.label{
+.ui.circular.doctor.label{
     margin: 0px 0px 0.2em 0px;
 }
 
-.ui.huge.circular.button.fat{
+.ui.circular.button.fat {
     padding: 0.575em 0.5em;
     margin-right: 0em !important;
+    margin-left: 0em !important;
 }
 
-.ui.huge.circular.button.thin{
+.ui.circular.button.thin {
     padding: 0.575em 0.790em;
     margin-right: 0em !important;
+    margin-left: 0em !important;
 }
 
-.ui.huge.tertiary.button{
-    margin: 0em !important;
+.tertiary-button{
     padding: 0.655em;
+    margin: 0em !important;
+    margin-left: 0em !important;
 }
 
 /*
@@ -164,10 +167,7 @@ td.dark.green.pastel.colored.cell{
     padding-bottom: 10px;
 }
 
-
-
 .hoverable:hover{
-
     cursor: pointer;
 }
 #timeSlotDayAll.hoverable:hover,#timeSlotDayOne.hoverable:hover{
