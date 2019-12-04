@@ -1,13 +1,30 @@
-//Resize window
+// resize window
 var oldWidth, newWidth;
 var startOfWeek, endOfWeek;
-window.onresize = resizePage;
+window.onresize = () => {
+    oldWidth = newWidth;
+    newWidth = $(window).width();
+    resizePage();
+};
+window.onload = () => {
+    $('#up-button').fadeOut({
+        duration: 0
+    }); 
+    resizePage();
+}
 
 $(document).ready(() => {
-    //Initializes dropdown
-    $('.ui.dropdown').dropdown();
-    setViewToWeek();
-    $('#filter-dropdown').dropdown('set selected', 'all');
+    $(window).scroll(function(){ 
+        if ($(this).scrollTop() > 100) { 
+            $('#up-button').fadeIn(); 
+        } else { 
+            $('#up-button').fadeOut(); 
+        } 
+    }); 
+    $('#up-button').click(function(){ 
+        $("html, body").animate({ scrollTop: 0 }, 500); 
+        return false; 
+    });
 
     //Sets Calendar
     $('#standard_calendar').calendar({
@@ -16,62 +33,23 @@ $(document).ready(() => {
         initialDate: moment().toDate(),
         onChange: function () {
             let date = $(this).calendar('get focusDate');
-            setViewToWeek();
-            initializeTHead(date);
-            // update table rows
-        }
-    });
-
-    // Set view chooser
-    $('#view-chooser').dropdown({
-        onChange: function (value) {
-            if (value == "week-view") {
-                
-            } else if (value == "month-view") {
-                
-            }
-            let date = $('#standard_calendar').calendar('get date');
             initializeTHead(date);
             // update table rows
         }
     });
 
     //Set Today
-    $('#today').click(function () {
-        setViewToWeek();        
+    $('#today').click(function () {       
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
         // update table rows
     });
 
     //Set Next and Prev Buttons
-    $('#next-button').click(function () {
-        let date = $('#standard_calendar').calendar('get date');
-        let viewType = $('#view-chooser').dropdown('get value');
-
-        if(viewType == "week-view") {
-            let nextWeek = moment(date).clone().add(7, 'd');
-            $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
-            initializeTHead(nextWeek.toDate());
-            // update table rows
-        } else if(viewType == "month-view") {
-
-        }
-    });
-
-    $('#prev-button').click(function () {
-        let date = $('#standard_calendar').calendar('get date');
-        let viewType = $('#view-chooser').dropdown('get value');
-
-        if(viewType == "week-view") {
-            let nextWeek = moment(date).clone().subtract(7, 'd');
-            $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
-            initializeTHead(nextWeek.toDate());
-            // update table rows
-        } else if(viewType == "month-view") {
-
-        }
-    });
+    $('#next-button').click(nextWeek);
+    $('#prev-button').click(prevWeek);
+    $('#next-icon').click(nextWeek);
+    $('#prev-icon').click(prevWeek);
 
     // Initialize Table header
     initializeTHead(moment().toDate());
@@ -84,7 +62,6 @@ $(document).ready(() => {
     };
 
     $.post("/dentist/weekly_view", sentData, function (data) {
-        $('.active.dimmer').toggle();
         // Compile Data
         let template = Handlebars.compile(data.htmlData);
         $('#the-body').html(template(data.data));
@@ -95,16 +72,30 @@ $(document).ready(() => {
     });
 })
 
-function setViewToWeek() {
-    $('#view-chooser').dropdown('set selected', 'week-view');
+// go to next week
+function nextWeek() {
+    let date = $('#standard_calendar').calendar('get date');
+    let nextWeek = moment(date).clone().add(7, 'd');
+    $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
+    initializeTHead(nextWeek.toDate());
 }
 
-async function initializeTHead(date) {
+// go to previous week
+function prevWeek() {
+    let date = $('#standard_calendar').calendar('get date');
+    let nextWeek = moment(date).clone().subtract(7, 'd');
+    $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
+    initializeTHead(nextWeek.toDate());
+}
 
-    // $('.active.dimmer').toggle();
+// intialize the header of the page
+async function initializeTHead(date) {
     let today = moment().toDate();
     startOfWeek = moment(date).startOf('week');
     endOfWeek = moment(date).endOf('week');
+
+    // sets weekly header-----------------------------------------------
+    $("#weekly-status").text(moment(date).format("dddd, D MMMM YYYY"));
 
     // gets days of week-------------------------------------------------
     var days = [];
@@ -114,24 +105,6 @@ async function initializeTHead(date) {
         day = day.clone().add(1, 'd');
     }
 
-    //Get viewType-------------------------------------------------
-    let viewType = $('#view-chooser').dropdown('get value');
-
-    // Set header Text
-    if($(window).width() > 768 && $(window).width() <= 1024) {
-        if (viewType == "week-view") {
-            $('#focus-date-header').text(`${moment(startOfWeek).format('MMM D, YYYY')} - ${moment(endOfWeek).format('MMM D, YYYY')}`);
-        } else {
-            $('#focus-date-header').text(`${moment().format('MMMM YYYY')}`);
-        }
-    } else {
-        if (viewType == "week-view") {
-            $('#focus-date-header').text(`${moment(startOfWeek).format('MMMM D, YYYY')} - ${moment(endOfWeek).format('MMMM D, YYYY')}`);
-        } else {
-            $('#focus-date-header').text(`${moment(date).format('MMMM YYYY')}`);
-        }
-    }
-
     // Retrieve data-------------------------------------------------
     let theadData = [];
     for (var i = 0; i < 7; i++) {
@@ -139,13 +112,15 @@ async function initializeTHead(date) {
         let singleDate = moment(oneDate);
         //if chosen
         let chosenDay = "";
+        if (singleDate.isSame(date, 'date')) {
+            chosenDay = "yes";
+        }
 
         //if today
         let todayDay = "";
         if (singleDate.isSame(today, 'date')) {
-            $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
             todayDay = "yes";
-        }
+        } 
 
         let oneDay = {
             "day": moment(singleDate).format("dddd").toString(),
@@ -160,7 +135,6 @@ async function initializeTHead(date) {
     });
 
     // Compiles date data-------------------------------------------------
-    $('.active.dimmer').toggle();
     let template = Handlebars.compile(htmlData);
     $('#the-header').html(template(theadData));
 
@@ -170,6 +144,11 @@ async function initializeTHead(date) {
             hide: 50
         }
     })
+
+    newWidth = $(window).width();
+    if(oldWidth != newWidth) {
+        resizePage();
+    }
 
     // Sets up the on click of the week dates displayed----------------------------------------
     for (var i = 0; i < 7; i++) {
@@ -185,94 +164,97 @@ async function initializeTHead(date) {
         } else {
             $(`#${dayID}`).addClass('fat');
         }
+
+        if(i == 0) {
+            $(`#${dayID}`).attr("href","#one");
+        } else if(i == 1) {
+            $(`#${dayID}`).attr("href","#two");
+        } else if(i == 2) {
+            $(`#${dayID}`).attr("href","#three");
+        } else if(i == 3) {
+            $(`#${dayID}`).attr("href","#four");
+        } else if(i == 4) {
+            $(`#${dayID}`).attr("href","#five");
+        } else if(i == 5) {
+            $(`#${dayID}`).attr("href","#six");
+        } else if(i == 6) {
+            $(`#${dayID}`).attr("href","#seven");
+        }
+
+        $(`#${dayID}`).click(function () {
+            initializeTHead(oneDate);
+            $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
+            console.log(url);
+            // update table rows
+        });
     }
-
-    resizePage();
 };
-
-// initial loading of page
-function onLoad() {
-    oldWidth = window.innerWidth;
-    $('#view-chooser').dropdown('set selected', 'week-view');
-}
 
 // setup to resize page
 function resizePage() {
-    var text = $(".smaller-marbottom");
-    newWidth = $(window).width();
-    if(oldWidth != newWidth) {
-        let viewType = $('#view-chooser').dropdown('get value');
-        if(newWidth < 768) {
+    if(newWidth > 1024) {
+        $('#focus-date-header').text(`${moment(startOfWeek).format('MMMM D, YYYY')} - ${moment(endOfWeek).format('MMMM D, YYYY')}`);
+        expand();
+        // resize fonts of the page
+        $("#the-body").css({'font-size':'14px'});
+        $("#the-header").css({'font-size':'18px'});
+        $("#focus-date-header").css({'font-size':'22px'});
+        $("#weekly-status").css({'font-size':''});
+        // show and hide the components for mobile and desktop view
+        $(".omit").show(); 
+        $(".omit-reverse").hide();
+    } else {
+        $('#focus-date-header').text(`${moment(startOfWeek).format('MMM D, YYYY')} - ${moment(endOfWeek).format('MMM D, YYYY')}`);
+        if(newWidth <= 425) {
             omit();
+            // resize fonts of the page
             $("#the-body").css({'font-size':'2.5vw'});
             $("#the-header").css({'font-size':'2vw'});
-            $("#focus-date-header").css({'font-size':'3.5vw'});
+            $("#focus-date-header").css({'font-size':'4vw'});
+            $("#weekly-status").css({'font-size':'4vw'});
+            // show and hide the components for mobile and desktop view
             $(".omit").hide();
             $(".omit-reverse").show();
-
-            // Set header Text
-            if (viewType == "week-view") {
-                $('#focus-date-header').text(`${moment(startOfWeek).format('MMM D, YYYY')} - ${moment(endOfWeek).format('MMM D, YYYY')}`);
-            } else {
-                $('#focus-date-header').text(`${moment().format('MMMM YYYY')}`);
-            }
-        } else if(newWidth == 768) {
+        } else if(newWidth > 425 && newWidth <= 768) {
             omit();
+            // resize fonts of the page
             $("#the-body").css({'font-size':'2vw'});
             $("#the-header").css({'font-size':'2vw'});
-            $("#focus-date-header").css({'font-size':'2vw'});
+            $("#focus-date-header").css({'font-size':'2.5vw'});
+            $("#weekly-status").css({'font-size':'2.5vw'});
+            // show and hide the components for mobile and desktop view
             $(".omit").hide();
             $(".omit-reverse").show();
-
-            // Set header Text
-            if (viewType == "week-view") {
-                $('#focus-date-header').text(`${moment(startOfWeek).format('MMM D, YYYY')} - ${moment(endOfWeek).format('MMM D, YYYY')}`);
-            } else {
-                $('#focus-date-header').text(`${moment().format('MMMM YYYY')}`);
-            }
         } else if(newWidth > 768 && newWidth <= 1024) {
             expand();
+            // resize fonts of the page
             $("#the-body").css({'font-size':'14px'});
             $("#the-header").css({'font-size':'1.5vw'});
             $("#focus-date-header").css({'font-size':'2vw'});
+            $("#weekly-status").css({'font-size':''});
+            // show and hide the components for mobile and desktop view
             $(".omit").show();
             $(".omit-reverse").hide();
-            // Set header Text
-            if (viewType == "week-view") {
-                $('#focus-date-header').text(`${moment(startOfWeek).format('MMM D, YYYY')} - ${moment(endOfWeek).format('MMM D, YYYY')}`);
-            } else {
-                $('#focus-date-header').text(`${moment().format('MMMM YYYY')}`);
-            }
-        } else {
-            expand();
-            $("#the-body").css({'font-size':'14px'});
-            $("#the-header").css({'font-size':'18px'});
-            $("#focus-date-header").css({'font-size':'22px'});
-            $(".omit").show();
-            $(".omit-reverse").hide();
-            if (viewType == "week-view") {
-                $('#focus-date-header').text(`${moment(startOfWeek).format('MMMM D, YYYY')} - ${moment(endOfWeek).format('MMMM D, YYYY')}`);
-            } else {
-                $('#focus-date-header').text(`${moment().format('MMMM YYYY')}`);
-            }
         }
-        oldWidth = newWidth;
     }
+    newWidth = oldWidth;
 }
 
 // trim and adjust the day to screen
 function omit() {
-    $(text[0]).text($(text[0]).text().substring(0, 1));
-    $(text[1]).text($(text[1]).text().substring(0, 1));
-    $(text[2]).text($(text[2]).text().substring(0, 1));
-    $(text[3]).text($(text[3]).text().substring(0, 1));
-    $(text[4]).text($(text[4]).text().substring(0, 1));
-    $(text[5]).text($(text[5]).text().substring(0, 1));
-    $(text[6]).text($(text[6]).text().substring(0, 1));
+    var text = $(".smaller-marbottom");
+    $(text[0]).text("S");
+    $(text[1]).text("M");
+    $(text[2]).text("T");
+    $(text[3]).text("W");
+    $(text[4]).text("H");
+    $(text[5]).text("F");
+    $(text[6]).text("S");
 }
 
 // expand and adjust the day to screen
 function expand() {
+    var text = $(".smaller-marbottom");
     $(text[0]).text("Sunday");
     $(text[1]).text("Monday");
     $(text[2]).text("Tuesday");

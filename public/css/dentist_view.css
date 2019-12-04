@@ -54,7 +54,7 @@
     margin-left: 0em !important;
 }
 
-.tertiary-button{
+.ui.tertiary.button{
     padding: 0.655em;
     margin: 0em !important;
     margin-left: 0em !important;
@@ -173,4 +173,16 @@ td.dark.green.pastel.colored.cell{
 #timeSlotDayAll.hoverable:hover,#timeSlotDayOne.hoverable:hover{
     background-color: #c2ceb5;
     cursor: pointer;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+#up-button {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    width: 50px;
+    height: 50px;
 }

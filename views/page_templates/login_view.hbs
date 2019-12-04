@@ -27,27 +27,31 @@
 </head>
 
 <body onload="setup()">
-    <div class="ui middle aligned center aligned grid">
+    <div class="ui middle aligned center aligned very padded grid">
         <div class="column">
-            <img class="ui massive image" src="img/Access Dental Clinic Trans.png">
-            <form class="ui large form" id="form">
-                <div class="ui stacked segment">
-                    <div class="field" id="username-input">
-                        <div class="ui left icon input">
-                            <i class="user icon"></i>
-                            <input type="text" name="username" id="username" placeholder="Username">
+            <div class="row">
+                <img class="ui image" src="img/Access Dental Clinic Trans.png">
+            </div>
+            <div class="row">
+                <form class="ui large form" id="form">
+                    <div class="ui stacked segment">
+                        <div class="field" id="username-input">
+                            <div class="ui left icon input">
+                                <i class="user icon"></i>
+                                <input type="text" name="username" id="username" placeholder="Username">
+                            </div>
                         </div>
-                    </div>
-                    <div class="field" id="password-input">
-                        <div class="ui left icon input">
-                            <i class="lock icon"></i>
-                            <input type="password" name="password" id="password" placeholder="Password">
+                        <div class="field" id="password-input">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" name="password" id="password" placeholder="Password">
+                            </div>
                         </div>
+                        <div class="ui button" id="forgot" style="padding-bottom: 15px; text-decoration: underline; background-color: transparent">Forgot password?</div>
+                        <button type="button" id="submit" class="ui fluid large pink submit button">Login</button>
                     </div>
-                    <div class="ui button" id="forgot" style="padding-bottom: 15px; text-decoration: underline; background-color: transparent">Forgot password?</div>
-                    <button type="button" id="submit" class="ui fluid large pink submit button">Login</button>
-                </div>
-            </form>   
+                </form>
+            </div>
         </div>
     </div>
 

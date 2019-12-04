@@ -1,22 +1,20 @@
-<tr>
-    {{#each this}}
-        {{#if chosen}}
-            <th colspan="2" class="center aligned week-view">
+{{#each this}}
+    {{#if chosen}}
+        <div class="column center aligned">
+            <div class="ui small header dates smaller-marbottom">{{day}}</div>
+            <a class="ui small blue circular button" id={{day}}>{{date}}</a>
+        </div>
+    {{else}} 
+        {{#if today}}
+            <div class="column center aligned">
                 <div class="ui small header dates smaller-marbottom">{{day}}</div>
-                <button class="ui large blue circular button" id={{day}}>{{date}}</button>
-            </th>
-        {{else}} 
-            {{#if today}}
-                <th colspan="2" class="center aligned week-view">
-                    <div class="ui small header dates smaller-marbottom">{{day}}</div>
-                    <button class="ui small blue basic circular button" id={{day}}>{{date}}</button>
-                </th>
-            {{else}}
-                <th colspan="2" class="center aligned week-view">
-                    <div class="ui small header dates smaller-marbottom">{{day}}</div>
-                    <div class="tertiary-button" id={{day}}>{{date}}</div>
-                </th>
-            {{/if}}
+                <a class="ui small blue basic circular button" id={{day}}>{{date}}</a>
+            </div>
+        {{else}}
+            <div class="column center aligned">
+                <div class="ui small header dates smaller-marbottom">{{day}}</div>
+                <a class="ui small tertiary button" id={{day}}>{{date}}</a>
+            </div>
         {{/if}}
-    {{/each}}
-</tr>
+    {{/if}}
+{{/each}}

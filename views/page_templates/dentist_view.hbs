@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/css/dentist_view.css">
 
     </head>
-    <body onload="onLoad">
+    <body>
         <div class="ui top fixed sticky borderless menu" id="main-menu" data-id="{{id}}">
             <div class="item omit">
                 <div class="ui calendar" id="standard_calendar">
@@ -20,62 +20,50 @@
                 </div>
             </div>
             <div class="item omit">
-                <div class="ui basic button with tooltip" data-title="Today (SPACEBAR)"
-                    data-content="Moves focus date to today" data-variation="basic" data-position="bottom center"
-                    id="today">
+                <div class="ui basic button with tooltip" id="today">
                     TODAY
                 </div>
             </div>
             <div class="item omit">
                 <div class="ui icon basic buttons">
                     <div class="ui button with tooltip" data-title="Previous (←)"
-                        data-content="Moves focused date to yesterday" data-position="bottom center" data-inverted=""
+                        data-content="Moves focused date to previous week" data-position="bottom center" data-inverted=""
                         data-variation="basic" id="prev-button">
                         <i class="angle left icon"></i>
                     </div>
-                    <div class="ui button with tooltip" data-title="Next (→)" data-content="Moves focused date to tomorrow"
+                    <div class="ui button with tooltip" data-title="Next (→)" data-content="Moves focused date to next week"
                         data-position="bottom center" data-inverted="" data-variation="basic" id="next-button">
                         <i class="angle right icon"></i>
                     </div>
                 </div>
             </div>
-            <div class="item omit-reverse" style="padding: 0px;">
-                <i class="large angle left icon"></i>
-            </div>
             <div class="item ">
-                <span class="ui large text" id="focus-date-header">
-                </span>
+                <i class="angle left icon link omit-reverse" id="prev-icon"></i>
+                &nbsp;<span class="ui large text" id="focus-date-header"></span>&nbsp;&nbsp;
+                <i class="angle right icon link omit-reverse" id="next-icon"></i>
             </div>
             <div class="right borderless menu">
-                <div class="item omit">
-                    <div class="ui fluid selection dropdown" id="view-chooser">
-                        <div class="default text">View</div>
-                        <i class="dropdown icon"></i>
-                        <div class="menu">
-                            <div class="item" data-value="week-view">WEEKLY</div>
-                            <div class="item" data-value="month-view">MONTHLY</div>
-                        </div>
-                    </div>
-                </div>
                 <div class="item ">
                     <i id="logoutButton" class="large sign out icon link"></i>
                 </div>
             </div>
         </div>
+        <div class="ui center aligned celled equal width padded grid" id="the-header">
+            
+        </div>
         <div class="ui fluid container" id="schedule-table">
             <table class="ui basic fixed celled structured unstackable table main">
-                <thead id="the-header">
-
-                </thead>
+                <div class="ui header center aligned" id="weekly-status" style="padding-top: 15px;"></div>
                 <tbody id="the-body">
 
                 </tbody>
-
-
             </table>
         </div>
-        <div class="ui inverted  dimmer">
-            <div class="ui elastic massive green loader"></div>
+        <div class="ui center aligned basic segment">
+            <span class="center aligned">END OF WEEK</span>
+        </div>
+        <div class="circular ui blue icon button" id="up-button">
+            <i class="big caret up icon"></i>
         </div>
 
         <script src="javascript/jquery.js"></script>
