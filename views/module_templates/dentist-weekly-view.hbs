@@ -1,100 +1,67 @@
-{{!-- {{#each data}} --}}
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">SUN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{sun}}</span>
-        <a class="anchor" id="one"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">MON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{mon}}</span>
-        <a class="anchor" id="two"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">TUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{tue}}</span>
-        <a class="anchor" id="three"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">WED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{wed}}</span>
-        <a class="anchor" id="four"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">THU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{thu}}</span>
-        <a class="anchor" id="five"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">FRI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{fri}}</span>
-        <a class="anchor" id="six"></a>
-    </td>
-</tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr><td colspan="14">&nbsp;&nbsp;&nbsp;&nbsp;DATA</td></tr>
-<tr class="row-date">
-    <td colspan="14">
-        <span class="ui black text">SAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{sat}}</span>
-        <a class="anchor" id="seven"></a>
-    </td>
-</tr>
-
-    {{!-- {{#each weekAppointments}}
-    <td colspan="2" class="center aligned daily appointment cell">
-        <table class="ui very basic compact fixed structured unstackable table single line {{{maxify ../max num }}}"
-            id="slots-table">
-            <tbody>
-                {{#each appointments}}
-                <tr>
-                    <td class="center aligned {{weekBlue @index}}">  
-                        <div class="hoverable swa">
-                            <h5 class="header">{{firstname}} {{lastname}}</h5>
-                        </div>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </td>
-    {{/each}} --}}
-
-{{!-- {{/each}} --}}
+{{#each data}}
+    <tr class="row-date">
+        <td colspan="1" class="center aligned">
+            <span>{{dayCaps}}</span>
+            {{#ifEquals dayCaps "SUN"}}
+                <a class="anchor" id="one"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "MON"}}
+                <a class="anchor" id="two"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "TUE"}}
+                <a class="anchor" id="three"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "WED"}}
+                <a class="anchor" id="four"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "THU"}}
+                <a class="anchor" id="five"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "FRI"}}
+                <a class="anchor" id="six"></a>
+            {{/ifEquals}}
+            {{#ifEquals dayCaps "SAT"}}
+                <a class="anchor" id="seven"></a>
+            {{/ifEquals}}
+        </td>
+        <td colspan="13" class="borderless-column">
+            <span>{{dateShort}}</span>
+        </td>
+    </tr>
+    {{!-- start of dummy data --}}
+    <tr class="appointment-row">
+        <td colspan="1" class="center aligned details-row">
+            TIME    
+        </td>
+        <td colspan="13">
+            APPOINTMENT DETAILS
+        </td>
+    </tr>
+    <tr class="appointment-row">
+        <td colspan="1" class="center aligned details-row">
+            TIME    
+        </td>
+        <td colspan="13">
+            APPOINTMENT DETAILS
+        </td>
+    </tr>
+    <tr class="appointment-row">
+        <td colspan="1" class="center aligned details-row">
+            TIME    
+        </td>
+        <td colspan="13">
+            APPOINTMENT DETAILS
+        </td>
+    </tr>
+    {{!-- end of dummy data --}}
+    {{!-- {{#each appointment}}
+        <tr class="appointment-row">
+            <td colspan="1" class="center aligned details-row">
+                TIME    
+            </td>
+            <td colspan="13">
+                APPOINTMENT DETAILS
+            </td>
+        </tr>
+    {{/appointment}} --}}
+{{/each}}

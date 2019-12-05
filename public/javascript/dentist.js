@@ -42,6 +42,7 @@ $(document).ready(() => {
     $('#today').click(function () {       
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
+        updateRow($('#standard_calendar').calendar('get date'));
         // update table rows
     });
 
@@ -287,3 +288,7 @@ $("#logoutButton").hover(function () {
 }, function () {
     $(this).removeClass("red")
 })
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});

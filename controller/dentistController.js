@@ -75,18 +75,15 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
 
     var day = startOfWeek;
     while (day <= endOfWeek) {
-        dates.push(day);
+        dates.push(new Object({
+            dayCaps: moment(day).format("ddd").toUpperCase(),
+            dateShort: moment(day).format("D MMM").toUpperCase()
+        }));
         day = day.clone().add(1, 'd');
     }
 
     let final = {
-        sun: moment(dates[0]).format("D MMM"),
-        mon: moment(dates[1]).format("D MMM"),
-        tue: moment(dates[2]).format("D MMM"),
-        wed: moment(dates[3]).format("D MMM"),
-        thu: moment(dates[4]).format("D MMM"),
-        fri: moment(dates[5]).format("D MMM"),
-        sat: moment(dates[6]).format("D MMM")
+        data: dates
     }
 
     result.send({

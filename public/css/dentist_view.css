@@ -71,14 +71,6 @@ td.daily.appointment.cell{
     border-left: 5px solid;
 }
 
-#the-header th, #the-body td{
-    border: 1px rgba(0,0,0,0.6) solid;
-}
-
-#slots-table.table th, #slots-table.table td{
-    border: none;
-}
-
 .side.colored.colored.colored.colored.strip{
     border-left: 5px solid !important;
     cursor: pointer;
@@ -167,14 +159,6 @@ td.dark.green.pastel.colored.cell{
     padding-bottom: 10px;
 }
 
-.hoverable:hover{
-    cursor: pointer;
-}
-#timeSlotDayAll.hoverable:hover,#timeSlotDayOne.hoverable:hover{
-    background-color: #c2ceb5;
-    cursor: pointer;
-}
-
 html {
     scroll-behavior: smooth;
 }
@@ -189,4 +173,24 @@ html {
 
 .row-date {
     background-color: lightgray;
+    border: none;
+}
+
+.row-date:hover {
+    background: lightgray !important;
+    cursor: default !important;
+}
+
+.details-row {
+    border-right: 0.5px rgba(0,0,0,0.4) solid;
+}
+
+.appointment-row {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.appointment-row:hover{
+    background-color: #c2ceb5;
+    cursor: pointer;
 }
