@@ -186,3 +186,7 @@ html {
     width: 50px;
     height: 50px;
 }
+
+.row-date {
+    background-color: lightgray;
+}

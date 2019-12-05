@@ -31,7 +31,7 @@ router.get("/table_header", function (request, result) {
 router.post("/weekly_view", urlencoder, async function (request, result) {
 
     // Get the date from sent data
-    let date = request.body.date;
+    let date = Date.parse(request.body.date);
 
     // Load up the html template
     let all_day = fs.readFileSync('./views/module_templates/dentist-weekly-view.hbs', 'utf-8');
@@ -49,28 +49,44 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         "5:00 PM", "5:30 PM",
         "6:00 PM"];
 
-    let dataArray = [];
-    for (var i = 0; i < timeSlotsArray.length; i++) {
-        let timeSlot = timeSlotsArray[i];
-        // get all appointments in this date and time slot
-        let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
-        let appointments = [];
-        for (var k = 0; k < appointmentlist.length; k++) {
-            let appointment = appointmentlist[k];
-            //populate necessary info
-            appointment = await appointment.populateDoctorAndProcess();
-            appointments.push(appointment);
-        }
+    // let dataArray = [];
+    // for (var i = 0; i < timeSlotsArray.length; i++) {
+    //     let timeSlot = timeSlotsArray[i];
+    //     // get all appointments in this date and time slot
+    //     let appointmentlist = await Appointment.getAppointmentsByDateandTime(date, timeSlot);
+    //     let appointments = [];
+    //     for (var k = 0; k < appointmentlist.length; k++) {
+    //         let appointment = appointmentlist[k];
+    //         //populate necessary info
+    //         appointment = await appointment.populateDoctorAndProcess();
+    //         appointments.push(appointment);
+    //     }
 
-        let data = {
-            appointments: appointments
-        };
+    //     let data = {
+    //         appointments: appointments
+    //     };
 
-        dataArray.push(data);
+    //     dataArray.push(data);
+    // }
+
+    var dates = [];
+    var startOfWeek = moment(date).startOf('week');
+    var endOfWeek = moment(date).endOf('week');
+
+    var day = startOfWeek;
+    while (day <= endOfWeek) {
+        dates.push(day);
+        day = day.clone().add(1, 'd');
     }
 
     let final = {
-        data: dataArray
+        sun: moment(dates[0]).format("D MMM"),
+        mon: moment(dates[1]).format("D MMM"),
+        tue: moment(dates[2]).format("D MMM"),
+        wed: moment(dates[3]).format("D MMM"),
+        thu: moment(dates[4]).format("D MMM"),
+        fri: moment(dates[5]).format("D MMM"),
+        sat: moment(dates[6]).format("D MMM")
     }
 
     result.send({

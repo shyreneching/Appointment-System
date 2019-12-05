@@ -78,6 +78,7 @@ function nextWeek() {
     let nextWeek = moment(date).clone().add(7, 'd');
     $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
     initializeTHead(nextWeek.toDate());
+    updateRow($('#standard_calendar').calendar('get date'));
 }
 
 // go to previous week
@@ -86,6 +87,7 @@ function prevWeek() {
     let nextWeek = moment(date).clone().subtract(7, 'd');
     $('#standard_calendar').calendar('set date', nextWeek.toDate(), true, false);
     initializeTHead(nextWeek.toDate());
+    updateRow($('#standard_calendar').calendar('get date'));
 }
 
 // intialize the header of the page
@@ -184,11 +186,23 @@ async function initializeTHead(date) {
         $(`#${dayID}`).click(function () {
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
-            console.log(url);
-            // update table rows
         });
     }
 };
+
+function updateRow(date) {
+    $.ajax({
+        type: "post",
+        url: "dentist/weekly_view",
+        data: {
+            date
+        },
+        success: (value) => {
+            let template = Handlebars.compile(value.htmlData);
+            $('#the-body').html(template(value.data));
+        }
+    })
+}
 
 // setup to resize page
 function resizePage() {
