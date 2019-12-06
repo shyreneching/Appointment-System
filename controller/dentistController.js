@@ -75,9 +75,12 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
 
     var day = startOfWeek;
     while (day <= endOfWeek) {
+        let appntmts = await Doctor.getAppByDoctorandDate(dentist.id_, day);
+
         dates.push(new Object({
             dayCaps: moment(day).format("ddd").toUpperCase(),
-            dateShort: moment(day).format("D MMM").toUpperCase()
+            dateShort: moment(day).format("D MMM").toUpperCase(),
+            appointment: appntmts
         }));
         day = day.clone().add(1, 'd');
     }
