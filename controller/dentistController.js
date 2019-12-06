@@ -98,13 +98,7 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         });
     });
 
-<<<<<<< HEAD
-=======
-    let final = {
-        data: dates
-    }
->>>>>>> e78b2c2915bf58fbff5a503a23a5f71f985ae85f
-
+  
     
 
     findAllAppointments.then(() => {
