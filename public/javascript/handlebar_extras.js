@@ -8,6 +8,8 @@ Handlebars.registerHelper('colorcells', function(index) {
     return new Handlebars.SafeString(colorsArrays[num]);
 });
 
+
+
 Handlebars.registerHelper('commafy', function(index) {
     if (index > 0){
         return new Handlebars.SafeString(", ");
@@ -53,5 +55,28 @@ Handlebars.registerHelper('weekRed', function(index) {
         return new Handlebars.SafeString("light red pastel colored cell");
     } else {
         return new Handlebars.SafeString("dark red pastel colored cell");
+    }
+});
+
+Handlebars.registerHelper('iff', function(a, operator, b, opts) {
+    var bool = false;
+    switch(operator) {
+       case '==':
+           bool = a == b;
+           break;
+       case '>':
+           bool = a > b;
+           break;
+       case '<':
+           bool = a < b;
+           break;
+       default:
+           throw "Unknown operator " + operator;
+    }
+ 
+    if (bool) {
+        return opts.fn(this);
+    } else {
+        return opts.inverse(this);
     }
 });

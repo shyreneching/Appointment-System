@@ -271,7 +271,6 @@ function updateTableRows(date) {
             $.post("/secretary/week_all", weekData, function (data) {
                 let template = Handlebars.compile(data.htmlData);
                 $('#the-body').html(template(data.data));
-                console.log(data.data)
                 $(".slot.in.week").each(function () {
                     let oneSlot = this;
                     $(oneSlot).find(".less-cell-count").each(function () {
@@ -378,6 +377,8 @@ function updateTableRows(date) {
                 } else {
                     $(".tsda").addClass("hoverable")
                 }
+                
+                
             });
 
 
@@ -600,10 +601,7 @@ var addAppointmentModal = function () {
 
 
 
-    var unbindShorcuts = function () {
-        console.log("UNBINDED")
-        $(document).unbind("keydown")
-    }
+    
 
 
     $('#add-appointment-date-modal').modal({
@@ -704,7 +702,6 @@ var addAppointmentModal = function () {
     });
 
     $('#add-appointment-date-modal').modal('show');
-
 }
 
 $('#add-back-button').on('click', function () {
@@ -1241,6 +1238,10 @@ async function editAppointment(appointmentID, initialDoctors) {
 
 }
 
+var unbindShorcuts = function () {
+    console.log("UNBINDED")
+    $(document).unbind("keydown")
+}
 
 function initializeShortcutsMain() {
     $(document).on('keydown', function (e) {
