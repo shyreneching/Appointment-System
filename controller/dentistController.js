@@ -75,7 +75,10 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
 
     var day = startOfWeek;
     while (day <= endOfWeek) {
-        dates.push(day);
+        dates.push(new Object({
+            dayCaps: moment(day).format("ddd").toUpperCase(),
+            dateShort: moment(day).format("D MMM").toUpperCase()
+        }));
         day = day.clone().add(1, 'd');
     }
     var apps = []
@@ -95,6 +98,12 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         });
     });
 
+<<<<<<< HEAD
+=======
+    let final = {
+        data: dates
+    }
+>>>>>>> e78b2c2915bf58fbff5a503a23a5f71f985ae85f
 
     
 
