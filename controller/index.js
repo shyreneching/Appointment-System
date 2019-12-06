@@ -77,6 +77,7 @@ router.post("/validateLogin", async (req, res) => {
 router.get("/logout", (req, res) => {
     req.session.username = null;
     req.session.doctorUsername = null;
+    req.session.id = null
     res.header("Cache-Control", "no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0");
     res.redirect("/login");
 })

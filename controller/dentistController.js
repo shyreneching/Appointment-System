@@ -29,7 +29,7 @@ router.get("/table_header", function (request, result) {
 });
 
 router.post("/weekly_view", urlencoder, async function (request, result) {
-
+    let dentist = await Account.getAccountByUsername(request.session.doctorUsername);
     // Get the date from sent data
     let date = Date.parse(request.body.date);
 
@@ -78,21 +78,45 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         dates.push(day);
         day = day.clone().add(1, 'd');
     }
+    var apps = []
 
-    let final = {
-        sun: moment(dates[0]).format("D MMM"),
-        mon: moment(dates[1]).format("D MMM"),
-        tue: moment(dates[2]).format("D MMM"),
-        wed: moment(dates[3]).format("D MMM"),
-        thu: moment(dates[4]).format("D MMM"),
-        fri: moment(dates[5]).format("D MMM"),
-        sat: moment(dates[6]).format("D MMM")
-    }
+    var findAllAppointments = new Promise(async (resolve, reject) => {
+        dates.forEach(async (date, index, array) => {
+            var d = await Appointment.getAppByDoctorandDate(dentist.doctorID, moment(date).format("MMM D YYYY"))
+            var populatedAppointments = []
 
-    result.send({
-        htmlData: all_day,
-        data: final
+            for(var i = 0; i < d.length; i++){
+                d[i] = await d[i].populateDoctorAndProcess()
+                populatedAppointments.push(d[i])
+            }
+            
+            apps.push(populatedAppointments)
+            if (index === array.length -1) resolve();
+        });
     });
+
+
+    
+
+    findAllAppointments.then(() => {
+        let final = {
+            sun: moment(dates[0]).format("D MMM"),
+            mon: moment(dates[1]).format("D MMM"),
+            tue: moment(dates[2]).format("D MMM"),
+            wed: moment(dates[3]).format("D MMM"),
+            thu: moment(dates[4]).format("D MMM"),
+            fri: moment(dates[5]).format("D MMM"),
+            sat: moment(dates[6]).format("D MMM"),
+            appointments:apps
+        }
+    
+        result.send({
+            htmlData: all_day,
+            data: final
+        });
+    });
+    
+    
 });
 
 module.exports = router;
