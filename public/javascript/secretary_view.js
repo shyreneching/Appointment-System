@@ -239,7 +239,7 @@ $(document).ready(function () {
 function updateTableRows(date) {
     let choice = $('#filter-dropdown').dropdown('get value');
     let viewType = $('#view-chooser').dropdown('get value');
-
+    console.log(choice)
     let sentData = {
         "date": moment(date).format("MMM D YYYY").toString()
     };
@@ -259,9 +259,32 @@ function updateTableRows(date) {
         day = day.clone().add(1, 'd');
     }
 
+    if (choice == "availability") {
+        let weekData = {
+            "dates": days
+        }
+        $('#the-body').html("");
+        $('.active.dimmer').toggle();
+        $.post("/secretary/availability", weekData, function (data) {
+            let template = Handlebars.compile(data.htmlData);
+            $('#the-body').html(template(data.data));
 
+            $('.active.dimmer').toggle();
 
-    if (viewType == "week-view") {
+            // $(".hoverable.swa").popup({
+            //     inline: true,
+            //     delay: {
+            //         show: 500,
+            //         hide: 50
+            //     },
+            //     boundary: ".hoverable.swa",
+            //     position: "right center",
+            //     lastResort: "right center"
+
+            // })
+
+        });
+    } else if (viewType == "week-view") {
         if (choice == 'all' || choice == 'all1') {
             let weekData = {
                 "dates": days
@@ -377,8 +400,8 @@ function updateTableRows(date) {
                 } else {
                     $(".tsda").addClass("hoverable")
                 }
-                
-                
+
+
             });
 
 
@@ -389,7 +412,6 @@ function updateTableRows(date) {
             $('.active.dimmer').toggle();
 
 
-            console.log(choice);
             let sendData = {
                 "date": moment(date).format("MMM D YYYY").toString(),
                 "doctor": choice
@@ -601,7 +623,7 @@ var addAppointmentModal = function () {
 
 
 
-    
+
 
 
     $('#add-appointment-date-modal').modal({
@@ -615,11 +637,11 @@ var addAppointmentModal = function () {
 
             var datetime = {
                 dateInput: date.toString(),
-                timeInput: time.toString()
+                timeInput: time.toString(),
+                fn: "secretary_add_doctor_field.hbs"
             }
 
             await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
-
                 let template = Handlebars.compile(data.htmlData);
                 $('#add-fieldDoctors').html(template(data.data));
                 $('#add-multiDoctor').dropdown();
@@ -707,6 +729,10 @@ var addAppointmentModal = function () {
 $('#add-back-button').on('click', function () {
     $("#add-appointment-date-modal").modal('show')
 })
+$('#edit-back-button').on('click', function () {
+    $("#edit-appointment-date-modal").modal('show')
+})
+
 
 async function addAppointment() {
     let firstName = $('#add-firstName').val();
@@ -877,7 +903,7 @@ async function openDetailsModal(appointmentID) {
         $('#deleteConfirmation').modal({
             transition: "fly down"
         }).modal('attach events', '#edit-appointment-modal #edit-delete-button');
-        $('#edit-appointment-modal').modal('show');
+        $('#edit-appointment-date-modal').modal('show');
 
         $('#edit-cancel-button').unbind('click');
         $('#edit-cancel-button').on('click', function () {
@@ -899,10 +925,6 @@ async function openDetailsModal(appointmentID) {
             return data;
         });
 
-        $("#edit-lastName").val(appointment.lastname);
-        $("#edit-firstName").val(appointment.firstname);
-        $("#edit-notes").val(appointment.notes);
-        $("#edit-contact").val(appointment.patientcontact);
 
 
         // Initialize popup stuff
@@ -911,6 +933,81 @@ async function openDetailsModal(appointmentID) {
             today: 'true',
             disabledDaysOfWeek: [0],
             initialDate: moment(appointment.date).toDate()
+        })
+
+
+        $('#edit-appointment-date-modal').modal({
+            transition: "fade",
+            closable: false,
+            duration: 500,
+            queue: true,
+            onApprove: async function () {
+
+                $("#edit-lastName").val(appointment.lastname);
+                $("#edit-firstName").val(appointment.firstname);
+                $("#edit-notes").val(appointment.notes);
+                $("#edit-contact").val(appointment.patientcontact);
+
+                $('#edit-multiProcedure').dropdown();
+                for (var i = 0; i < appointment.process.length; i++) {
+                    $('#edit-multiProcedure').dropdown('set selected', appointment.process[i]._id);
+                }
+
+                var date = $('#edit-date_calendar').calendar('get date')
+                var time = $('#edit-time_calendar').calendar('get date')
+                var datetime = {
+                    dateInput: date.toString(),
+                    timeInput: time.toString(),
+                    fn: "secretary_edit_doctor_field.hbs"
+                }
+
+
+
+                await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                    let template = Handlebars.compile(data.htmlData);
+                    $('#edit-fieldDoctors').html(template(data.data));
+                    for (var i = 0; i < appointment.doctor.length; i++) {
+                        $('#edit-multiDoctor').append('<option value="' + appointment.doctor[i]._id + '">Dr. ' + appointment.doctor[i].lastname + '</option>')
+                    }
+                    $('#edit-multiDoctor').dropdown();
+                    for (var i = 0; i < appointment.doctor.length; i++) {
+                        $('#edit-multiDoctor').dropdown('set selected', appointment.doctor[i]._id)
+                    }
+                });
+            },
+            onDeny: function () {
+
+            },
+            onShow: function () {
+
+            },
+            onHidden: function () {
+
+            }
+        })
+
+
+        $('#edit-appointment-modal').modal({
+            transition: "fade",
+            closable: false,
+            duration: 500,
+            queue: true,
+            onApprove: function () {
+
+            },
+            onShow: function () {
+
+            },
+            onHidden: function () {
+
+            },
+            onDeny: function () {
+
+            }
+        }).modal('attach events', '#edit-appointment-date-modal #date-done-edit')
+
+        $('#edit-step-date').on('click', function () {
+            $("#edit-appointment-date-modal").modal('show')
         })
 
 
@@ -940,10 +1037,7 @@ async function openDetailsModal(appointmentID) {
             initialDate: startTime
         });
 
-        $('#edit-multiDoctor').dropdown();
-        $('#edit-multiDoctor').dropdown('set selected', appointment.doctor);
-        $('#edit-multiProcedure').dropdown();
-        $('#edit-multiProcedure').dropdown('set selected', appointment.process);
+
 
         $("#edit-lastName").keypress(function () {
             $("#edit-fieldLastName").removeClass("error")
@@ -1190,23 +1284,23 @@ async function editAppointment(appointmentID, initialDoctors) {
                 doctors: clone
             };
 
-            await $.post("/secretary/check_app_exists", checkData, function (data) {
+            // await $.post("/secretary/check_app_exists", checkData, function (data) {
 
-                if (data == true) {
-                    $("#edit-fieldDoctors").addClass("error");
-                    $('#edit-appointment-modal')
-                        .toast({
-                            class: 'error',
-                            message: 'Doctor already booked on date and time',
-                            position: 'bottom right'
-                        });
+            //     if (data == true) {
+            //         $("#edit-fieldDoctors").addClass("error");
+            //         $('#edit-appointment-modal')
+            //             .toast({
+            //                 class: 'error',
+            //                 message: 'Doctor already booked on date and time',
+            //                 position: 'bottom right'
+            //             });
 
-                    isValid = false;
-                } else {
-                    isValid = true;
-                }
+            //         isValid = false;
+            //     } else {
+            //         isValid = true;
+            //     }
 
-            });
+            // });
         }
     }
 

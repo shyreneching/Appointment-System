@@ -80,3 +80,11 @@ Handlebars.registerHelper('iff', function(a, operator, b, opts) {
         return opts.inverse(this);
     }
 });
+
+Handlebars.registerHelper('availableAllDay', function(available) {
+    if(available){
+        return new Handlebars.SafeString("light red pastel colored cell");
+    }else{
+        return new Handlebars.SafeString("light green pastel colored cell");
+    }
+});
