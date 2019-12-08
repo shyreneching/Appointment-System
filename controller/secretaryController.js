@@ -215,6 +215,8 @@ router.post("/week_one", urlencoder, async function (request, result) {
 
 });
 
+
+
 router.post("/week_unavailable", async function (request, result) {
     let weekData = request.body["dates[]"];
 
@@ -527,6 +529,7 @@ router.post("/getAppointment", urlencoder, async (req, res) => {
     let appID = req.body.appointmentID;
 
     let appointment = await Appointment.getAppointmentsByID(appID);
+    appointment = await appointment.populateDoctorAndProcess();
     res.send(appointment);
 })
 
@@ -684,7 +687,6 @@ router.post("/check_app_exists", urlencoder, async (req, res) => {
             found = true;
         }
     }
-
     res.send(found);
 });
 
@@ -973,8 +975,9 @@ router.get("/getUnavailable", async (req, res) => {
 
 // given date and time, will return the available doctors
 router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
-    console.log("POST /secretary/getAvailableDoctors")
-    let addDoctorField = fs.readFileSync('./views/module_templates/secretary_add_doctor_field.hbs', 'utf-8');
+    let fn = req.body.fn;
+
+    let addDoctorField = fs.readFileSync('./views/module_templates/'+fn+'', 'utf-8');
 
     let time = req.body.timeInput;
     let date = req.body.dateInput;
@@ -1137,6 +1140,9 @@ router.post("/info4", urlencoder, async function (request, result) {
     })
 })
 
+router.post("/availability" ,urlencoder, async(req, res)=>{
+
+})
 
 
 module.exports = router;

@@ -1,0 +1,12 @@
+{{#each data}}
+<tr id="doctorAvailability">
+    {{#each doctor}}
+    <td colspan="2" class="center aligned" height="75px">
+        Dr. {{firstname}} {{lastname}}
+    </td>
+    <td colspan="2" class="center aligned {{availableAllDay available}}" height="75px">
+        
+    </td>
+    {{/each}}
+</tr>
+{{/each}}
