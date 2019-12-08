@@ -1141,7 +1141,26 @@ router.post("/info4", urlencoder, async function (request, result) {
 })
 
 router.post("/availability" ,urlencoder, async(req, res)=>{
+    let weekData = req.body["dates[]"];
 
+    //Convert data to MMM D YYYY
+    let formattedWeekData = [];
+
+    for (var i = 0; i < weekData.length; i++) {
+        let newDate = Date.parse(weekData[i]);
+        let formattedDate = moment(newDate).format("MMM D YYYY");
+        formattedWeekData.push(formattedDate);
+    }
+
+    let availabilityhbs = fs.readFileSync('./views/module_templates/secretary_availability.hbs', 'utf-8');
+
+    let allDoctors = await Doctor.getAllDoctors();
+
+
+    for(var i = 0; i < allDoctors.length; i++){
+        // for(var j = 0; j < ) continue...
+        Appointment.getAppByDoctorandDate(allDoctors[i]._id, )
+    }
 })
 
 

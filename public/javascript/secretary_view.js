@@ -259,9 +259,32 @@ function updateTableRows(date) {
         day = day.clone().add(1, 'd');
     }
 
-    if(choice =="availability"){
-        
-    }else if (viewType == "week-view") {
+    if (choice == "availability") {
+        let weekData = {
+            "dates": days
+        }
+        $('#the-body').html("");
+        $('.active.dimmer').toggle();
+        $.post("/secretary/availability", weekData, function (data) {
+            let template = Handlebars.compile(data.htmlData);
+            $('#the-body').html(template(data.data));
+
+            $('.active.dimmer').toggle();
+
+            // $(".hoverable.swa").popup({
+            //     inline: true,
+            //     delay: {
+            //         show: 500,
+            //         hide: 50
+            //     },
+            //     boundary: ".hoverable.swa",
+            //     position: "right center",
+            //     lastResort: "right center"
+
+            // })
+
+        });
+    } else if (viewType == "week-view") {
         if (choice == 'all' || choice == 'all1') {
             let weekData = {
                 "dates": days
