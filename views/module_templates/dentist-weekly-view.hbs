@@ -46,40 +46,26 @@
             <span>{{dateShort}}</span>
         </td>
     </tr>
-    {{!-- start of dummy data --}}
-    <tr class="appointment-row">
-        <td colspan="1" class="center aligned details-row">
-            TIME    
-        </td>
-        <td colspan="13">
-            APPOINTMENT DETAILS
-        </td>
-    </tr>
-    <tr class="appointment-row">
-        <td colspan="1" class="center aligned details-row">
-            TIME    
-        </td>
-        <td colspan="13">
-            APPOINTMENT DETAILS
-        </td>
-    </tr>
-    <tr class="appointment-row">
-        <td colspan="1" class="center aligned details-row">
-            TIME    
-        </td>
-        <td colspan="13">
-            APPOINTMENT DETAILS
-        </td>
-    </tr>
-    {{!-- end of dummy data --}}
-    {{!-- {{#each appointment}}
+    {{#each appointment}}
         <tr class="appointment-row">
-            <td colspan="1" class="center aligned details-row">
-                 TIME    
+            <td colspan="2" class="center aligned details-row">
+                {{time}}<br>
+                {{#getEndTime time date}}
+                {{/getEndTime}}
             </td>
-            <td colspan="13">
-                APPOINTMENT DETAILS
+            <td colspan="12">
+                <span class="ui large text">
+                    <b>{{firstname}} {{lastname}}</b>
+                </span>
+                <div class="ui medium text" style="color:#b5b5b5">
+                    {{patientcontact}} 
+                    <br>
+                    {{#each process}}
+                        {{commafy @index}}{{processname}}
+                    {{/each}}
+                </div>
             </td>
         </tr>
-    {{/appointment}} --}}
+    </td>
+    {{/each}}
 {{/each}}

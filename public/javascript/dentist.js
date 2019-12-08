@@ -292,3 +292,13 @@ $("#logoutButton").hover(function () {
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
+
+Handlebars.registerHelper('getEndTime', function(arg1, arg2) {
+    var date = moment(arg2, "MMM D YYYY");
+    var time = moment(arg1, "h:mm A");
+    date.set({
+        hour: time.get('hour'),
+        minute: time.get('minute')
+    })
+    return moment(date).add(30, 'minutes').format("h:mm A");
+})
