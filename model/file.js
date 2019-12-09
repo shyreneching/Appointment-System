@@ -1,5 +1,6 @@
 var stringthread = {
-    input: "@dmin"
+    admin: "@dmin",
+    secretary: "secret@ry"
 }
 
 module.exports = stringthread;

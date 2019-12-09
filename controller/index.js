@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const fs = require('fs');
 const { Account } = require("../model/account");
+const { Doctor } = require("../model/doctor");
 const initial = require("../model/file");
 
 router.use("/secretary", require("./secretaryController"));
@@ -14,12 +15,20 @@ router.get("/", async (req, res) => {
     if (account == undefined) {
         Account.addAccount(new Account({
             username: "admin",
-            password: initial.input,
+            password: initial.admin,
             accountType: "admin",
-            doctorID: "",
-            lastLogin: ""
+            doctorID: ""
         }), (value) => {
-            res.redirect("/login");
+            Account.addAccount(new Account({
+                username: "secretary",
+                password: initial.secretary,
+                accountType: "secretary",
+                doctorID: ""
+            }), (val) => {
+                res.redirect("/login");
+            }, (err) => {   
+                res.send(err);
+            })    
         }, (err) => {   
             res.send(err);
         })
@@ -63,8 +72,10 @@ router.post("/validateLogin", async (req, res) => {
         account = await Account.authenticate(account.username, req.body.password, account.salt);
         if (account != undefined) {
             req.session.username = account.accountType;
-            req.session.doctorUsername = req.body.username;
-            Account.updateLogin(account.id, req.body.date);
+            if(account.accountType == "dentist") {
+                req.session.doctorUsername = req.body.username;
+                Doctor.updateLogin(account.doctorID, req.body.date);
+            }
             res.send({ message: 1 });
         } else {
             res.send({ message: 2 })

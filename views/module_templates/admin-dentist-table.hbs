@@ -1,9 +1,11 @@
 <thead>
     <tr>
-        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;First Name</th>
-        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;Last Name</th>
-        <th style="background-color: #b8b6b6; cursor: pointer; width: 25%"><i class="sort icon"></i>&nbsp;&nbsp;Status</th>
-        <th class="center aligned" style="background-color: #b8b6b6; width: 25%">Schedule</th>
+        <th style="background-color: #b8b6b6; cursor: pointer;"><i class="sort icon"></i>&nbsp;First Name</th>
+        <th style="background-color: #b8b6b6; cursor: pointer;"><i class="sort icon"></i>&nbsp;Last Name</th>
+        <th style="background-color: #b8b6b6; cursor: pointer;"><i class="sort icon"></i>&nbsp;Last Login</th>
+        <th class="center aligned" style="background-color: #b8b6b6; cursor: pointer;"><i class="sort icon"></i>&nbsp;Status</th>
+        <th class="center aligned" style="background-color: #b8b6b6;">Schedule</th>
+        <th class="right aligned" style="background-color: #b8b6b6;"> </th>
     </tr>
 </thead>
 <tbody class="fixed sticky">
@@ -11,7 +13,8 @@
         <tr>
             <td>{{firstname}}</td>
             <td>{{lastname}}</td>
-            <td>
+            <td>{{lastLogin}}</td>
+            <td class="center aligned">
                 {{#ifEquals status "Active"}}
                     <button class="ui toggle button active" id="{{_id}}">Active</button>
                 {{else}}
@@ -20,6 +23,10 @@
             </td>
             <td class="center aligned">
                 <button class="ui green button" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}">View</button>
+            </td>
+            <td class="right aligned">
+                <i class="large edit icon link" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}" data-name="edit"></i>
+                <i class="large trash icon link" data-id="{{_id}}" data-firstname="{{firstname}}" data-lastname="{{lastname}}" data-name="delete"></i>
             </td>
         </tr>
     {{/each}}

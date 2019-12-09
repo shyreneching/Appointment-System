@@ -9,7 +9,6 @@ var accountSchema = new Schema({
     password: String, 
     accountType: String,
     doctorID: String,
-    lastLogin: String,
     salt: String
 })
 
@@ -61,14 +60,6 @@ accountSchema.statics.updateAccount = async function(accountID, password){
         new: true
     }); 
 };
-
-accountSchema.statics.updateLogin = async function(accountID, lastLogin) {
-    return await this.updateOne({
-        _id: accountID
-    }, { $set: {
-        lastLogin
-    }})
-}
 
 accountSchema.statics.updatePassword = async function(accountID, password) {
     var hashed = saltHashPassword(password)

@@ -32,12 +32,6 @@
         </div>
         <a class="item">
           <div class="ui left" style=" font-weight: bold">
-            <i class="large users icon" style="color: black; margin-right: 10px"></i>
-            Users
-          </div>
-        </a>
-        <a class="item">
-          <div class="ui left" style=" font-weight: bold">
             <i class="large user md icon" style="color: black; margin-right: 10px"></i>
             Dentist
           </div>
@@ -49,9 +43,15 @@
           </div>
         </a>
         <a class="item">
-          <div class="ui left" style=" font-weight: bold">
-            <i id="reset-password" class="large setting icon" style="color: black; margin-right: 10px"></i>
-            Reset Password
+          <div class="ui left" style=" font-weight: bold" id="reset-password">
+            <i class="large lock icon" style="color: black; margin-right: 10px"></i>
+            Reset Admin
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left" style=" font-weight: bold" id="reset-secretary">
+            <i class="large setting icon" style="color: black; margin-right: 10px"></i>
+            Reset Secretary
           </div>
         </a>
         <a class="item">
@@ -76,15 +76,7 @@
       <i class="close icon deny"></i>
       <div class="header" style="text-align: center;">What would you like to create?</div>
       <div class="actions">
-        <div class="ui three column center aligned grid">
-          <div class="column">
-            <div class="ui button" id="add-sec-button" style="text-align: center">
-              <div class="segment">
-                <i class="large user plus icon"></i><br><br>
-              </div>
-              New Secretary
-            </div>
-          </div>
+        <div class="ui two column center aligned grid">
           <div class="column">
             <div class="ui button" id="add-dentist-button" style="text-align: center">
               <div class="segment">
@@ -131,6 +123,38 @@
       </div>
       <div class="actions">
         <div class="ui right floated labeled icon green button" id="save-password" style="margin-bottom: 15px;">
+            CONFIRM
+            <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>  
+
+    {{!-- modal for resetting secretary password --}}
+    <div class="ui mini modal" id="reset-secretary-modal">
+      <i class="close icon deny"></i>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Secretary Password</div>
+      <div class="content">
+        <div class="ui form">
+          <div class="required field" id="sec-current-password-field">
+              <label>Current Password</label>
+              <input type="password" name="currentPassword" id="sec-current-password" autocomplete="false" data-password="{{password}}" placeholder="Current Password">
+          </div>
+          <div class="required field" id="sec-new-password-field">
+              <label>New Password</label>
+              <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
+                <input type="password" name="newPassword" id="sec-new-password" autocomplete="false" placeholder="New Password">
+              </div>
+          </div>
+          <div class="required field" id="sec-confirm-new-password-field">
+              <label>Confirm New Password</label>
+              <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
+                <input type="password" name="confirmNewPassword" id="sec-confirm-new-password" autocomplete="false" placeholder="Confirm New Password">
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button" id="sec-save-password" style="margin-bottom: 15px;">
             CONFIRM
             <i class="checkmark icon"></i>
         </div>
