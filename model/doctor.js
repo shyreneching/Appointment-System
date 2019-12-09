@@ -12,7 +12,8 @@ var doctorSchema = new Schema({
     breakTime: {
         type: Schema.Types.ObjectId,
         ref: "BreakTime"
-    }
+    },
+    lastLogin: String
 })
 
 doctorSchema.statics.getDoctorByID = async function(doctorID){
@@ -85,6 +86,14 @@ doctorSchema.methods.populateBreakTime = async function(){
         _id: this._id
     }).populate("breakTime");
 };
+
+doctorSchema.statics.updateLogin = async function(doctorID, lastLogin) {
+    return await this.updateOne({
+        _id: doctorID
+    }, { $set: {
+        lastLogin
+    }})
+}
 
 var Doctor = mongoose.model("Doctor", doctorSchema)
 

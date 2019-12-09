@@ -38,6 +38,16 @@ router.post("/checkCurrentAdminPassword", async (req, res) => {
     }
 })
 
+router.post("/checkCurrentSecretaryPassword", async (req, res) => {
+    let user = await Account.getAccountByUsername("secretary");
+    var temp = await Account.authenticate(user.username, req.body.newPassword, user.salt);
+    if(temp != undefined) {
+        res.send(true);
+    } else {
+        res.send(false);
+    }
+})
+
 router.post("/validateUsername", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.username);
     if (account == undefined) {
@@ -50,7 +60,7 @@ router.post("/validateUsername", async (req, res) => {
 // ALL ACCOUNT SETTING
 router.post("/updateAccountPassword", async (req, res) => {
     let account = await Account.getAccountByUsername(req.body.username);
-    if (req.body.username == "admin") {
+    if (req.body.username == "admin" || req.body.username == "secretary") {
         Account.updateAccount(account.id, req.body.newPassword);
         res.send({ message: true });
     } else {
@@ -69,9 +79,7 @@ router.post("/addAccount", async (req, res) => {
         Account.addAccount(new Account({
             username: req.body.username,
             password: req.body.password,
-            accountType: req.body.type,
-            doctorID: "",
-            lastLogin: ""
+            accountType: req.body.type
         }), (value) => {
             res.send({ message: true });
         }, (err) => {
@@ -83,13 +91,12 @@ router.post("/addAccount", async (req, res) => {
 })
 
 router.post("/editAccount", (req, res) => {
-
     Account.updateAccount(req.body.accountID, req.body.accountPassword);
     res.send(true);
 })
 
 router.post("/deleteAccount", async (req, res) => {
-    let account = await Account.getAccountByUsername(req.body.accountUsername);
+    let account = await Account.findOne({ doctorID: req.body.doctorID });
     if (account.accountType == "dentist") {
         let unavailableDate = await UnavailableDate.getDoctorUnavailableDates(account.doctorID);
         for (var i = 0; i < unavailableDate.length; i++) {
@@ -108,7 +115,7 @@ router.post("/deleteAccount", async (req, res) => {
             }
         }
     }
-    Account.delete(req.body.accountID);
+    Account.delete(account._id);
     res.send({ message: true });
 })
 
@@ -119,13 +126,14 @@ router.post("/addDentist", async (req, res) => {
         Doctor.addDoctor(new Doctor({
             firstname: req.body.firstname,
             lastname: req.body.lastname,
-            status: req.body.status
+            status: req.body.status,
+            lastLogin: ""
         }), (value) => {
             Account.addAccount(new Account({
                 username: req.body.username,
                 password: req.body.password,
                 accountType: req.body.type,
-                doctorID: value.id
+                doctorID: value._id
             }), (val) => {
                 let time = ['8:00', '18:00'];
                 let defaultschedule = new Schedule({
@@ -174,7 +182,8 @@ router.post("/addDentist", async (req, res) => {
 })
 
 router.post("/editDentist", async (req, res) => {
-    let account = await Account.findOne({ _id: req.body.accountID });
+    let account = await Account.findOne({ doctorID: req.body.doctorID });
+    
     Account.updateAccount(account.id, req.body.password);
     Doctor.updateDoctor(account.doctorID, req.body.firstname, req.body.lastname);
     res.send(true);
@@ -217,11 +226,8 @@ router.post("/deleteProcess", (req, res) => {
 
 // GET USER BY USERNAME
 router.post("/getUser", async (req, res) => {
-    let user = await Account.findOne({ username: req.body.username });
-    let doctor;
-    if (user.doctorID != "") {
-        doctor = await Doctor.getDoctorByID(user.doctorID);
-    }
+    let user = await Account.findOne({ doctorID: req.body.doctorID });
+    let doctor = await Doctor.getDoctorByID(req.body.doctorID);
     res.send({
         user,
         doctor
@@ -246,22 +252,6 @@ router.post("/filterUser", async (req, res) => {
         htmlData: table,
         data: sendData
     })
-})
-
-// LOAD TABLES FOR ALL USERS
-router.get("/adminUsers", urlencoder, async (req, res) => {
-    let accounts = await Account.getAccountWithoutAdmin();
-    let table = fs.readFileSync('./views/module_templates/admin-users-table.hbs', 'utf-8');
-    let sendData = {
-        user: accounts
-    }
-    res.send({
-        htmlData: {
-            table
-        },
-        data: sendData
-    })
-
 })
 
 // LOAD TABLES FOR ALL DENTISTS

@@ -294,46 +294,8 @@ $(document).ready(() => {
     // function to access the loaded table
     $('#table').on("click", (event) => {
         var temp = event.target;
-        if($(temp).text().trim() != "" && temp.id != "filter-dropdown") {
-            if(currTab == "Users") {    // accessing elements in users tab
-                if($(temp).text() == "Delete") {
-                    if($(temp).data("type") == "dentist") {
-                        $("#warning").css({'visibility':'visible'});
-                    } else if($(temp).data("type") == "secretary") {
-                        $("#warning").css({'visibility':'hidden'});
-                    }
-                    $("#delete-user-modal").modal("show");
-                    $("#modal-text-delete-user").text($(event.target).data("username"));
-                    // setting temporary value
-                    accountID = $(temp).data("id");
-                    accountUsername = $(temp).data("username");
-                } else if($(event.target).text() == "Edit") {
-                    // setting temporary value
-                    accountID = $(temp).data("id");
-                    accountUsername = $(temp).data("username");
-                    // getting the user object to be edited
-                    $.ajax({
-                        type: "post",
-                        url: "admin/getUser",
-                        data: {
-                            username: accountUsername
-                        },
-                        success: (value) => {
-                            let user = value.user;
-                            let doctor = value.doctor;
-                            if(user.accountType == "dentist") {
-                                $("#edit-dentist-modal").modal("show");
-                                $("#edit-firstname-dentist").val(doctor.firstname);
-                                $("#edit-lastname-dentist").val(doctor.lastname);
-                                $("#edit-username-dentist").text(user.username);
-                            } else {
-                                $("#edit-user-modal").modal("show");
-                                $("#edit-username-user").text(user.username);
-                            }
-                        }
-                    })
-                }
-            } else if(currTab == "Dentist") {   // accessing elements in dentist tab
+        if($(temp).text().trim() != "" || $(temp).data("name") != "") {
+            if(currTab == "Dentist") {   // accessing elements in dentist tab
                 if($(temp).text() == "View") {
                     $("#schedule-modal").data("id", $(temp).data("id"));
                     $("#schedule-modal").data("firstname", $(temp).data("firstname"));
@@ -360,6 +322,33 @@ $(document).ready(() => {
                         data: {
                             doctorID: $(temp)[0].id,
                             status: "Active"
+                        }
+                    })
+                } else if($(temp).data("name") == "delete") {
+                    $("#warning").css({'visibility':'visible'});
+                    $("#delete-user-modal").modal("show");
+                    $("#modal-text-delete-user").text($(temp).data("lastname") + ", " + $(temp).data("firstname"));
+                    // setting temporary value
+                    doctorID = $(temp).data("id");
+                } else if($(temp).data("name") == "edit") {
+                    // setting temporary value
+                    doctorID = $(temp).data("id");
+                    // getting the user object to be edited
+                    $.ajax({
+                        type: "post",
+                        url: "admin/getUser",
+                        data: {
+                            doctorID
+                        },
+                        success: (value) => {
+                            let user = value.user;
+                            let doctor = value.doctor;
+                            if(user.accountType == "dentist") {
+                                $("#edit-dentist-modal").modal("show");
+                                $("#edit-firstname-dentist").val(doctor.firstname);
+                                $("#edit-lastname-dentist").val(doctor.lastname);
+                                $("#edit-username-dentist").text(user.username);
+                            }
                         }
                     })
                 }
@@ -413,12 +402,12 @@ $("#save-password").click(() => {
                         position: "top center",
                         message: "Incorrect current password"
                     });   
-                    passwordChecker = false;
+                    done = false;
                 }
             }
         })
     }
-    if(!$("#new-password").val().match(checkPassword) || !validateSpecialChar($("#current-password").val().trim())) {
+    if(!$("#new-password").val().match(checkPassword) || !validateSpecialChar($("#new-password").val().trim())) {
         $("#new-password-field").addClass("error");
         $("body").toast({
             class: "error",
@@ -434,8 +423,7 @@ $("#save-password").click(() => {
             position: "top center",
             message: "Password is too short"
         })
-        inputChecker = false;
-        passwordChecker = false;
+        done = false;
     }
     if($("#new-password").val().length > 32) {
         $("#new-password-field").addClass("error");
@@ -494,31 +482,56 @@ $("#save-password").click(() => {
     }
 })
 
-// ADDING SECRETARY/USER
-$("#create-user-button").click(() => {
+// RESETING SECRETARY PASSWORD
+$("#sec-save-password").click(() => {
     var done = true;
 
     // ERROR CHECKING
-    if($("#add-username-user").val().trim() == "") {
-        $("#username-field-user").addClass("error");
-        $('body').toast({ 
-            class: "error",
-            position: "top center",
-            message: "Please input a valid username"
-        });
-        done = false;
+    if($("#sec-current-password").val() == "") {
+        $("#sec-current-password-field").addClass("error");
+        if(!showToast) {
+            showToast = true;
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Please input your current password",
+                onHidden: () => {
+                    showToast = false;
+                }
+            });
+            done = false;
+        }
+    } else {
+        $.ajax({
+            type: "post",
+            url: "admin/checkCurrentSecretaryPassword",
+            data: {
+                newPassword: $("#sec-current-password").val().trim()
+            },
+            success: (value) => {
+                if(!value) {
+                    $("#sec-current-password-field").addClass("error");
+                    $('body').toast({
+                        class: "error",
+                        position: "top center",
+                        message: "Incorrect current password"
+                    });   
+                    done = false;
+                }
+            }
+        })
     }
-    if(!$("#add-password-user").val().match(checkPassword) || !validateSpecialChar($("#add-password-user").val().trim())) {
-        $("#password-field-user").addClass("error");
+    if(!$("#sec-new-password").val().match(checkPassword) || !validateSpecialChar($("#sec-new-password").val().trim())) {
+        $("#sec-new-password-field").addClass("error");
         $("body").toast({
             class: "error",
             position: "top center",
             message: "Incorrect password format"
         })
         done = false;
-    } 
-    if($("#add-password-user").val().length < 10) {
-        $("#password-field-user").addClass("error");
+    }
+    if($("#sec-new-password").val().length < 10) {
+        $("#sec-new-password-field").addClass("error");
         $("body").toast({
             class: "error",
             position: "top center",
@@ -526,8 +539,8 @@ $("#create-user-button").click(() => {
         })
         done = false;
     }
-    if($("#add-password-user").val().length > 32) {
-        $("#password-field-user").addClass("error");
+    if($("#sec-new-password").val().length > 32) {
+        $("#sec-new-password-field").addClass("error");
         $("body").toast({
             class: "error",
             position: "top center",
@@ -535,26 +548,26 @@ $("#create-user-button").click(() => {
         })
         done = false;
     }
-    if($("#add-password-user").val() == "" || $("#confirm-password-user").val() == "") {
-        if($("#add-password-user").val() == "") {
-            $("#password-field-user").addClass("error");
+    if($("#sec-new-password").val() == "" || $("#sec-confirm-new-password").val() == "") {
+        if($("#sec-new-password").val() == "") {
+            $("#sec-new-password-field").addClass("error");
         }
-        if($("#confirm-password-user").val() == "") {
-            $("#confirm-password-field-user").addClass("error");
+        if($("#sec-confirm-new-password").val() == "") {
+            $("#sec-confirm-new-password-field").addClass("error");
         }
-        $('body').toast({ 
+        $('body').toast({
             class: "error",
             position: "top center",
-            message: "Please input a valid password"
+            message: "Please input your new password"
         });
         done = false;
     } else {
-        if($("#add-password-user").val() != $("#confirm-password-user").val()) {
-            $("#password-field-user").addClass("error");
-            $("#confirm-password-field-user").addClass("error");
-            $("#add-password-user").val("");
-            $("#confirm-password-user").val("");
-            $('body').toast({ 
+        if($("#sec-new-password").val() != $("#sec-confirm-new-password").val()) {
+            $("#sec-new-password-field").addClass("error");
+            $("#sec-confirm-new-password-field").addClass("error");
+            $("#sec-new-password").val("");
+            $("#sec-confirm-new-password").val("");
+            $('body').toast({
                 class: "error",
                 position: "top center",
                 message: "Password do not match"
@@ -562,47 +575,22 @@ $("#create-user-button").click(() => {
             done = false;
         }
     }
-
     if(done) {
-        $("#list-dimmer").addClass("active");
         $.ajax({
             type: "post",
-            url: "admin/addAccount",
+            url: "admin/updateAccountPassword",
             data: {
-                username: $("#add-username-user").val().trim(),
-                password: $("#add-password-user").val(),
-                type: "secretary",
-                doctorID: ""
+                username: "secretary",
+                newPassword: $("#sec-new-password").val()
             },
             success: (value) => {
-                if(value.message) {
-                    $("#add-user-modal").modal("hide");
-                    $('#add-user-modal').form("clear");
-                    if(currTab == "Users") {
-                        $.get("admin/adminUsers", (data) => {
-                            $("#table").DataTable().destroy();
-                            updateTable(data);
-                        });
-                    } else if(currTab == "Dentist") {
-                        $.get("admin/adminDentist", (data) => {
-                            $("#table").DataTable().destroy();
-                            updateTable(data);
-                        });
-                    }
-                    $('body').toast({
-                        class: "success",
-                        position: "top center",
-                        message: "New secretary successfully added"
-                    });
-                } else {
-                    $("#username-field-user").addClass("error");
-                    $('body').toast({
-                        class: "error",
-                        position: "top center",
-                        message: "Username already taken"
-                    });
-                }
-                $("#list-dimmer").removeClass("active");
+                $("#reset-secretary-modal").modal("hide");
+                $("#reset-secretary-modal").form("clear");
+                $('body').toast({
+                    class: "success",
+                    position: "top center",
+                    message: "Password successfully reset"
+                });
             }
         })
     }
@@ -854,89 +842,6 @@ $("#create-procedure-button").click(() => {
     }
 })
 
-// EDITING SECRETARY/USER
-$("#edit-user-button").click(() => {
-    var done = true;
-
-    // ERROR CHECKING
-    if(!$("#edit-password-user").val().match(checkPassword) && !validateSpecialChar($("#edit-password-user").val().trim())) {
-        $("#edit-password-field-user").addClass("error");
-        $("body").toast({
-            class: "error",
-            position: "top center",
-            message: "Incorrect password format"
-        })
-        done = false;
-    } 
-    if($("#edit-password-user").val().length < 10) {
-        $("#edit-password-field-user").addClass("error");
-        $("body").toast({
-            class: "error",
-            position: "top center",
-            message: "Password is too short"
-        })
-        done = false;
-    } 
-    if($("#edit-password-user").val().length > 32) {
-        $("#edit-password-field-user").addClass("error");
-        $("body").toast({
-            class: "error",
-            position: "top center",
-            message: "Password is too long"
-        })
-        done = false;
-    }
-    if($("#edit-password-user").val() == "" || $("#edit-confirm-password-user").val() == "") {
-        if($("#edit-password-user").val() == "") {
-            $("#edit-password-field-user").addClass("error");
-        }
-        if($("#edit-confirm-password-user").val() == "") {
-            $("#edit-confirm-password-field-user").addClass("error");
-        }   
-        $('body').toast({
-            class: "error",
-            position: "top center",
-            message: "Please input a valid password"
-        })
-        done = false;
-    } else {
-        if($("#edit-password-user").val() != $("#edit-confirm-password-user").val()) {
-            $("#edit-password-field-user").addClass("error");
-            $("#edit-confirm-password-field-user").addClass("error");
-            $("#edit-password-user").val("");
-            $("#edit-confirm-password-user").val("");
-            $('body').toast({
-                class: "error",
-                position: "top center",
-                message: "Password do not match"
-            })
-            done = false;
-        }
-    }
-    if(done) {
-        $("#list-dimmer").addClass("active");
-        $.ajax({
-            type: "post",
-            url: "admin/editAccount",
-            data: {
-                accountID,
-                accountUsername,
-                accountPassword: $("#edit-password-user").val()
-            },
-            success: (value) => {
-                $("#edit-user-modal").modal("hide");
-                $("#edit-user-modal").form("clear");
-                $('body').toast({
-                    class: "success",
-                    position: "top center",
-                    message: "Secretary details successfully edited"
-                })
-                $("#list-dimmer").removeClass("active");
-            }
-        })
-    }
-})
-
 // EDITING DENTIST
 $("#edit-dentist-button").click(() => {
    var done = true;
@@ -1057,19 +962,23 @@ $("#edit-dentist-button").click(() => {
             type: "post",
             url: "admin/editDentist",
             data: {
-                accountID,
+                doctorID,
                 firstname: $("#edit-firstname-dentist").val(),
                 lastname: $("#edit-lastname-dentist").val(),
                 password: $("#edit-password-dentist").val(),
             },
             success: (value) => {
-                $("#edit-dentist-modal").modal("hide");
-                $("#edit-dentist-modal").form("clear");
-                $('body').toast({
-                    class: "success",
-                    position: "top center",
-                    message: "Dentist detail successfully edited"
-                })
+                $.get("admin/adminDentist", (data) => {
+                    $("#table").DataTable().destroy();
+                    updateTable(data);
+                    $("#edit-dentist-modal").modal("hide");
+                    $("#edit-dentist-modal").form("clear");
+                    $('body').toast({
+                        class: "success",
+                        position: "top center",
+                        message: "Dentist detail successfully edited"
+                    })  
+                });
             }
         })
     }
@@ -1101,11 +1010,11 @@ $("#edit-procedure-button").click(() => {
             },
             success: (value) => {
                 if(value.message) {
-                    $("#edit-procedure-modal").modal("hide");
-                    $("#edit-procedure-modal").form("clear");
                     $.get("admin/adminProcedure", (data) => {
                         $("#table").DataTable().destroy();
                         updateTable(data);
+                        $("#edit-procedure-modal").modal("hide");
+                        $("#edit-procedure-modal").form("clear");
                         $('body').toast({
                             class: "success",
                             position: "top center",
@@ -1131,14 +1040,13 @@ $("#delete-user-button").click(() => {
         type: "post",
         url: "admin/deleteAccount",
         data: {
-            accountID: accountID,
-            accountUsername: accountUsername
+            doctorID
         },
         success: (value) => {
-            $("#delete-user-modal").modal("hide");
-            $.get("admin/adminUsers", (data) => {
+            $.get("admin/adminDentist", (data) => {
                 $("#table").DataTable().destroy();
                 updateTable(data);
+                $("#delete-user-modal").modal("hide");
                 $('body').toast({
                     class: "success",
                     position: "top center",
@@ -1982,26 +1890,21 @@ $("#confirmation-modal").modal({
 
 // Initialization
 function setup() {
-    // load the list of users
-    $.get("admin/adminUsers", (data) => {
+    // load the list of dentist
+    $.get("admin/adminDentist", (data) => {
         updateTable(data);
     });
 
     accor_show = false;
     modalReset = false;
     showToast = false;
-    currTab = "Users";
-    $(".ui .item:contains('Users')").addClass("active");
-    $(".ui .item:contains('Users')").css({'background-color':'#ebebeb'});
+    currTab = "Dentist";
+    $(".ui .item:contains('Dentist')").addClass("active");
+    $(".ui .item:contains('Dentist')").css({'background-color':'#ebebeb'});
 }
 
 function resizePage() {
-    if(currTab == "Users") {
-        $.get("admin/adminUsers", (data) => {
-            $("#table").DataTable().destroy();
-            updateTable(data);
-        });
-    } else if(currTab == "Dentist") {
+    if(currTab == "Dentist") {
         $.get("admin/adminDentist", (data) => {
             $("#table").DataTable().destroy();
             updateTable(data);
@@ -2017,19 +1920,7 @@ function resizePage() {
 // SWITCH TAB
 function switchPage() {
     let page = $(this).text().trim();
-    if(page == "Users") {
-        $(".ui .item").removeClass("active");
-        $(".ui .item").css({'background-color':''});
-        $(this).css({'background-color':'#ebebeb'});
-        $(this).addClass("active");
-        $("#list-dimmer").addClass("active");
-        currTab = "Users";
-        $.get("admin/adminUsers", (data) => {
-            $("#table").DataTable().destroy();
-            updateTable(data);
-            $("#list-dimmer").removeClass("active");
-        });
-    } else if(page == "Dentist") {
+    if(page == "Dentist") {
         $(".ui .item").css({'background-color':''});
         $(".ui .item").removeClass("active");
         $(this).addClass("active");
@@ -2053,8 +1944,10 @@ function switchPage() {
             updateTable(data);
             $("#list-dimmer").removeClass("active");
         });
-    } else if(page == "Reset Password") {
+    } else if(page == "Reset Admin") {
         $("#reset-password-modal").modal("show");
+    } else if(page == "Reset Secretary") {
+        $("#reset-secretary-modal").modal("show");
     } else if(page == "Logout") {        
         window.location.href="/logout";
     }
@@ -2099,6 +1992,8 @@ $(document).keypress((event) => {
             $("#edit-procedure-button").click();
         } else if($("#adding-schedule-modal")[0].className.includes("active")) {
             $("#add-schedule-button").click();
+        } else if($("#reset-secretary-modal")[0].className.includes("active")) {
+            $("#sec-save-password").click();
         }
     }
 })
@@ -2134,6 +2029,9 @@ $(document).on("keydown", () => {
     $("#end-add-field").removeClass("error");
     $("#start-date").removeClass("error");
     $("#end-date").removeClass("error");
+    $("#sec-new-password-field").removeClass("error");
+    $("#sec-confirm-new-password-field").removeClass("error");
+    $("#sec-current-password-field").removeClass("error");
 })
 
 // Validate special characters
