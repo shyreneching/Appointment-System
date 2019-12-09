@@ -81,10 +81,26 @@ Handlebars.registerHelper('iff', function(a, operator, b, opts) {
     }
 });
 
-Handlebars.registerHelper('availableAllDay', function(available) {
-    if(available){
-        return new Handlebars.SafeString("light red pastel colored cell");
+Handlebars.registerHelper('isAvailableDayColor', function(availability) {
+    if(availability === "available"){
+        return new Handlebars.SafeString("green hoverable");
+    }else if(availability === "unavailable"){
+        return new Handlebars.SafeString("yellow");
+    }else if(availability === "no more slots"){
+        return new Handlebars.SafeString("red");
     }else{
-        return new Handlebars.SafeString("light green pastel colored cell");
+        return new Handlebars.SafeString("black")
+    }
+});
+
+Handlebars.registerHelper('isAvailableDayText', function(availability) {
+    if(availability === "available"){
+        return new Handlebars.SafeString("");
+    }else if(availability === "unavailable"){
+        return new Handlebars.SafeString("Unavailable");
+    }else if(availability === "no more slots"){
+        return new Handlebars.SafeString("No more slots");
+    }else{
+        return new Handlebars.SafeString("")
     }
 });

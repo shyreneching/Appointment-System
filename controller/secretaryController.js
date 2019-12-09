@@ -768,9 +768,9 @@ router.get("/getAvailable", async (req, res) => {
     let breakstartFormat = moment(formattedDate + ' ' + breakstart, 'YYYY-MM-DD HH:mm');
     let breakendFormat = moment(formattedDate + ' ' + breakend, 'YYYY-MM-DD HH:mm');
 
-    var dates = []; 
+    var dates = [];
     if (doctorUnAvail != "") {
-        for(var k = 0; k < doctorUnAvail.length; k++){
+        for (var k = 0; k < doctorUnAvail.length; k++) {
             var start = new Date(doctorUnAvail[k].stringDate1);
             let startformattedDate = moment(start).format("YYYY-MM-DD");
             var end = new Date(doctorUnAvail[k].stringDate2);
@@ -778,33 +778,33 @@ router.get("/getAvailable", async (req, res) => {
 
             // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
             // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
-            var getDates = function(startDate, endDate) {
+            var getDates = function (startDate, endDate) {
                 var datesget = [];
-                    if(dates != ""){
-                        datesget = dates;
-                    }
+                if (dates != "") {
+                    datesget = dates;
+                }
 
-                    var currentDate = startDate,
-                        addDays = function(days) {
-                          var date = new Date(this.valueOf());
-                          date.setDate(date.getDate() + days);
-                          return date;
-                        };
-                    while (currentDate <= endDate) {
-                      datesget.push(currentDate);
-                      currentDate = addDays.call(currentDate, 1);
-                    }
+                var currentDate = startDate,
+                    addDays = function (days) {
+                        var date = new Date(this.valueOf());
+                        date.setDate(date.getDate() + days);
+                        return date;
+                    };
+                while (currentDate <= endDate) {
+                    datesget.push(currentDate);
+                    currentDate = addDays.call(currentDate, 1);
+                }
                 return datesget;
             };
-                
-                // Usage
-                dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
-        }  
+
+            // Usage
+            dates = getDates(new Date(startformattedDate), new Date(endformattedDate));
+        }
     }
 
     var something = dates.filter((value) => {
         return moment(value).format("YYYY-MM-DD") == formattedDate;
-    })           
+    })
 
     //Checks if the dentist is available based on schedule
     if (moment(formattedDate).isWorkingDay()) {
@@ -820,7 +820,7 @@ router.get("/getAvailable", async (req, res) => {
 
             // if working time of dentist and the time is not in the 'break time' adds to the list of available times
             if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "Active"
-            && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
+                && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
                 let data = {
                     slot: timeSlot,
                 };
@@ -877,7 +877,7 @@ router.get("/getUnavailable", async (req, res) => {
     var breakstart = "19:00:00";
     var breakend = "19:00:00";
 
-   // gets the 'breaktime' of the doctor
+    // gets the 'breaktime' of the doctor
     if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != "") {
         var breakstart = breaktime.monday[0];
         var breakend = breaktime.monday[1];
@@ -904,9 +904,9 @@ router.get("/getUnavailable", async (req, res) => {
     let breakstartFormat = moment(formattedDate + ' ' + breakstart, 'YYYY-MM-DD HH:mm');
     let breakendFormat = moment(formattedDate + ' ' + breakend, 'YYYY-MM-DD HH:mm');
 
-    var dates = []; 
+    var dates = [];
     if (doctorUnAvail != "") {
-        for(var k = 0; k < doctorUnAvail.length; k++){
+        for (var k = 0; k < doctorUnAvail.length; k++) {
             var start = new Date(doctorUnAvail[k].stringDate1);
             let startformattedDate = moment(start).format("YYYY-MM-DD");
             var end = new Date(doctorUnAvail[k].stringDate2);
@@ -914,33 +914,33 @@ router.get("/getUnavailable", async (req, res) => {
 
             // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
             // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
-            var getDates = function(startDate, endDate) {
+            var getDates = function (startDate, endDate) {
                 var datesget = [];
-                    if(dates != ""){
-                        datesget = dates;
-                    }
+                if (dates != "") {
+                    datesget = dates;
+                }
 
-                    var currentDate = startDate,
-                        addDays = function(days) {
-                          var date = new Date(this.valueOf());
-                          date.setDate(date.getDate() + days);
-                          return date;
-                        };
-                    while (currentDate <= endDate) {
-                      datesget.push(currentDate);
-                      currentDate = addDays.call(currentDate, 1);
-                    }
+                var currentDate = startDate,
+                    addDays = function (days) {
+                        var date = new Date(this.valueOf());
+                        date.setDate(date.getDate() + days);
+                        return date;
+                    };
+                while (currentDate <= endDate) {
+                    datesget.push(currentDate);
+                    currentDate = addDays.call(currentDate, 1);
+                }
                 return datesget;
             };
-                
-                // Usage
-                dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
-        }  
+
+            // Usage
+            dates = getDates(new Date(startformattedDate), new Date(endformattedDate));
+        }
     }
 
     var something = dates.filter((value) => {
         return moment(value).format("YYYY-MM-DD") == formattedDate;
-    })       
+    })
 
     // if it is not working day then sends the whole timeslot array
     if (!moment(formattedDate).isWorkingDay()) {
@@ -958,7 +958,7 @@ router.get("/getUnavailable", async (req, res) => {
 
             //checks if the time is not working time or in between break adds to the unavailable times
             if (!moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() || something == "" || doctor.status != "Active"
-            && (moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) || appointment != "") {
+                && (moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) || appointment != "") {
                 let data = {
                     slot: timeSlot,
                 };
@@ -977,11 +977,11 @@ router.get("/getUnavailable", async (req, res) => {
 router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
     let fn = req.body.fn;
 
-    let addDoctorField = fs.readFileSync('./views/module_templates/'+fn+'', 'utf-8');
+    let addDoctorField = fs.readFileSync('./views/module_templates/' + fn + '', 'utf-8');
 
     let time = req.body.timeInput;
     let date = req.body.dateInput;
- 
+
 
     let newTime = Date.parse(time);
     let formattedTime = moment(newTime).format("HH:mm");
@@ -1017,7 +1017,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
         var breakstart = "19:00:00";
         var breakend = "19:00:00";
 
-       // gets the 'breaktime' of the doctor
+        // gets the 'breaktime' of the doctor
         if (moment(formattedDate).isoWeekday() == 1 && breaktime.monday != "") {
             var breakstart = breaktime.monday[0];
             var breakend = breaktime.monday[1];
@@ -1041,69 +1041,62 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
             var breakend = breaktime.sunday[1];
         }
 
-        // console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakstart)
-        // console.log(breaktime.monday[0])
-        // console.log("DOCTOR:" + doctor.firstname + "-------" + formattedDate + " " + breakend)
-        // console.log(breaktime.monday[1])
-
         let breakstartFormat = moment(formattedDate + ' ' + breakstart, 'YYYY-MM-DD HH:mm');
         let breakendFormat = moment(formattedDate + ' ' + breakend, 'YYYY-MM-DD HH:mm');
 
-        var dates = []; 
+        var dates = [];
         if (doctorUnAvail != "") {
-            for(var k = 0; k < doctorUnAvail.length; k++){
+            for (var k = 0; k < doctorUnAvail.length; k++) {
                 var start = new Date(doctorUnAvail[k].stringDate1);
                 let startformattedDate = moment(start).format("YYYY-MM-DD");
                 var end = new Date(doctorUnAvail[k].stringDate2);
                 let endformattedDate = moment(end).format("YYYY-MM-DD");
 
-                // console.log("DOCTOR:" + doctor.firstname + "-------" + startformattedDate)
-                // console.log("DOCTOR:" + doctor.firstname + "-------" + endformattedDate)
-                var getDates = function(startDate, endDate) {
+
+                var getDates = function (startDate, endDate) {
                     var datesget = [];
-                    if(dates != ""){
+                    if (dates != "") {
                         datesget = dates;
                     }
 
                     var currentDate = startDate,
-                        addDays = function(days) {
-                          var date = new Date(this.valueOf());
-                          date.setDate(date.getDate() + days);
-                          return date;
+                        addDays = function (days) {
+                            var date = new Date(this.valueOf());
+                            date.setDate(date.getDate() + days);
+                            return date;
                         };
                     while (currentDate <= endDate) {
-                      datesget.push(currentDate);
-                      currentDate = addDays.call(currentDate, 1);
+                        datesget.push(currentDate);
+                        currentDate = addDays.call(currentDate, 1);
                     }
                     return datesget;
-                  };
-                  
-                  // Usage
-                  dates = getDates(new Date(startformattedDate), new Date(endformattedDate));                                                                                                           
-            }  
+                };
+
+                // Usage
+                dates = getDates(new Date(startformattedDate), new Date(endformattedDate));
+            }
         }
 
         var something = dates.filter((value) => {
             return moment(value).format("YYYY-MM-DD") == formattedDate;
         })
-        
-        
+
+
         //Checks if the dentist is available based on schedule
         if (moment(datetime.format('YYYY-MM-DD HH:mm')).isWorkingTime() && something == "" && doctor.status == "Active"
-        && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
-            
+            && !(moment(datetime.format('YYYY-MM-DD HH:mm')).isBetween(breakstartFormat.format('YYYY-MM-DD HH:mm'), breakendFormat.format('YYYY-MM-DD HH:mm'), 'minute')) && appointment == "") {
+
             let data = {
                 doctor: doctor,
             };
 
             doctorsArray.push(data);
         }
-       
+
     }
     let final = {
         data: doctorsArray
     }
-
     res.send({ /* Send the doctors somewhere*/
         htmlData: addDoctorField,
         data: final
@@ -1114,7 +1107,7 @@ router.post("/getAvailableDoctors", urlencoder, async (req, res) => {
 router.post("/info1", urlencoder, async function (request, result) {
     let info1 = fs.readFileSync('./views/module_templates/info1.hbs', 'utf-8');
     result.send({
-        htmlData:info1
+        htmlData: info1
     })
 
 })
@@ -1122,45 +1115,215 @@ router.post("/info1", urlencoder, async function (request, result) {
 router.post("/info2", urlencoder, async function (request, result) {
     let info2 = fs.readFileSync('./views/module_templates/info2.hbs', 'utf-8');
     result.send({
-        htmlData:info2
+        htmlData: info2
     })
 })
 
 router.post("/info3", urlencoder, async function (request, result) {
     let info3 = fs.readFileSync('./views/module_templates/info3.hbs', 'utf-8');
     result.send({
-        htmlData:info3
+        htmlData: info3
     })
 })
 
 router.post("/info4", urlencoder, async function (request, result) {
     let info4 = fs.readFileSync('./views/module_templates/info4.hbs', 'utf-8');
     result.send({
-        htmlData:info4
+        htmlData: info4
     })
 })
 
-router.post("/availability" ,urlencoder, async(req, res)=>{
+router.post("/availabilityTime", urlencoder, async (req, res) => {
+    let date = req.body.date
+    let doctorID = req.body.doctorID
+    let availability_modalhbs = fs.readFileSync('./views/module_templates/secretary_availability_modal.hbs', 'utf-8');
+
+    var slots1Military = ["8:00", "8:30",
+        "9:00", "9:30",
+        "10:00", "10:30",
+        "11:00", "11:30",
+        "12:00", "12:30",
+        "13:00 "]
+    var slots2Military = ["13:30",
+        "14:00", "14:30",
+        "15:00", "15:30",
+        "16:00", "16:30",
+        "17:00", "17:30",
+        "18:00"];
+
+
+    var slots1 =
+        ["8:00 AM", "8:30 AM",
+            "9:00 AM", "9:30 AM",
+            "10:00 AM", "10:30 AM",
+            "11:00 AM", "11:30 AM",
+            "12:00 PM", "12:30 PM",
+            "1:00 PM"]
+    var availability1;
+
+    var slots2 = ["1:30 PM",
+        "2:00 PM", "2:30 PM",
+        "3:00 PM", "3:30 PM",
+        "4:00 PM", "4:30 PM",
+        "5:00 PM", "5:30 PM",
+        "6:00 PM"]
+    var availability2;
+
+    var row = []
+
+    var doctor = await Doctor.getDoctorByID(doctorID);
+    var docSched = await Schedule.getScheduleByID(doctor.schedule);
+    var unavDate = await UnavailableDate.getDoctorUnavailableDates(doctor)
+    var docBreakTime = await BreakTime.getBreakTimeByID(doctor.breakTime);
+    var schedule = [docSched.sunday, docSched.monday, docSched.tuesday, docSched.wednesday, docSched.thursday, docSched.friday, docSched.saturday]
+    var breakTime = [docBreakTime.sunday, docBreakTime.monday, docBreakTime.tuesday, docBreakTime.wednesday, docBreakTime.thursday, docBreakTime.friday, docBreakTime.saturday]
+
+    console.log(doctor)
+    console.log(unavDate)
+    console.log(schedule)
+    console.log(breakTime)
+    var dayOfWeek = moment(date).day()
+
+    for (var i = 0; i < slots1.length; i++) {
+        availability1 = "available"
+        availability2 = "available"
+
+        var app1 = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, slots1[i])
+        var app2 = await Appointment.getOneAppByDoctorandDateandTime(doctorID, date, slots2[i])
+
+        if (app1 !== null) {
+            availability1 = "unavailable"
+            console.log("app")
+        }
+        if (app2 !== null) {
+            availability2 = "unavailable"
+            console.log("app")
+
+        }
+
+        for (var j = 0; j < unavDate.length; j++) {
+            if (moment(date).isBetween(moment(unavDate[j].momentDate1), moment(unavDate[j].momentDate2), null, "[]")) {
+                availability1 = "unavailable"
+                console.log("unav")
+            }
+
+            if (slots2Military[i] !== undefined && moment(date).isBetween(moment(unavDate[j].momentDate1), moment(unavDate[j].momentDate2), null, "[]")) {
+                availability2 = "unavailable"
+                console.log("unav")
+
+            }
+        }
+
+
+        if (!((schedule[dayOfWeek] !== null && schedule[dayOfWeek].length !== 0) && moment.utc(slots1Military[i], "HH:mm").isBetween(moment.utc(schedule[dayOfWeek][0], "HH:mm"), moment.utc(schedule[dayOfWeek][1], "HH:mm"), null, "[]")
+        && !moment.utc(slots1Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))){
+            availability1 = "unavailable"
+        }
+        if (!((schedule[dayOfWeek] !== null && schedule[dayOfWeek].length !== 0) && moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(schedule[dayOfWeek][0], "HH:mm"), moment.utc(schedule[dayOfWeek][1], "HH:mm"), null, "[]")
+        && !moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))){
+            availability2 = "unavailable"
+        }
+
+
+            row.push({
+                timeSlot1: slots1[i],
+                timeSlot2: slots2[i],
+                available1: availability1,
+                available2: availability2
+            })
+
+    }
+
+    var displayDate = moment(date).format("MMMM DD YYYY")
+
+    let final = {
+        row: row,
+        doctor:doctor,
+        displayDate: displayDate,
+        date: date
+    }
+    console.log(row)
+    res.send({
+        htmlData: availability_modalhbs,
+        data: final
+    })
+
+
+})
+
+router.post("/availabilityAll", urlencoder, async (req, res) => {
     let weekData = req.body["dates[]"];
 
-    //Convert data to MMM D YYYY
-    let formattedWeekData = [];
+    let timeSlotsArray = ["8:00", "8:30",
+        "9:00", "9:30",
+        "10:00", "10:30",
+        "11:00", "11:30",
+        "12:00", "12:30",
+        "13:00 ", "13:30 ",
+        "14:00 ", "14:30 ",
+        "15:00 ", "15:30 ",
+        "16:00 ", "16:30 ",
+        "17:00 ", "17:30 ",
+        "18:00 "];
 
+    let formattedWeekData = [];
+    let momentWeekData = [];
     for (var i = 0; i < weekData.length; i++) {
         let newDate = Date.parse(weekData[i]);
         let formattedDate = moment(newDate).format("MMM D YYYY");
+        momentWeekData.push(moment(newDate))
         formattedWeekData.push(formattedDate);
     }
 
+
+
     let availabilityhbs = fs.readFileSync('./views/module_templates/secretary_availability.hbs', 'utf-8');
 
-    let allDoctors = await Doctor.getAllDoctors();
+    var allDoctors = await Doctor.getAllDoctors();
+    var allDoctorsAvailability = []
+    for (var i = 0; i < allDoctors.length; i++) {
+        allDoctorsAvailability[i] = {}
+        allDoctorsAvailability[i].availability = []
+        allDoctorsAvailability[i]._id = allDoctors[i]._id
+        allDoctorsAvailability[i].firstname = allDoctors[i].firstname
+        allDoctorsAvailability[i].lastname = allDoctors[i].lastname
+        for (var j = 0; j < formattedWeekData.length; j++) {
+            var available = "no more slots";
+            var unavDate = await UnavailableDate.getDoctorUnavailableDates(allDoctors[i])
+            var docSched = await Schedule.getScheduleByID(allDoctors[i].schedule);
+
+            var schedule = [docSched.sunday, docSched.monday, docSched.tuesday, docSched.wednesday, docSched.thursday, docSched.friday, docSched.saturday]
+            for (var k = 0; k < timeSlotsArray.length; k++) {
+                var app = await Appointment.getOneAppByDoctorandDateandTime(allDoctors[i], formattedWeekData[j], timeSlotsArray[k])
+                if (app === null && schedule[j] != null && moment.utc(timeSlotsArray[k], "HH:mm").isBetween(moment.utc(schedule[j][0], "HH:mm"), moment.utc(schedule[j][1], "HH:mm"), null, "[]")) {
+                    available = "available";
+                    break;
+                }
+            }
+
+            for (var k = 0; k < unavDate.length; k++) {
+                if (moment(momentWeekData[j]).isBetween(moment(unavDate[k].momentDate1), moment(unavDate[k].momentDate2), null, "[]")) {
+                    available = "unavailable"
+                    break;
+                }
+            }
+
+            if (j === 0) {
+                available = "sunday"
+            }
 
 
-    for(var i = 0; i < allDoctors.length; i++){
-        // for(var j = 0; j < ) continue...
-        Appointment.getAppByDoctorandDate(allDoctors[i]._id, )
+            allDoctorsAvailability[i].availability.push([formattedWeekData[j], available])
+        }
     }
+    let final = {
+        doctors: allDoctorsAvailability
+    };
+    res.send({
+        htmlData: availabilityhbs,
+        data: final
+    });
+
 })
 
 

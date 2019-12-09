@@ -260,30 +260,19 @@ function updateTableRows(date) {
     }
 
     if (choice == "availability") {
+        $("#view-chooser").dropdown('set selected', 'week-view')
         let weekData = {
             "dates": days
         }
         $('#the-body').html("");
         $('.active.dimmer').toggle();
-        $.post("/secretary/availability", weekData, function (data) {
+        $.post("/secretary/availabilityAll", weekData, function (data) {
             let template = Handlebars.compile(data.htmlData);
             $('#the-body').html(template(data.data));
 
-            $('.active.dimmer').toggle();
-
-            // $(".hoverable.swa").popup({
-            //     inline: true,
-            //     delay: {
-            //         show: 500,
-            //         hide: 50
-            //     },
-            //     boundary: ".hoverable.swa",
-            //     position: "right center",
-            //     lastResort: "right center"
-
-            // })
 
         });
+        $('.active.dimmer').toggle();
     } else if (viewType == "week-view") {
         if (choice == 'all' || choice == 'all1') {
             let weekData = {
@@ -585,6 +574,7 @@ var addAppointmentModal = function () {
 
     $("#add-date_calendar").removeClass("disabled")
     $("#add-time_calendar").removeClass("disabled")
+
     // $('#add-appointment-modal').modal('toggle');
     // Initialize popup stuff
 
@@ -634,7 +624,8 @@ var addAppointmentModal = function () {
         onApprove: async function () {
             var date = $('#add-date_calendar').calendar('get date')
             var time = $('#add-time_calendar').calendar('get date')
-
+            console.log(date)
+            console.log(time)
             var datetime = {
                 dateInput: date.toString(),
                 timeInput: time.toString(),
@@ -1102,6 +1093,96 @@ async function openDetailsModal(appointmentID) {
 }
 
 
+async function checkAvailableTime(date, doctorID) {
+    $("#modalAvailabilityTime").modal()
+
+    let checkData = {
+        date: date,
+        doctorID: doctorID
+    }
+    $('.active.dimmer').toggle();
+    await $.post("/secretary/availabilityTime", checkData, function (data) {
+        let template = Handlebars.compile(data.htmlData);
+        $('#modalAvailabilityTime').html(template(data.data));
+
+        $('.active.dimmer').toggle();
+        $("#modalAvailabilityTime").modal("show")
+    })
+
+}
+
+function quickAddAvailability(date, time, doctorID) {
+    addAppointmentModal();
+
+    $("#add-date_calendar").calendar({
+        type: 'date',
+        today: 'true',
+        disabledDaysOfWeek: [0],
+        initialDate: moment(date).toDate(),
+        minDate: moment().toDate()
+    })
+    $("#add-date_calendar").addClass("disabled")
+    var minDate = new Date();
+    var maxDate = new Date();
+    minDate.setHours(8);
+    minDate.setMinutes(0);
+    maxDate.setHours(18);
+    maxDate.setMinutes(0);
+    $('#add-time_calendar').calendar({
+        type: 'time',
+        minTimeGap: 30,
+        maxDate: maxDate,
+        minDate: minDate,
+        initialDate: moment(time, 'HH:mm a').toDate()
+    });
+    $("#add-time_calendar").addClass("disabled")
+
+
+    $('#add-appointment-date-modal').modal({
+        transition: "fade",
+        closable: false,
+        duration: 500,
+        queue: true,
+        onApprove: async function () {
+            var date = $('#add-date_calendar').calendar('get date')
+            var time = $('#add-time_calendar').calendar('get date')
+            console.log(date)
+            console.log(time)
+            var datetime = {
+                dateInput: date.toString(),
+                timeInput: time.toString(),
+                fn: "secretary_add_doctor_field.hbs"
+            }
+
+            await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
+                let template = Handlebars.compile(data.htmlData);
+                $('#add-fieldDoctors').html(template(data.data));
+                $('#add-multiDoctor').dropdown();
+                $('#add-multiDoctor').dropdown('set selected', doctorID);
+
+            });
+        },
+        onDeny: function () {
+            $('#cancelConfirmation').modal('show')
+
+            $('#cancelDiscard').on('click', function () {
+                $("#add-appointment-date-modal").modal("show")
+                $('#cancelDiscard').unbind('click')
+            })
+        },
+        onShow: function () {
+            $(document).keydown(modalDateHandler);
+        },
+        onHidden: function () {
+            $(document).unbind('keydown', modalDateHandler);
+        }
+
+    })
+
+
+
+
+}
 
 function quickAdd(slot) {
     if (!isPast()) {
