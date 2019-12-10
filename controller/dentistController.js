@@ -23,6 +23,11 @@ router.get("/", async function(req, res) {
     }
 })
 
+router.post("/getAppointment", async function(req, res) {
+    let appointment = await Appointment.getAppointmentsByID(req.body.appID);
+    res.send(appointment);
+})
+
 router.get("/table_header", function (request, result) {
     let table_header = fs.readFileSync('./views/module_templates/dentist-table-header.hbs', 'utf-8');
     result.send(table_header);
@@ -51,22 +56,6 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         }));
         day = day.clone().add(1, 'd');
     }
-    // var apps = []
-
-    // var findAllAppointments = new Promise(async (resolve, reject) => {
-    //     dates.forEach(async (date, index, array) => {
-    //         var d = await Appointment.getAppByDoctorandDate(dentist.doctorID, moment(date).format("MMM D YYYY"))
-    //         var populatedAppointments = []
-
-    //         for(var i = 0; i < d.length; i++){
-    //             d[i] = await d[i].populateDoctorAndProcess()
-    //             populatedAppointments.push(d[i])
-    //         }
-            
-    //         apps.push(populatedAppointments)
-    //         if (index === array.length -1) resolve();
-    //     });
-    // });
 
     let final = {
         data: dates
@@ -76,7 +65,6 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
         htmlData: all_day,
         data: final
     })
-    
     
 });
 
