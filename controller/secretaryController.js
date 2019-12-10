@@ -1320,8 +1320,6 @@ router.post("/availabilityAll", urlencoder, async (req, res) => {
 
 })
 
-
-
 function isPast(date) {
     var focusedDate
     if (date === undefined) {
@@ -1336,5 +1334,24 @@ function isPast(date) {
     if (focusedDate < now) return true;
     return false;
 }
+
+router.post("/deleteXYearsApp", urlencoder, async (req, res) => {
+    let temp = moment().subtract(5,'years');
+    // console.log(temp.year());
+    
+    let apps =  await Appointment.getAll();
+
+     for (var i = 0; i < apps.length; i++) {
+        //  console.log(apps[i].date);
+         let tempdate = new Date(apps[i].date);
+         let year = moment(tempdate).format("YYYY");
+        
+        if(year <= temp.year()){
+            // console.log(apps[i]);
+            await Appointment.delete(apps[i]._id);
+        }
+    }
+    res.send(true);
+})
 
 module.exports = router;
