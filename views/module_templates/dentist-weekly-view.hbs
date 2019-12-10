@@ -1,24 +1,6 @@
-{{!-- {{#each appointments.[6]}}
-<tr>
-    <td colspan="14">
-        <span class="ui large text">
-            <b>{{firstname}} {{lastname}}</b>
-        </span>
-        <div class="ui medium text" style="color:#b5b5b5">
-            {{patientcontact}} 
-            <br>
-            {{#each process}}
-            {{processname}}
-            {{/each}}
-        </div>
-        
-    </td>
-</tr>
-{{/each}} --}}
-
 {{#each data}}
     <tr class="row-date">
-        <td colspan="1" class="center aligned">
+        <td colspan="2" class="center aligned">
             <span>{{dayCaps}}</span>
             {{#ifEquals dayCaps "SUN"}}
                 <a class="anchor" id="one"></a>
@@ -42,24 +24,23 @@
                 <a class="anchor" id="seven"></a>
             {{/ifEquals}}
         </td>
-        <td colspan="13" class="borderless-column">
+        <td colspan="12" class="borderless-column">
             <span>{{dateShort}}</span>
         </td>
     </tr>
     {{#each appointment}}
-        <tr class="appointment-row">
-            <td colspan="2" class="center aligned details-row">
+        <tr class="appointment-row" data-id="{{_id}}">
+            <td colspan="2" class="center aligned details-row" data-id="{{_id}}">
                 {{time}}<br>
                 {{#getEndTime time date}}
                 {{/getEndTime}}
             </td>
-            <td colspan="12">
+            <td colspan="12" data-id="{{_id}}">
                 <span class="ui large text">
                     <b>{{firstname}} {{lastname}}</b>
                 </span>
-                <div class="ui medium text" style="color:#b5b5b5">
-                    {{patientcontact}} 
-                    <br>
+                <div class="ui medium text" style="color:#b5b5b5" data-id="{{_id}}">
+                    {{patientcontact}} <br>
                     {{#each process}}
                         {{commafy @index}}{{processname}}
                     {{/each}}

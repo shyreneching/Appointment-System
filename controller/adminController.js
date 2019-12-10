@@ -702,4 +702,36 @@ router.post("/unavailableTaken", urlencoder, async (req, res) => {
     res.send(dates);
 })
 
+router.get("/exportData", async (req, res) => {
+    var data = await Appointment.getAll();
+    var csv = "First Name,Last Name,Contact,Procedures,Notes,Date,Time,Doctor\n";
+    for(var i = 0; i < data.length; i++) {
+        var row = data[i];
+        csv += row.firstname + ",";
+        csv += row.lastname + ",";
+        csv += row.patientcontact + ",";
+        for(var j = 0; j < row.process.length; j++) {
+            var proc = await Process.findOne({_id: row.process[j]._id});
+            csv += proc.processname + " - ";
+        }
+        csv = csv.substring(0, csv.length - 3);
+        csv += ",";
+        csv += row.notes + ",";
+        csv += row.date + ",";
+        csv += row.time + ",";
+        for(var j = 0; j < row.doctor.length; j++) {
+            var doc = await Doctor.findOne({_id: row.doctor[j]._id});
+            csv += doc.firstname + " " + doc.lastname + " - ";
+        }
+        csv = csv.substring(0, csv.length - 3);
+        csv += ",";
+        csv += "\n";
+    }
+    res.send(csv);
+})
+
+function exportData() {
+
+}
+
 module.exports = router;

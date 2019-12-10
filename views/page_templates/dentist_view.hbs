@@ -66,6 +66,36 @@
             <i class="big caret up icon"></i>
         </div>
 
+        {{!-- modal for view appointment --}}
+        <div class="ui tiny modal" id="view-modal">
+            <i class="close icon deny"></i>
+            {{!-- <div class="header"><i class="file alternate icon"></i>&nbsp;&nbsp;&nbsp;<span id="title"></span></div> --}}
+            <div class="content">
+                <h2 id="title"></h2>
+                <span id="appDate"></span><br>
+                <span id="appTime"></span>
+                <div class="ui section divider" style="margin-top: 10px; margin-bottom: 10px"></div>
+                <div class="ui equal width grid">
+                    <div class="column">
+                        <h4>Contact No</h4>
+                    </div>
+                    <div class="column" id="contact-no" style="font-size: 14px; text-align: right;"></div>
+                </div>
+                <div class="ui section divider" style="margin-top: 10px; margin-bottom: 10px"></div>
+                <div class="ui equal width grid">
+                    <div class="column">
+                        <h4>Procedure</h4>
+                    </div>
+                    <div class="column" id="procedure-list" style="font-size: 14px; text-align: right;"></div>
+                </div>
+                <div class="ui section divider" style="margin-top: 10px; margin-bottom: 10px"></div>
+                <h4 style="margin: 0px;">Notes</h4>
+                <div class="ui visible message" id="notes">
+                    
+                </div>
+            </div>
+        </div>
+
         <script src="javascript/jquery.js"></script>
         <script src="semantic/dist/semantic.js"></script>
         <script src="javascript/jquery-data-table.js"></script>

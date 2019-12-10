@@ -43,7 +43,6 @@ $(document).ready(() => {
         $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
         initializeTHead(moment().toDate());
         updateRow($('#standard_calendar').calendar('get date'));
-        // update table rows
     });
 
     //Set Next and Prev Buttons
@@ -71,6 +70,32 @@ $(document).ready(() => {
             context: '#schedule-table'
         });
     });
+
+    // upon clicking a row
+    $(".table").on("click", (event) => {
+        var temp = event.target;
+        if($(temp).data("id") != undefined) {
+            $.ajax({
+                type: "post",
+                url: "dentist/getAppointment",
+                data: {
+                    appID: $(temp).data("id")
+                },
+                success: (value) => {
+                    $("#title").text(value.firstname + " " + value.lastname);
+                    $("#appDate").text(moment(Date.parse(value.date)).format("dddd, D MMM YYYY"));
+                    $("#appTime").text("from " + moment(value.time, "h:mm A").format("h:mm A") + " to " + moment(value.time, "h:mm A").add(30, "minutes").format("h:mm A"));
+                    $("#contact-no").text(value.patientcontact);
+                    if(value.notes == "") {
+                        $("#notes").text("None");
+                    } else {
+                        $("#notes").text(value.notes);
+                    }
+                    $("#view-modal").modal("show");
+                }
+            })
+        }
+    })
 })
 
 // go to next week
@@ -223,7 +248,7 @@ function resizePage() {
         if(newWidth <= 425) {
             omit();
             // resize fonts of the page
-            $("#the-body").css({'font-size':'2.5vw'});
+            $("#the-body").css({'font-size':'2vw'});
             $("#the-header").css({'font-size':'2vw'});
             $("#focus-date-header").css({'font-size':'4vw'});
             $("#weekly-status").css({'font-size':'4vw'});
