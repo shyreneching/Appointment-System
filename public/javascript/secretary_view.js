@@ -269,8 +269,7 @@ function updateTableRows(date) {
         $.post("/secretary/availabilityAll", weekData, function (data) {
             let template = Handlebars.compile(data.htmlData);
             $('#the-body').html(template(data.data));
-
-
+            
         });
         $('.active.dimmer').toggle();
     } else if (viewType == "week-view") {
@@ -1094,7 +1093,9 @@ async function openDetailsModal(appointmentID) {
 
 
 async function checkAvailableTime(date, doctorID) {
-    $("#modalAvailabilityTime").modal()
+    $("#modalAvailabilityTime").modal({
+
+    })
 
     let checkData = {
         date: date,

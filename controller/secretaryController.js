@@ -513,9 +513,7 @@ router.post("/check_valid_appointment", urlencoder, async function (request, res
     let date = request.body.date;
     let time = request.body.time;
     let doctors = request.body.doctors;
-    console.log(date);
-    console.log(time);
-    console.log(doctors);
+  
 
 
 
@@ -589,8 +587,7 @@ router.post("/create", urlencoder, (req, res) => {
     let date = req.body.dateInput;
     let doctor = req.body["doctors[]"];
 
-    console.log(time);
-    console.log(date);
+    
     let newTime = Date.parse(time);
     let formattedTime = moment(newTime).format("h:mm A");
 
@@ -632,8 +629,6 @@ router.post("/edit", urlencoder, async (req, res) => {
     let date = req.body.dateInput;
     let doctor = req.body["doctors[]"];
 
-    console.log(time);
-    console.log(date);
     let newTime = Date.parse(time);
     let formattedTime = moment(newTime).format("h:mm A");
 
@@ -1177,11 +1172,6 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
     var docBreakTime = await BreakTime.getBreakTimeByID(doctor.breakTime);
     var schedule = [docSched.sunday, docSched.monday, docSched.tuesday, docSched.wednesday, docSched.thursday, docSched.friday, docSched.saturday]
     var breakTime = [docBreakTime.sunday, docBreakTime.monday, docBreakTime.tuesday, docBreakTime.wednesday, docBreakTime.thursday, docBreakTime.friday, docBreakTime.saturday]
-
-    console.log(doctor)
-    console.log(unavDate)
-    console.log(schedule)
-    console.log(breakTime)
     var dayOfWeek = moment(date).day()
 
     for (var i = 0; i < slots1.length; i++) {
@@ -1193,44 +1183,43 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
 
         if (app1 !== null) {
             availability1 = "unavailable"
-            console.log("app")
         }
         if (app2 !== null) {
             availability2 = "unavailable"
-            console.log("app")
-
         }
 
         for (var j = 0; j < unavDate.length; j++) {
             if (moment(date).isBetween(moment(unavDate[j].momentDate1), moment(unavDate[j].momentDate2), null, "[]")) {
                 availability1 = "unavailable"
-                console.log("unav")
             }
 
             if (slots2Military[i] !== undefined && moment(date).isBetween(moment(unavDate[j].momentDate1), moment(unavDate[j].momentDate2), null, "[]")) {
                 availability2 = "unavailable"
-                console.log("unav")
-
             }
         }
 
 
         if (!((schedule[dayOfWeek] !== null && schedule[dayOfWeek].length !== 0) && moment.utc(slots1Military[i], "HH:mm").isBetween(moment.utc(schedule[dayOfWeek][0], "HH:mm"), moment.utc(schedule[dayOfWeek][1], "HH:mm"), null, "[]")
-        && !moment.utc(slots1Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))){
+            && !moment.utc(slots1Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))) {
             availability1 = "unavailable"
         }
         if (!((schedule[dayOfWeek] !== null && schedule[dayOfWeek].length !== 0) && moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(schedule[dayOfWeek][0], "HH:mm"), moment.utc(schedule[dayOfWeek][1], "HH:mm"), null, "[]")
-        && !moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))){
+            && !moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))) {
             availability2 = "unavailable"
         }
 
+        if(isPast(date)){
+            availability1 = "past"
+            availability2 = "past"
 
-            row.push({
-                timeSlot1: slots1[i],
-                timeSlot2: slots2[i],
-                available1: availability1,
-                available2: availability2
-            })
+        }
+
+        row.push({
+            timeSlot1: slots1[i],
+            timeSlot2: slots2[i],
+            available1: availability1,
+            available2: availability2
+        })
 
     }
 
@@ -1238,11 +1227,11 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
 
     let final = {
         row: row,
-        doctor:doctor,
+        doctor: doctor,
         displayDate: displayDate,
         date: date
     }
-    console.log(row)
+
     res.send({
         htmlData: availability_modalhbs,
         data: final
@@ -1250,6 +1239,8 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
 
 
 })
+
+
 
 router.post("/availabilityAll", urlencoder, async (req, res) => {
     let weekData = req.body["dates[]"];
@@ -1312,6 +1303,9 @@ router.post("/availabilityAll", urlencoder, async (req, res) => {
                 available = "sunday"
             }
 
+            if(isPast(formattedWeekData[j])){
+                available = "past"
+            }
 
             allDoctorsAvailability[i].availability.push([formattedWeekData[j], available])
         }
@@ -1326,5 +1320,21 @@ router.post("/availabilityAll", urlencoder, async (req, res) => {
 
 })
 
+
+
+function isPast(date) {
+    var focusedDate
+    if (date === undefined) {
+        focusedDate = moment($("#standard_calendar").calendar('get date'))
+    } else {
+        focusedDate = moment(date)
+
+    }
+    focusDate = focusedDate.add(1, 'd')
+
+    var now = moment()
+    if (focusedDate < now) return true;
+    return false;
+}
 
 module.exports = router;
