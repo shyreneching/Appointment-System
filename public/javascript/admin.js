@@ -14,62 +14,6 @@ $(document).ready(() => {
         inputChecker = false;
     })
 
-    // validation if username exist
-    $("#add-username-user").focusout(() => {
-        var check = /^[0-9a-zA-Z]+$/;
-        if(inputChecker) {
-            if(!$("#add-username-user").val().match(check)) {
-                $("#username-field-user").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Incorrect username format"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if($("#add-username-user").val().length < 6) {
-                $("#username-field-user").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Username should be at least 6 alphanumeric characters"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else if($("#add-username-user").val().length > 32) {
-                $("#username-field-user").addClass("error");
-                $("body").toast({
-                    class: "error",
-                    position: "top center",
-                    message: "Username is too long"
-                })
-                inputChecker = false;
-                nameChecker = false;
-            } else {
-                nameChecker = true;
-            }
-        }
-        if(nameChecker) {
-            $.ajax({
-                type: "post",
-                url: "admin/validateUsername",
-                data:  {
-                    username: $("#add-username-user").val().trim()
-                },
-                success: (value) => {
-                    if(value.message) {
-                        $("#username-field-user").addClass("error");
-                        $('body').toast({
-                            class: "error",
-                            position: "top center",
-                            message: "Username already taken"
-                        });
-                        inputChecker = false;
-                    }
-                }
-            })
-        }
-    })
     $("#add-username-dentist").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
         if(inputChecker) {
@@ -1944,6 +1888,8 @@ function switchPage() {
             updateTable(data);
             $("#list-dimmer").removeClass("active");
         });
+    } else if(page == "Export Data") {
+        exportData();
     } else if(page == "Reset Admin") {
         $("#reset-password-modal").modal("show");
     } else if(page == "Reset Secretary") {
@@ -1978,14 +1924,10 @@ $(document).keypress((event) => {
     if(event.keyCode == 13) {
         if($("#reset-password-modal")[0].className.includes("active")) {
             $("#save-password").click();
-        } else if($("#add-user-modal")[0].className.includes("active")) {
-            $("#create-user-button").click();
         } else if($("#add-dentist-modal")[0].className.includes("active")) {
             $("#create-dentist-button").click();
         } else if($("#procedure-modal")[0].className.includes("active")) {
             $("#create-procedure-button").click();
-        } else if($("#edit-user-modal")[0].className.includes("active")) {
-            $("#edit-user-button").click();
         } else if($("#edit-dentist-modal")[0].className.includes("active")) {
             $("#edit-dentist-button").click();
         } else if($("#edit-procedure-modal")[0].className.includes("active")) {
@@ -2004,9 +1946,6 @@ $(document).on("keyup", () => {
 
 // RESETTING ERRORS
 $(document).on("keydown", () => {
-    $("#username-field-user").removeClass("error");
-    $("#password-field-user").removeClass("error");
-    $("#confirm-password-field-user").removeClass("error");
     $("#firstname-field-dentist").removeClass("error");
     $("#lastname-field-dentist").removeClass("error");
     $("#username-field-dentist").removeClass("error");
@@ -2016,8 +1955,6 @@ $(document).on("keydown", () => {
     $("#current-password-field").removeClass("error");
     $("#new-password-field").removeClass("error");
     $("#confirm-new-password-field").removeClass("error");
-    $("#edit-password-field-user").removeClass("error");
-    $("#edit-confirm-password-field-user").removeClass("error");
     $("#edit-firstname-field-dentist").removeClass("error");
     $("#edit-lastname-field-dentist").removeClass("error");
     $("#edit-password-field-dentist").removeClass("error");
@@ -2043,6 +1980,19 @@ function validateSpecialChar(password) {
         return true;
     }
     return false;
+}
+
+// Export data
+function exportData() {
+    $.ajax({
+        type: "get",
+        url: "admin/exportData",
+        success: (value) => {
+            $("#downloadFile").attr("href","data:text/csv;charset=utf-8," + encodeURI(value));
+            $("#downloadFile").attr("download","Appointment.csv");
+            $("#downloadFile").click();
+        }
+    })
 }
 
 // LOGOUT
