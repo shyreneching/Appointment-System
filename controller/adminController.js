@@ -730,8 +730,4 @@ router.get("/exportData", async (req, res) => {
     res.send(csv);
 })
 
-function exportData() {
-
-}
-
 module.exports = router;
