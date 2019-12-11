@@ -1354,4 +1354,21 @@ router.post("/deleteXYearsApp", urlencoder, async (req, res) => {
     res.send(true);
 })
 
+router.post("/isXYearsApp", urlencoder, async (req, res) => {
+    let temp = moment().subtract(5,'years');
+    
+    let apps =  await Appointment.getAll();
+
+     for (var i = 0; i < apps.length; i++) {
+         let tempdate = new Date(apps[i].date);
+         let year = moment(tempdate).format("YYYY");
+        
+        if(year <= temp.year()){
+            res.send(true);
+            break;
+        }
+    }
+    
+})
+
 module.exports = router;
