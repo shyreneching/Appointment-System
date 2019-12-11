@@ -68,6 +68,8 @@ $(document).ready(() => {
         $('#main-menu').sticky({
             context: '#schedule-table'
         });
+        var button = $(".blue.circular.button")[0];
+        $(button).click();
     });
 
     // upon clicking a row
@@ -209,25 +211,45 @@ async function initializeTHead(date) {
 
         if(i == 0) {
             $(`#${dayID}`).attr("href","#one");
+            $(`#${dayID}`).data("id","one");
         } else if(i == 1) {
             $(`#${dayID}`).attr("href","#two");
+            $(`#${dayID}`).data("id","two");
         } else if(i == 2) {
             $(`#${dayID}`).attr("href","#three");
+            $(`#${dayID}`).data("id","three");
         } else if(i == 3) {
             $(`#${dayID}`).attr("href","#four");
+            $(`#${dayID}`).data("id","four");
         } else if(i == 4) {
             $(`#${dayID}`).attr("href","#five");
+            $(`#${dayID}`).data("id","five");
         } else if(i == 5) {
             $(`#${dayID}`).attr("href","#six");
+            $(`#${dayID}`).data("id","six");
         } else if(i == 6) {
             $(`#${dayID}`).attr("href","#seven");
+            $(`#${dayID}`).data("id","seven");
         }
 
         $(`#${dayID}`).click(function () {
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
+            var list = $(".day-caps");
+            var shorts = $(".short-date");
+            $(".day-caps").css({'color':'black'});
+            $(".short-date").css({'color':'black'});
+            var index;
+            var temp = list.filter(val => {
+                if(list[val].id.includes($(`#${dayID}`).data("id"))) {
+                    index = val;
+                }
+                return list[val].id.includes($(`#${dayID}`).data("id"));
+            })
+            $(temp).css({'color':'blue'});
+            $(shorts[index]).css({'color':'blue'});
         });
-    }
+    }   
 };
 
 function updateRow(date) {

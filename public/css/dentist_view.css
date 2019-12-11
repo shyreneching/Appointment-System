@@ -194,3 +194,7 @@ html {
     background-color: #c2ceb5;
     cursor: pointer;
 }
+
+.day-caps .short-date {
+    font-style: bold;
+}

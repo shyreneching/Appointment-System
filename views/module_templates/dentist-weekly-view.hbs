@@ -1,31 +1,37 @@
 {{#each data}}
     <tr class="row-date">
-        <td colspan="2" class="center aligned">
-            <span class="day-caps">{{dayCaps}}</span>
+        <td colspan="2" class="center aligned" style="font-style: bold;">
             {{#ifEquals dayCaps "SUNDAY"}}
+                <span class="day-caps" id="day-one">{{dayCaps}}</span>
                 <a class="anchor" id="one"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "MONDAY"}}
+                <span class="day-caps" id="day-two">{{dayCaps}}</span>
                 <a class="anchor" id="two"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "TUESDAY"}}
+                <span class="day-caps" id="day-three">{{dayCaps}}</span>
                 <a class="anchor" id="three"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "WEDNESDAY"}}
+                <span class="day-caps" id="day-four">{{dayCaps}}</span>
                 <a class="anchor" id="four"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "THURSDAY"}}
+                <span class="day-caps" id="day-five">{{dayCaps}}</span>
                 <a class="anchor" id="five"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "FRIDAY"}}
+                <span class="day-caps" id="day-six">{{dayCaps}}</span>
                 <a class="anchor" id="six"></a>
             {{/ifEquals}}
             {{#ifEquals dayCaps "SATURDAY"}}
+                <span class="day-caps" id="day-seven">{{dayCaps}}</span>
                 <a class="anchor" id="seven"></a>
             {{/ifEquals}}
         </td>
         <td colspan="12" class="borderless-column">
-            <span>{{dateShort}}</span>
+            <span class="short-date">{{dateShort}}</span>
         </td>
     </tr>
     {{#each appointment}}
