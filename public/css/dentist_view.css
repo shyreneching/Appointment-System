@@ -172,17 +172,17 @@ html {
 }
 
 .row-date {
-    background-color: lightgray;
+    background-color: #dedede;
     border: none;
 }
 
 .row-date:hover {
-    background: lightgray !important;
+    background: #dedede !important;
     cursor: default !important;
 }
 
 .details-row {
-    border-right: 0.5px rgba(0,0,0,0.4) solid;
+    border-right: 5px rgba(83, 51, 237, 0.5) solid;
 }
 
 .appointment-row {

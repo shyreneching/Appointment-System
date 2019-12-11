@@ -1,26 +1,26 @@
 {{#each data}}
     <tr class="row-date">
         <td colspan="2" class="center aligned">
-            <span>{{dayCaps}}</span>
-            {{#ifEquals dayCaps "SUN"}}
+            <span class="day-caps">{{dayCaps}}</span>
+            {{#ifEquals dayCaps "SUNDAY"}}
                 <a class="anchor" id="one"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "MON"}}
+            {{#ifEquals dayCaps "MONDAY"}}
                 <a class="anchor" id="two"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "TUE"}}
+            {{#ifEquals dayCaps "TUESDAY"}}
                 <a class="anchor" id="three"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "WED"}}
+            {{#ifEquals dayCaps "WEDNESDAY"}}
                 <a class="anchor" id="four"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "THU"}}
+            {{#ifEquals dayCaps "THURSDAY"}}
                 <a class="anchor" id="five"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "FRI"}}
+            {{#ifEquals dayCaps "FRIDAY"}}
                 <a class="anchor" id="six"></a>
             {{/ifEquals}}
-            {{#ifEquals dayCaps "SAT"}}
+            {{#ifEquals dayCaps "SATURDAY"}}
                 <a class="anchor" id="seven"></a>
             {{/ifEquals}}
         </td>
@@ -30,7 +30,7 @@
     </tr>
     {{#each appointment}}
         <tr class="appointment-row" data-id="{{_id}}">
-            <td colspan="2" class="center aligned details-row" data-id="{{_id}}">
+            <td colspan="2" class="center aligned details-row" data-id="{{_id}}" style="margin-top: 100px;">
                 {{time}}<br>
                 {{#getEndTime time date}}
                 {{/getEndTime}}
@@ -47,6 +47,5 @@
                 </div>
             </td>
         </tr>
-    </td>
     {{/each}}
 {{/each}}

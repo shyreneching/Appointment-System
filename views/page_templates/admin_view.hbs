@@ -56,7 +56,7 @@
         </a>
         <a class="item">
           <div class="ui left" style=" font-weight: bold" id="reset-secretary">
-            <i class="large setting icon" style="color: black; margin-right: 10px"></i>
+            <i class="large user lock icon" style="color: black; margin-right: 10px"></i>
             Reset Secretary
           </div>
         </a>
@@ -201,38 +201,6 @@
       </div>
     </div>
 
-    {{!-- modal for editing user --}}
-    <div class="ui mini modal" id="edit-user-modal">
-      <i class="close icon deny"></i>
-      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Secretary</div>
-      <div class="content">
-        <div class="ui form">
-              <div class="required field" id="edit-username-field-user">
-                  <label>Username</label>
-                  <div class="ui message" id="edit-username-user"></div>
-              </div>
-              <div class="required field" id="edit-password-field-user">
-                  <label>Password</label>
-                  <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="password" id="edit-password-user" autocomplete="false" placeholder="Password">
-                  </div>
-              </div>
-              <div class="required field" id="edit-confirm-password-field-user">
-                  <label>Confirm Password</label>
-                  <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
-                    <input type="password" name="confirmPassword" id="edit-confirm-password-user" autocomplete="false" placeholder="Confirm Password">
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div class="actions">
-        <div class="ui right floated labeled icon green button very padded" id="edit-user-button" style="margin-bottom: 15px">
-            SAVE CHANGES
-            <i class="checkmark icon"></i>
-        </div>
-      </div>
-    </div>
-
     {{!-- modal for deleting user --}}
     <div class="ui mini modal" id="delete-user-modal">
       <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete User</div>
@@ -304,7 +272,7 @@
     {{!-- modal for editing dentist --}}
     <div class="ui mini modal" id="edit-dentist-modal">
       <i class="close icon deny"></i>
-      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Dentist</div>
+      <div class="header"><i class="user edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Dentist</div>
       <div class="content">
           <div class="ui form">
               <div class="required field" id="edit-firstname-field-dentist">

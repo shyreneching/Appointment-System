@@ -40,9 +40,7 @@ $(document).ready(() => {
 
     //Set Today
     $('#today').click(function () {       
-        $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
-        initializeTHead(moment().toDate());
-        updateRow($('#standard_calendar').calendar('get date'));
+        today();
     });
 
     //Set Next and Prev Buttons
@@ -50,6 +48,7 @@ $(document).ready(() => {
     $('#prev-button').click(prevWeek);
     $('#next-icon').click(nextWeek);
     $('#prev-icon').click(prevWeek);
+    $('#today-icon').click(today);
 
     // Initialize Table header
     initializeTHead(moment().toDate());
@@ -85,6 +84,14 @@ $(document).ready(() => {
                     $("#title").text(value.firstname + " " + value.lastname);
                     $("#appDate").text(moment(Date.parse(value.date)).format("dddd, D MMM YYYY"));
                     $("#appTime").text("from " + moment(value.time, "h:mm A").format("h:mm A") + " to " + moment(value.time, "h:mm A").add(30, "minutes").format("h:mm A"));
+                    var list = "";
+                    for(var i = 0; i < value.process.length; i++) {
+                        list += value.process[i].processname;
+                        if(i < value.process.length - 1) {
+                            list += ", ";
+                        }
+                    }
+                    $("#procedure-list").text(list);
                     $("#contact-no").text(value.patientcontact);
                     if(value.notes == "") {
                         $("#notes").text("None");
@@ -97,6 +104,13 @@ $(document).ready(() => {
         }
     })
 })
+
+// go to today
+function today() {
+    $('#standard_calendar').calendar('set date', moment().toDate(), true, false);
+    initializeTHead(moment().toDate());
+    updateRow($('#standard_calendar').calendar('get date'));
+}
 
 // go to next week
 function nextWeek() {
@@ -290,6 +304,14 @@ function omit() {
     $(text[4]).text("H");
     $(text[5]).text("F");
     $(text[6]).text("S");
+    var day = $(".day-caps");
+    $(day[0]).text("SUN");
+    $(day[1]).text("MON");
+    $(day[2]).text("TUE");
+    $(day[3]).text("WED");
+    $(day[4]).text("THU");
+    $(day[5]).text("FRI");
+    $(day[6]).text("SAT");
 }
 
 // expand and adjust the day to screen
@@ -302,6 +324,14 @@ function expand() {
     $(text[4]).text("Thursday");
     $(text[5]).text("Friday");
     $(text[6]).text("Saturday");
+    var day = $(".day-caps");
+    $(day[0]).text("SUNDAY");
+    $(day[1]).text("MONDAY");
+    $(day[2]).text("TUESDAY");
+    $(day[3]).text("WEDNESDAY");
+    $(day[4]).text("THURSDAY");
+    $(day[5]).text("FRIDAY");
+    $(day[6]).text("SATURDAY");
 }
 
 $("#logoutButton").click(function () {

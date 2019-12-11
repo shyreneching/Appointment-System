@@ -25,7 +25,7 @@ router.get("/", async function(req, res) {
 
 router.post("/getAppointment", async function(req, res) {
     let appointment = await Appointment.getAppointmentsByID(req.body.appID);
-    res.send(appointment);
+    res.send(await appointment.populateDoctorAndProcess());
 })
 
 router.get("/table_header", function (request, result) {
@@ -49,10 +49,17 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
     var day = startOfWeek;
     while (day <= endOfWeek) {        
         let appntmts = await Appointment.getAppByDoctorandDate(dentist.doctorID, moment(day).format("MMM D YYYY"));
+        let appointments = [];
+        for (var k = 0; k < appntmts.length; k++) {
+            let appointment = appntmts[k];
+            //populate necessary info
+            appointment = await appointment.populateDoctorAndProcess();
+            appointments.push(appointment);
+        }
         dates.push(new Object({
-            dayCaps: moment(day).format("ddd").toUpperCase(),
+            dayCaps: moment(day).format("dddd").toUpperCase(),
             dateShort: moment(day).format("D MMM").toUpperCase(),
-            appointment: appntmts
+            appointment: appointments
         }));
         day = day.clone().add(1, 'd');
     }

@@ -1845,6 +1845,7 @@ function setup() {
     currTab = "Dentist";
     $(".ui .item:contains('Dentist')").addClass("active");
     $(".ui .item:contains('Dentist')").css({'background-color':'#ebebeb'});
+    exportData();
 }
 
 function resizePage() {
