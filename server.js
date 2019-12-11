@@ -10,7 +10,7 @@ const path = require("path");
 var app = new express();
 
 mongoose.Promise = global.Promise
-const MONGOLAB_URI = process.env.MONGOLAB_URI || "mongodb+srv://AndrewIng:TTH7,Ld3bvss&rn@sampledeployappointment-71awr.gcp.mongodb.net/test?retryWrites=true&w=majority"
+const MONGOLAB_URI = process.env.MONGOLAB_URI || "mongodb+srv://shyrene_ching:Kitagawa.0621@cluster0-10e7l.mongodb.net/test?retryWrites=true&w=majority"
 
 mongoose.connect(MONGOLAB_URI, {
     useNewUrlParser: true,
