@@ -132,6 +132,23 @@ function prevWeek() {
     updateRow($('#standard_calendar').calendar('get date'));
 }
 
+// mark date
+function markDate(button) {
+    var list = $(".day-caps");
+    var shorts = $(".short-date");
+    $(".day-caps").css({'color':'black','font-weight':''});
+    $(".short-date").css({'color':'black','font-weight':''});
+    var index;
+    var temp = list.filter(val => {
+        if(list[val].id.includes($(button).data("id"))) {
+            index = val;
+        }
+        return list[val].id.includes($(button).data("id"));
+    })
+    $(temp).css({'color':'blue','font-weight':'bold'});
+    $(shorts[index]).css({'color':'blue','font-weight':'bold'});
+}
+
 // intialize the header of the page
 async function initializeTHead(date) {
     let today = moment().toDate();
@@ -235,19 +252,7 @@ async function initializeTHead(date) {
         $(`#${dayID}`).click(function () {
             initializeTHead(oneDate);
             $('#standard_calendar').calendar('set date', singleDate.toDate(), true, false);
-            var list = $(".day-caps");
-            var shorts = $(".short-date");
-            $(".day-caps").css({'color':'black'});
-            $(".short-date").css({'color':'black'});
-            var index;
-            var temp = list.filter(val => {
-                if(list[val].id.includes($(`#${dayID}`).data("id"))) {
-                    index = val;
-                }
-                return list[val].id.includes($(`#${dayID}`).data("id"));
-            })
-            $(temp).css({'color':'blue'});
-            $(shorts[index]).css({'color':'blue'});
+            markDate($(`#${dayID}`));
         });
     }   
 };
@@ -262,6 +267,8 @@ function updateRow(date) {
         success: (value) => {
             let template = Handlebars.compile(value.htmlData);
             $('#the-body').html(template(value.data));
+            var button = $(".blue.circular.button")[0];
+            markDate(button);
         }
     })
 }

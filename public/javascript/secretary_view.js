@@ -1501,3 +1501,22 @@ function isPast(date) {
     if (focusedDate < now) return true;
     return false;
 }
+
+function setup() {
+    $.ajax({
+        type: "get",
+        url: "secretary/isXYearsApp",
+        success: (value) => {
+            if(value) {
+                $('body').toast({
+                    class: 'inverted yellow',
+                    showIcon: false,
+                    position: 'bottom right',
+                    displayTime: 0,
+                    closeIcon: true,
+                    message: 'This program was designed to handle 512MB to maintain the free service. We will warn every 5 years to delete 5 years worth of appointments. We strongly recommend to continue this action. Please consult with admin on this.'
+                });
+            }
+        }
+    })
+}

@@ -1354,7 +1354,7 @@ router.post("/deleteXYearsApp", urlencoder, async (req, res) => {
     res.send(true);
 })
 
-router.post("/isXYearsApp", urlencoder, async (req, res) => {
+router.get("/isXYearsApp", urlencoder, async (req, res) => {
     let temp = moment().subtract(5,'years');
     
     let apps =  await Appointment.getAll();
