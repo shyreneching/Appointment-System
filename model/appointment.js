@@ -57,7 +57,7 @@ appointmentSchema.statics.getAppByDoctorandDate = async function(doctorID, date)
         doctor:{
             "$in": [doctorID]
         }
-    }).sort({'time': 1});
+    });
 };
 
 appointmentSchema.statics.getOneAppByDoctorandDateandTime = async function(doctorID, date, time){

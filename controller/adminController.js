@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
 router.post("/checkCurrentAdminPassword", async (req, res) => {
     let admin = await Account.getAccountByUsername("admin");
     var temp = await Account.authenticate(admin.username, req.body.newPassword, admin.salt);
-    if(temp != undefined) {
+    if(temp != null) {
         res.send(true);
     } else {
         res.send(false);
@@ -41,7 +41,7 @@ router.post("/checkCurrentAdminPassword", async (req, res) => {
 router.post("/checkCurrentSecretaryPassword", async (req, res) => {
     let user = await Account.getAccountByUsername("secretary");
     var temp = await Account.authenticate(user.username, req.body.newPassword, user.salt);
-    if(temp != undefined) {
+    if(temp != null) {
         res.send(true);
     } else {
         res.send(false);
@@ -103,15 +103,29 @@ router.post("/deleteAccount", async (req, res) => {
             let unAvID = unavailableDate[i]._id;
             await UnavailableDate.delete(unAvID);
         }
-        let doctor = Doctor.getDoctorByID(account.doctorID);
+        let doctor = await Doctor.getDoctorByID(account.doctorID);
         await BreakTime.delete(doctor.breaktime);
         await Schedule.delete(doctor.schedule);
-        await Doctor.delete(account.doctorID);
+        await Doctor.delete(account.doctorID); 
         let appointments = await Appointment.getDoctorAppointment(account.doctorID);
         for (var i = 0; i < appointments.length; i++) {
             let appID = appointments[i]._id;
-            if(appointments[i].doctor == "" || appointments[i].doctor.length == 0) {
+            var ary = appointments[i].doctor;
+            ary.pull(account.doctorID)
+            if(ary.length == 0){
                 await Appointment.delete(appID);
+            }else{
+                let temp = new Appointment({
+                    firstname: appointments[i].firstname,
+                    lastname: appointments[i].lastname,
+                    patientcontact: appointments[i].patientcontact,
+                    process: appointments[i].process,
+                    notes: appointments[i].notes,
+                    time: appointments[i].time,
+                    date: appointments[i].date,
+                    doctor: ary
+                });
+                await Appointment.updateAppointment(appointments, temp);
             }
         }
     }
@@ -288,7 +302,7 @@ router.get("/adminProcedure", urlencoder, async (req, res) => {
 router.post("/addSchedule", urlencoder, async (req, res) => {
 
     let doctorID = req.body.doctorID;
-
+    let doctor = await Doctor.getDoctorByID(doctorID);
     let defaultschedule;
     let mondayBreak = [];
     let tuesdayBreak = [];
@@ -322,29 +336,24 @@ router.post("/addSchedule", urlencoder, async (req, res) => {
             friday,
             saturday
         })
+        
+        let breaktime = new BreakTime({
+            monday: mondayBreak,
+            tuesday: tuesdayBreak,
+            wednesday: wednesdayBreak,
+            thursday: thursdayBreak,
+            friday: fridayBreak,
+            saturday: saturdayBreak
+        })
+
+        BreakTime.updateBreakTime(doctor.breakTime, breaktime);
+
+        Schedule.updateSchedule(doctor.schedule, defaultschedule);
+
     }
 
-    let breaktime = new BreakTime({
-        monday: mondayBreak,
-        tuesday: tuesdayBreak,
-        wednesday: wednesdayBreak,
-        thursday: thursdayBreak,
-        friday: fridayBreak,
-        saturday: saturdayBreak
-    })
 
-    BreakTime.addBreakTime(breaktime, function (val) {
-        Doctor.updateDoctorBreakTime(doctorID, val._id);
-    }, (error) => {
-        res.send(error);
-    })
-
-    Schedule.addschedule(defaultschedule, function (value) {
-        Doctor.updateDoctorSchedule(doctorID, value._id);
-        res.send(true);
-    }, (error) => {
-        res.send(error);
-    })
+    res.send(true);
 })
 
 router.post("/editSchedule", urlencoder, async (req, res) => {
@@ -729,5 +738,6 @@ router.get("/exportData", async (req, res) => {
     }
     res.send(csv);
 })
+
 
 module.exports = router;

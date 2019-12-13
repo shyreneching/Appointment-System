@@ -34,7 +34,7 @@ $(document).ready(() => {
         onChange: function () {
             let date = $(this).calendar('get focusDate');
             initializeTHead(date);
-            // update table rows
+            updateRow(date);
         }
     });
 

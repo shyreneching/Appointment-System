@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+{{!-- <!DOCTYPE html> --}}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Access Dental Clinic | Admin</title>
-    <link rel="stylesheet" href="semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css"
+      href="semantic/dist/semantic.min.css">
     <style>
       .ui.modal > .header {
         background-color: #cc1445 !important;
@@ -31,6 +32,12 @@
         </div>
         <a class="item">
           <div class="ui left" style=" font-weight: bold">
+            <i class="large users icon" style="color: black; margin-right: 10px"></i>
+            Users
+          </div>
+        </a>
+        <a class="item">
+          <div class="ui left" style=" font-weight: bold">
             <i class="large user md icon" style="color: black; margin-right: 10px"></i>
             Dentist
           </div>
@@ -41,28 +48,10 @@
             Procedure
           </div>
         </a>
-        <a class="item" id="downloadFile">
-          <div class="ui left" style=" font-weight: bold">
-            <i class="large download icon" style="color: black; margin-right: 10px"></i>
-            Export Data
-          </div>
-        </a>
-        <a class="item">
-          <div class="ui left" style=" font-weight: bold" id="reset-password">
-            <i class="large lock icon" style="color: black; margin-right: 10px"></i>
-            Reset Admin
-          </div>
-        </a>
-        <a class="item">
-          <div class="ui left" style=" font-weight: bold" id="reset-secretary">
-            <i class="large user lock icon" style="color: black; margin-right: 10px"></i>
-            Reset Secretary
-          </div>
-        </a>
         <a class="item">
           <div class="ui left" style=" font-weight: bold">
-            <i class="large recycle icon" style="color: black; margin-right: 10px"></i>
-            Free-up Memory
+            <i id="reset-password" class="large setting icon" style="color: black; margin-right: 10px"></i>
+            Reset Password
           </div>
         </a>
         <a class="item">
@@ -87,7 +76,15 @@
       <i class="close icon deny"></i>
       <div class="header" style="text-align: center;">What would you like to create?</div>
       <div class="actions">
-        <div class="ui two column center aligned grid">
+        <div class="ui three column center aligned grid">
+          <div class="column">
+            <div class="ui button" id="add-sec-button" style="text-align: center">
+              <div class="segment">
+                <i class="large user plus icon"></i><br><br>
+              </div>
+              New Secretary
+            </div>
+          </div>
           <div class="column">
             <div class="ui button" id="add-dentist-button" style="text-align: center">
               <div class="segment">
@@ -105,24 +102,6 @@
             </div>
           </div>
         </div>    
-      </div>
-    </div>
-
-    {{!-- modal for delete old appointment --}}
-    <div class="ui tiny modal" id="old-modal">
-      <i class="close icon deny"></i>
-      <div class="header"><i class="recycle icon" style="color: white"></i>&nbsp;&nbsp;Free-up Memory</div>
-      <div class="content">
-        <div class="ui center aligned basic segment">
-          <i class="big exclamation triangle icon"></i>
-        </div>
-        <p style="text-align: center; font-weight: bold">This program was designed to handle 512MB to maintain the free service. We will warn every year to delete past appointments made 5 years ago and beyond. We strongly recommend to continue this action.</p>
-      </div>
-      <div class="actions">
-        <div class="ui right floated labeled icon red button" id="delete-old" style="margin-bottom: 15px;">
-            DELETE
-            <i class="trash icon"></i>
-        </div>
       </div>
     </div>
 
@@ -158,38 +137,6 @@
       </div>
     </div>  
 
-    {{!-- modal for resetting secretary password --}}
-    <div class="ui mini modal" id="reset-secretary-modal">
-      <i class="close icon deny"></i>
-      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Secretary Password</div>
-      <div class="content">
-        <div class="ui form">
-          <div class="required field" id="sec-current-password-field">
-              <label>Current Password</label>
-              <input type="password" name="currentPassword" id="sec-current-password" autocomplete="false" data-password="{{password}}" placeholder="Current Password">
-          </div>
-          <div class="required field" id="sec-new-password-field">
-              <label>New Password</label>
-              <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
-                <input type="password" name="newPassword" id="sec-new-password" autocomplete="false" placeholder="New Password">
-              </div>
-          </div>
-          <div class="required field" id="sec-confirm-new-password-field">
-              <label>Confirm New Password</label>
-              <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
-                <input type="password" name="confirmNewPassword" id="sec-confirm-new-password" autocomplete="false" placeholder="Confirm New Password">
-              </div>
-          </div>
-        </div>
-      </div>
-      <div class="actions">
-        <div class="ui right floated labeled icon green button" id="sec-save-password" style="margin-bottom: 15px;">
-            CONFIRM
-            <i class="checkmark icon"></i>
-        </div>
-      </div>
-    </div>  
-
     {{!-- modal for adding user --}}
     <div class="ui mini modal" id="add-user-modal">
       <i class="close icon deny"></i>
@@ -219,6 +166,38 @@
       <div class="actions">
         <div class="ui right floated labeled icon green button very padded" id="create-user-button" style="margin-bottom: 15px;">
             CREATE
+            <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>
+
+    {{!-- modal for editing user --}}
+    <div class="ui mini modal" id="edit-user-modal">
+      <i class="close icon deny"></i>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Secretary</div>
+      <div class="content">
+        <div class="ui form">
+              <div class="required field" id="edit-username-field-user">
+                  <label>Username</label>
+                  <div class="ui message" id="edit-username-user"></div>
+              </div>
+              <div class="required field" id="edit-password-field-user">
+                  <label>Password</label>
+                  <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="password" id="edit-password-user" autocomplete="false" placeholder="Password">
+                  </div>
+              </div>
+              <div class="required field" id="edit-confirm-password-field-user">
+                  <label>Confirm Password</label>
+                  <div data-tooltip="Password should contain 10 to 32 alphanumeric characters" data-position="right center">
+                    <input type="password" name="confirmPassword" id="edit-confirm-password-user" autocomplete="false" placeholder="Confirm Password">
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="actions">
+        <div class="ui right floated labeled icon green button very padded" id="edit-user-button" style="margin-bottom: 15px">
+            SAVE CHANGES
             <i class="checkmark icon"></i>
         </div>
       </div>
@@ -295,7 +274,7 @@
     {{!-- modal for editing dentist --}}
     <div class="ui mini modal" id="edit-dentist-modal">
       <i class="close icon deny"></i>
-      <div class="header"><i class="user edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Dentist</div>
+      <div class="header"><i class="edit icon" style="color: white"></i>&nbsp;&nbsp;Edit Dentist</div>
       <div class="content">
           <div class="ui form">
               <div class="required field" id="edit-firstname-field-dentist">
@@ -362,14 +341,14 @@
           <h3>Working Hours</h3>
           <span style="font-weight: bold; color: white" id="first-schedule">First Session</span>
           <div class="ui two column center aligned grid" style="padding-top: 20px;">
-            <div class="ui calendar add-schedule" id="start-field">
+            <div class="ui calendar" id="start-field">
               <div class="ui input left icon">
                 <i class="time icon"></i>
                 <input type="text" placeholder="Start Time" id="start" autocomplete="false">
               </div>
             </div>
             <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-            <div class="ui calendar add-schedule" id="end-field">
+            <div class="ui calendar" id="end-field">
               <div class="ui input left icon">
                 <i class="time icon"></i>
                 <input type="text" placeholder="End Time" id="end" autocomplete="false">
@@ -381,14 +360,14 @@
             <div class="content" id="custom-schedule">
               <span style="font-weight: bold;" id="second-schedule">Second Session</span>
               <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
-                <div class="ui calendar add-schedule" id="start-add-field">
+                <div class="ui calendar" id="start-add-field">
                   <div class="ui input left icon">
                     <i class="time icon"></i>
                     <input type="text" placeholder="Start Time" id="start-add" autocomplete="false">
                   </div>
                 </div>
                 <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-                <div class="ui calendar add-schedule" id="end-add-field">
+                <div class="ui calendar" id="end-add-field">
                   <div class="ui input left icon">
                     <i class="time icon"></i>
                     <input type="text" placeholder="End Time" id="end-add" autocomplete="false">
@@ -507,14 +486,14 @@
           </div><br>
           <span style="font-weight: bold; color: white" id="edit-first-schedule">First Session</span>
           <div class="ui two column center aligned grid" style="padding-top: 25px;">
-            <div class="ui calendar edit-schedule" id="edit-start-field" style="padding: 0px">
+            <div class="ui calendar" id="edit-start-field" style="padding: 0px">
               <div class="ui input left icon">
                 <i class="time icon"></i>
                 <input type="text" placeholder="Start Time" id="edit-start" autocomplete="false">
               </div>
             </div>
             <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-            <div class="ui calendar edit-schedule" id="edit-end-field" style="padding: 0px">
+            <div class="ui calendar" id="edit-end-field" style="padding: 0px">
               <div class="ui input left icon">
                 <i class="time icon"></i>
                 <input type="text" placeholder="End Time" id="edit-end" autocomplete="false">
@@ -526,14 +505,14 @@
             <div class="content" id="edit-custom-schedule">
               <span style="font-weight: bold;" id="edit-second-schedule">Second Session</span>
               <div class="ui two column center aligned grid" style="padding-top: 20px; padding-bottom: 10px">
-                <div class="ui calendar edit-schedule" id="edit-start-add-field" style="padding: 0px">
+                <div class="ui calendar" id="edit-start-add-field" style="padding: 0px">
                   <div class="ui input left icon">
                     <i class="time icon"></i>
                     <input type="text" placeholder="Start Time" id="edit-start-add" autocomplete="false">
                   </div>
                 </div>
                 <div class="ui center basic segment" style="margin-top: -4px; font-weight: bold">to</div>
-                <div class="ui calendar edit-schedule" id="edit-end-add-field" style="padding: 0px">
+                <div class="ui calendar" id="edit-end-add-field" style="padding: 0px">
                   <div class="ui input left icon">
                     <i class="time icon"></i>
                     <input type="text" placeholder="End Time" id="edit-end-add" autocomplete="false">
@@ -564,14 +543,14 @@
       <div class="content">
         <div class="ui center aligned basic segment">
           <div class="ui two column center aligned grid">
-            <div class="ui calendar add-unavailable" id="start-date" style="padding: 0px;">
+            <div class="ui calendar" id="start-date" style="padding: 0px;">
               <div class="ui input left icon">
                 <i class="calendar icon"></i>
                 <input type="text" placeholder="Start Date" id="start-date-input" autocomplete="false">
               </div>
             </div>
             <span style="font-weight: bold; margin-top: 10px;">to</span>
-            <div class="ui calendar add-unavailable" id="end-date" style="padding: 0px;">
+            <div class="ui calendar" id="end-date" style="padding: 0px;">
               <div class="ui input left icon">
                 <i class="calendar icon"></i>
                 <input type="text" placeholder="End Date" id="end-date-input" autocomplete="false">

@@ -1,5 +1,5 @@
 var accountID, procedureID, accountUsername, showToast;
-var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show, inputChecker, deleteSchedule;
+var defaultButton, currTab, userType, days = [], passwordChecker, nameChecker, accor_show, inputChecker, deleteSchedule, unavailableDates;
 var editSchedule, editBreaktime, editDay, normal, breaktime, modalReset;
 
 var invalidChar = [".","}","{","&","\"",":","]","[","?",";"];
@@ -13,6 +13,70 @@ $(document).ready(() => {
     $("input[type='text']").focusin(() => {
         inputChecker = false;
     })
+    
+    $(".add-schedule").focusin((event) => {
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        minDate.setMinutes(0);
+        maxDate.setHours(18);
+        maxDate.setMinutes(0);
+        $($(event.target)[0].parentElement.parentElement).calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false,
+            minDate,
+            maxDate,
+            onHide: () => {
+                return false;
+            }   
+        })
+    })
+    $(".add-schedule").focusout(() => {
+        $(".popup.calendar").removeClass("visible");
+        $(".popup.calendar").addClass("hidden");
+    })
+
+    $(".edit-schedule").focusin((event) => {
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setHours(8);
+        minDate.setMinutes(0);
+        maxDate.setHours(18);
+        maxDate.setMinutes(0);
+        $($(event.target)[0].parentElement.parentElement).calendar({
+            type: "time",
+            minTimeGap: 30,
+            ampm: false,
+            minDate,
+            maxDate,
+            onHide: () => {
+                return false;
+            }   
+        })
+    })
+    $(".edit-schedule").focusout(() => {
+        $(".popup.calendar").removeClass("visible");
+        $(".popup.calendar").addClass("hidden");
+    })
+
+    $(".add-unavailable").focusin((event) => {
+        var today = new Date();
+        $($(event.target)[0].parentElement.parentElement).calendar({
+            type: "date",
+            minDate: today,
+            today: true,
+            disabledDates: unavailableDates,
+            onHide: () => {
+                return false;
+            }
+        });
+    })
+    $(".add-unavailable").focusout(() => {
+        $(".popup.calendar").removeClass("visible");
+        $(".popup.calendar").addClass("hidden");
+    })
+    
 
     $("#add-username-dentist").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
@@ -313,7 +377,7 @@ $(document).ready(() => {
 })
 
 // RESETING ADMIN PASSWORD
-$("#save-password").click(() => {
+$("#save-password").click(async () => {
     var done = true;
 
     // ERROR CHECKING
@@ -332,13 +396,13 @@ $("#save-password").click(() => {
             done = false;
         }
     } else {
-        $.ajax({
+        await $.ajax({
             type: "post",
             url: "admin/checkCurrentAdminPassword",
             data: {
                 newPassword: $("#current-password").val().trim()
             },
-            success: (value) => {
+            success: (value) => {                
                 if(!value) {
                     $("#current-password-field").addClass("error");
                     $('body').toast({
@@ -427,7 +491,7 @@ $("#save-password").click(() => {
 })
 
 // RESETING SECRETARY PASSWORD
-$("#sec-save-password").click(() => {
+$("#sec-save-password").click(async () => {
     var done = true;
 
     // ERROR CHECKING
@@ -446,7 +510,7 @@ $("#sec-save-password").click(() => {
             done = false;
         }
     } else {
-        $.ajax({
+        await $.ajax({
             type: "post",
             url: "admin/checkCurrentSecretaryPassword",
             data: {
@@ -1543,14 +1607,6 @@ function updateSchedule() {
 }
 
 // MODALS
-$(".modal").modal({
-    onHidden: () => {
-        $('body').removeClass("dimmed");
-        $('.modals').removeClass("active page transition visible");
-        $('.modals').css({'display':'none'})
-    }
-})
-
 $("#add").click(() => {
     $("#create-modal").modal("show");
 })
@@ -1572,21 +1628,17 @@ $("#add-schedule").click(() => {
             data: {
                 doctorID: $("#schedule-modal").data("id")
             }, success: (value) => {
-                var today = new Date();
                 $("#start-date").calendar('set date', moment().toDate(), true, false);
                 $("#end-date").calendar('set date', moment().toDate(), true, false);
-                $("#start-date").calendar({
+                /*
+                $(".add-unavailable").calendar({
                     type: "date",
                     minDate: today,
                     today: true,
                     disabledDates: value
                 });
-                $("#end-date").calendar({
-                    type: "date",
-                    minDate: today,
-                    today: true,
-                    disabledDates: value
-                });
+                */
+                unavailableDates = value;
                 $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
                 $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
                 $("#add-unavailable-modal").data("lastname", $("#schedule-modal").data("lastname"));
@@ -1609,31 +1661,14 @@ $("#delete-schedule").click(() => {
     $("#remove-schedule-modal").modal("show");
 })
 
-$("#add-sec-button").click(() => {
-    $("#add-user-modal").modal('show');
-    $("#add-dentist-modal").form('clear');
-    $("#procedure-modal").form('clear');
-})
-
 $("#add-dentist-button").click(() => {  
     $("#add-dentist-modal").modal('show');
-    $("#add-user-modal").form('clear');
     $("#procedure-modal").form('clear');
 })
 
 $("#add-procedure-button").click(() => {
     $("#procedure-modal").modal('show');
-    $("#add-user-modal").form('clear');
     $("#add-dentist-modal").form('clear');
-})
-
-$("#add-user-modal").modal({
-    onShow: function() {
-        $("#add-password-user").val("");
-        $("#confirm-password-user").val("");
-        passwordChecker = true;
-        nameChecker = true;
-    }
 })
 
 $("#add-dentist-modal").modal({
@@ -1642,12 +1677,6 @@ $("#add-dentist-modal").modal({
         $("#confirm-password-dentist").val("");
         passwordChecker = true;
         nameChecker = true;
-    }
-})
-
-$("#edit-user-modal").modal({
-    onShow: function() {
-        $("#edit-user-modal").form("clear");
     }
 })
 
@@ -1665,14 +1694,6 @@ $("#edit-procedure-modal").modal({
 
 $("#reset-password-modal").modal({
     onShow: function() {
-        $("#current-password").val("");
-        $("#new-password").val("");
-        $("#confirm-new-password").val("")
-    }
-})
-
-$("#reset-password-modal").modal({
-    onShow: function() {
         passwordChecker = true;   
     }
 })
@@ -1681,40 +1702,21 @@ $("#adding-schedule-modal").modal({
     onShow: () => {
         accor_show = false;
         days = [];
+        /*
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
         minDate.setMinutes(0);
         maxDate.setHours(18);
         maxDate.setMinutes(0);
-        $("#start-field").calendar({
+        $(".add-schedule").calendar({
             type: "time",
             minTimeGap: 30,
             ampm: false,
             minDate,
-            maxDate
+            maxDate    
         })
-        $("#end-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
-        $("#start-add-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
-        $("#end-add-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
+        */
         if(modalReset) {
             $("input[type='text']").val("");
             $(".ui .checkbox").checkbox('uncheck');
@@ -1730,7 +1732,6 @@ $("#adding-schedule-modal").modal({
         }
     },
     onHidden: () => {
-        $("input[type='text']").val("");
         $("#mon").removeClass("active");
         $("#tue").removeClass("active");
         $("#wed").removeClass("active");
@@ -1753,48 +1754,28 @@ $("#adding-schedule-modal").modal({
 $("#editing-schedule-modal").modal({
     onShow: () => {
         deleteSchedule = false;
+        /*
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
         minDate.setMinutes(0);
         maxDate.setHours(18);
         maxDate.setMinutes(0);
-        $("#edit-start-field").calendar({
+        $(".edit-schedule").calendar({
             type: "time",
             minTimeGap: 30,
             ampm: false,
             minDate,
             maxDate
         })
-        $("#edit-end-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
-        $("#edit-start-add-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
-        $("#edit-end-add-field").calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate
-        })
+        */
     },
     onHidden: () => {
-        $('input[type="text"]').val("");
         $(".ui .checkbox").checkbox('uncheck');
         $(".accordion .content").css({
             display: 'none'
         })
-        $("input").val("");
+        $('input[type="text"]').val("");
         accor_show = false;
         if(!deleteSchedule) {
             setDataTable("weekly");
@@ -1816,10 +1797,21 @@ $("#delete-user-modal").modal({
     closable: false
 })
 
+$("#reset-password-modal").modal({
+    onHidden: () => {
+        $(".form").form("clear");
+    }
+})
+
+$("#reset-secretary-modal").modal({
+    onHidden: () => {
+        $(".form").form("clear");
+    }
+})
+
 $("#add-unavailable-modal").modal({
     onShow: () => {
-        $("#start-date-input").val("");
-        $("#end-date-input").val("");
+        $('input[type="text"]').val("");
     },
     onHidden: () => {
         setDataTable("");

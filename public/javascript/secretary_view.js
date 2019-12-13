@@ -1,3 +1,4 @@
+var showToast;
 
 $(document).ready(function () {
 
@@ -269,7 +270,7 @@ function updateTableRows(date) {
         $.post("/secretary/availabilityAll", weekData, function (data) {
             let template = Handlebars.compile(data.htmlData);
             $('#the-body').html(template(data.data));
-            
+
         });
         $('.active.dimmer').toggle();
     } else if (viewType == "week-view") {
@@ -288,6 +289,15 @@ function updateTableRows(date) {
                         $(this).height($(oneSlot).find(".max-cell-count").height());
                     });
 
+                })
+
+                $(".swa").each(function (e) {
+                    var date = $(this).attr("date")
+                    if (isPast(date)) {
+                        $(this).removeClass("hoverable")
+                    } else {
+                        $(this).addClass("hoverable")
+                    }
                 })
 
                 $('.active.dimmer').toggle();
@@ -366,6 +376,15 @@ function updateTableRows(date) {
 
                 })
                 $("#filter-heading-title").html(`Weekly Appointments of ${actualName}`);
+
+                $(".swo").each(function (e) {
+                    var date = $(this).attr("date")
+                    if (isPast(date)) {
+                        $(this).removeClass("hoverable")
+                    } else {
+                        $(this).addClass("hoverable")
+                    }
+                })
 
                 $('.active.dimmer').toggle();
             });
@@ -623,8 +642,7 @@ var addAppointmentModal = function () {
         onApprove: async function () {
             var date = $('#add-date_calendar').calendar('get date')
             var time = $('#add-time_calendar').calendar('get date')
-            console.log(date)
-            console.log(time)
+
             var datetime = {
                 dateInput: date.toString(),
                 timeInput: time.toString(),
@@ -742,7 +760,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'Missing First Name!',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     } else {
@@ -753,7 +771,7 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'First Name should only  contain letters and contain at least 2 characters',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
             isValid = false;
         }
@@ -765,7 +783,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'Missing Last Name',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     } else {
@@ -776,7 +794,7 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'Last Name should only only contain letters.',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
             isValid = false;
         }
@@ -788,7 +806,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one doctor',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     }
@@ -799,7 +817,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one procedure',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     }
@@ -815,7 +833,7 @@ async function addAppointment() {
                 .toast({
                     class: 'error',
                     message: 'Invalid contact number format',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
 
             isValid = false;
@@ -826,7 +844,7 @@ async function addAppointment() {
             .toast({
                 class: 'error',
                 message: 'Missing contact number',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     }
@@ -846,7 +864,7 @@ async function addAppointment() {
                     .toast({
                         class: 'error',
                         message: 'Doctor already booked on date and time',
-                        position: 'bottom right'
+                        position: 'top center'
                     });
 
                 isValid = false;
@@ -887,13 +905,52 @@ async function addAppointment() {
     return isValid
 }
 
-async function openDetailsModal(appointmentID) {
-    if (!isPast()) {
+$('#edit-appointment-date-modal').modal({
+    closable: false,
+    onVisible: function () {
+        unbindShorcuts()
+        $(document).keydown(modalDateHandlerEdit);
+    }
+})
+
+$('#edit-appointment-modal').modal({
+    closable:false,
+    onHidden: function(){
+        initializeShortcutsMain()
+    },
+    onApprove: function () {
+        initializeShortcutsMain()
+    },
+    onShow: function () {
+
+    },
+    onHidden: function () {
+        initializeShortcutsMain()
+    },
+    onHide: function () {
+        initializeShortcutsMain()
+    },
+    onDeny: function () {
+        initializeShortcutsMain()
+    }
+})
+
+
+
+async function openDetailsModal(appointmentID, date) {
+    if (!isPast(date)) {
         //open second modal on first modal buttons
         $('#deleteConfirmation').modal({
-            transition: "fly down"
+            transition: "fly down",
+            onDeny: function(){
+                initializeShortcutsMain()
+            }
         }).modal('attach events', '#edit-appointment-modal #edit-delete-button');
-        $('#edit-appointment-date-modal').modal('show');
+        $('#edit-appointment-date-modal').modal('toggle');
+
+        $("#edit-modal-close-icon").on('click', function(){
+            initializeShortcutsMain()
+        })
 
         $('#edit-cancel-button').unbind('click');
         $('#edit-cancel-button').on('click', function () {
@@ -925,7 +982,6 @@ async function openDetailsModal(appointmentID) {
             initialDate: moment(appointment.date).toDate()
         })
 
-
         $('#edit-appointment-date-modal').modal({
             transition: "fade",
             closable: false,
@@ -951,8 +1007,6 @@ async function openDetailsModal(appointmentID) {
                     fn: "secretary_edit_doctor_field.hbs"
                 }
 
-
-
                 await $.post("/secretary/getAvailableDoctors", datetime, function (data) {
                     let template = Handlebars.compile(data.htmlData);
                     $('#edit-fieldDoctors').html(template(data.data));
@@ -966,33 +1020,39 @@ async function openDetailsModal(appointmentID) {
                 });
             },
             onDeny: function () {
+                initializeShortcutsMain()
 
             },
-            onShow: function () {
-
+            onVisible: function () {
+                unbindShorcuts()
+                $(document).keydown(modalDateHandlerEdit);
             },
             onHidden: function () {
+                $(document).unbind('keydown', modalDateHandlerEdit);
 
             }
         })
+
 
 
         $('#edit-appointment-modal').modal({
             transition: "fade",
             closable: false,
             duration: 500,
-            queue: true,
             onApprove: function () {
-
+                initializeShortcutsMain()
             },
             onShow: function () {
 
             },
             onHidden: function () {
-
+                initializeShortcutsMain()
+            },
+            onHide: function () {
+                initializeShortcutsMain()
             },
             onDeny: function () {
-
+                initializeShortcutsMain()
             }
         }).modal('attach events', '#edit-appointment-date-modal #date-done-edit')
 
@@ -1086,6 +1146,11 @@ async function openDetailsModal(appointmentID) {
             }
         });
 
+    } else {
+        $('body').toast({
+            position: "top center",
+            message: "Past appointments cannot be edited anymore",
+        });
     }
 
 
@@ -1258,7 +1323,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'Missing First Name!',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     } else {
@@ -1269,7 +1334,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'First Name should only contain letters.',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
             isValid = false;
         }
@@ -1281,7 +1346,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'Missing Last Name',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     } else {
@@ -1292,7 +1357,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'Last Name should only contain letters.',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
             isValid = false;
         }
@@ -1304,7 +1369,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one doctor',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     }
@@ -1315,7 +1380,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'An appointment needs at least one procedure',
-                position: 'bottom right'
+                position: 'top center'
             });
         isValid = false;
     }
@@ -1331,7 +1396,7 @@ async function editAppointment(appointmentID, initialDoctors) {
                 .toast({
                     class: 'error',
                     message: 'Invalid contact number format',
-                    position: 'bottom right'
+                    position: 'top center'
                 });
 
             isValid = false;
@@ -1342,7 +1407,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             .toast({
                 class: 'error',
                 message: 'Missing contact details',
-                position: 'bottom right'
+                position: 'top center'
             });
 
         isValid = false;
@@ -1376,7 +1441,7 @@ async function editAppointment(appointmentID, initialDoctors) {
             //             .toast({
             //                 class: 'error',
             //                 message: 'Doctor already booked on date and time',
-            //                 position: 'bottom right'
+            //                 position: 'top center'
             //             });
 
             //         isValid = false;
@@ -1439,7 +1504,9 @@ function initializeShortcutsMain() {
                 $('#today').trigger('click')
                 break;
             case ENTER:
-                $("#add-button").trigger('click');
+                if (!$("#confirm-admin-modal")[0].className.includes("active")) {
+                    $("#add-button").trigger('click');
+                }
                 break;
             case C:
                 $("#standard_calendar").calendar('popup', 'toggle')
@@ -1462,6 +1529,19 @@ function modalDateHandler(e) {
     }
 }
 
+function modalDateHandlerEdit(e) {
+    var ENTER = 13,
+        ESC = 27
+    switch (e.keyCode) {
+        case ENTER:
+            $("#date-done-edit").trigger('click');
+            break;
+        case ESC:
+            $("#date-cancel-edit").trigger('click');
+            break;
+    }
+}
+
 function modalHandler(e) {
     var ENTER = 13,
         ESC = 27
@@ -1476,6 +1556,8 @@ function modalHandler(e) {
     }
 }
 
+
+
 $("#logoutButton").click(function () {
     window.location.href = "/logout";
 })
@@ -1488,34 +1570,106 @@ $("#logoutButton").hover(function () {
 
 function isPast(date) {
     var focusedDate
-    console.log(date)
     if (date === undefined) {
         focusedDate = moment($("#standard_calendar").calendar('get date'))
-    }else{
+    } else {
         focusedDate = moment(date)
-        
+
     }
     focusDate = focusedDate.add(1, 'd')
-
+    //fix
     var now = moment()
-    if (focusedDate < now) return true;
+    if (focusedDate <= now) return true;
     return false;
 }
 
-function setup() {
+$("#reset-button-admin").click(() => {
+    var done = true;
+    if ($("#admin-input").val() == "") {
+        $("#admin-input-field").addClass("error");
+        if (!showToast) {
+            showToast = true;
+            $('body').toast({
+                class: "error",
+                position: "top center",
+                message: "Please input admin password",
+                onHidden: () => {
+                    showToast = false;
+                }
+            });
+            done = false;
+        }
+    } else {
+        $.ajax({
+            type: "post",
+            url: "admin/checkCurrentAdminPassword",
+            data: {
+                newPassword: $("#admin-input").val().trim()
+            },
+            success: (value) => {
+                if (!value) {
+                    if (!showToast) {
+                        showToast = true;
+                        $("#admin-input-field").addClass("error");
+                        $('body').toast({
+                            class: "error",
+                            position: "top center",
+                            message: "Incorrect admin password",
+                            onHidden: () => {
+                                showToast = false;
+                            }
+                        });
+                        done = false;
+                    }
+                } else {
+                    if (done) {
+                        deleteOld();
+                    }
+                }
+            }
+        })
+    }
+})
+
+$(document).keypress((event) => {
+    if (event.keyCode == 13) {
+        if ($("#confirm-admin-modal")[0].className.includes("active")) {
+            $("#reset-button-admin").click();
+        }
+    }
+})
+
+$("#delete-old").click(() => {
+    $("#confirm-admin-modal").modal("show");
+})
+
+function deleteOld() {
     $.ajax({
-        type: "get",
-        url: "secretary/isXYearsApp",
+        type: "post",
+        url: "secretary/deleteXYearsApp",
         success: (value) => {
-            if(value) {
-                $('body').toast({
-                    class: 'inverted yellow',
-                    showIcon: false,
-                    position: 'bottom right',
-                    displayTime: 0,
-                    closeIcon: true,
-                    message: 'This program was designed to handle 512MB to maintain the free service. We will warn every 5 years to delete 5 years worth of appointments. We strongly recommend to continue this action. Please consult with admin on this.'
-                });
+            $("#old-modal").modal("hide");
+            $("#confirm-admin-modal").modal("hide");
+            $('body').toast({
+                class: "success",
+                position: "top center",
+                message: "Old appointments successfully deleted"
+            })
+        }
+    })
+}
+
+function setup() {
+    showToast = false;
+    $.ajax({
+        type: "post",
+        url: "secretary/isXYearsApp",
+        data: {
+            monthToday: moment().toDate()
+        },
+        success: (value) => {
+            if (value) {
+                $("#old-modal").modal("show");
             }
         }
     })
