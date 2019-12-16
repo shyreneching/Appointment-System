@@ -12,71 +12,7 @@ $(document).ready(() => {
     $(".ui .item").on("click", switchPage);
     $("input[type='text']").focusin(() => {
         inputChecker = false;
-    })
-    
-    $(".add-schedule").focusin((event) => {
-        var minDate = new Date();
-        var maxDate = new Date();
-        minDate.setHours(8);
-        minDate.setMinutes(0);
-        maxDate.setHours(18);
-        maxDate.setMinutes(0);
-        $($(event.target)[0].parentElement.parentElement).calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate,
-            onHide: () => {
-                return false;
-            }   
-        })
-    })
-    $(".add-schedule").focusout(() => {
-        $(".popup.calendar").removeClass("visible");
-        $(".popup.calendar").addClass("hidden");
-    })
-
-    $(".edit-schedule").focusin((event) => {
-        var minDate = new Date();
-        var maxDate = new Date();
-        minDate.setHours(8);
-        minDate.setMinutes(0);
-        maxDate.setHours(18);
-        maxDate.setMinutes(0);
-        $($(event.target)[0].parentElement.parentElement).calendar({
-            type: "time",
-            minTimeGap: 30,
-            ampm: false,
-            minDate,
-            maxDate,
-            onHide: () => {
-                return false;
-            }   
-        })
-    })
-    $(".edit-schedule").focusout(() => {
-        $(".popup.calendar").removeClass("visible");
-        $(".popup.calendar").addClass("hidden");
-    })
-
-    $(".add-unavailable").focusin((event) => {
-        var today = new Date();
-        $($(event.target)[0].parentElement.parentElement).calendar({
-            type: "date",
-            minDate: today,
-            today: true,
-            disabledDates: unavailableDates,
-            onHide: () => {
-                return false;
-            }
-        });
-    })
-    $(".add-unavailable").focusout(() => {
-        $(".popup.calendar").removeClass("visible");
-        $(".popup.calendar").addClass("hidden");
-    })
-    
+    })    
 
     $("#add-username-dentist").focusout(() => {
         var check = /^[0-9a-zA-Z]+$/;
@@ -623,7 +559,7 @@ $("#create-dentist-button").click(() => {
         });
         done = false;
     } else {
-        var checkfirst = /^[a-zA-Z]+$/;
+        var checkfirst = /^[a-z A-Z]+$/;
         if($("#add-firstname-dentist").val().length < 2) {
             $("#firstname-dentist-field").addClass("error");
             $('body').toast({
@@ -644,7 +580,7 @@ $("#create-dentist-button").click(() => {
             nameChecker = true;
         }
 
-        var checklast = /^[a-zA-Z.\-_]+$/;
+        var checklast = /^[a-z A-Z.\-_]+$/;
         if($("#add-lastname-dentist").val().length < 2) {
             $("#lastname-dentist-field").addClass("error");
             $('body').toast({
@@ -1628,16 +1564,15 @@ $("#add-schedule").click(() => {
             data: {
                 doctorID: $("#schedule-modal").data("id")
             }, success: (value) => {
+                var today = new Date();
                 $("#start-date").calendar('set date', moment().toDate(), true, false);
                 $("#end-date").calendar('set date', moment().toDate(), true, false);
-                /*
                 $(".add-unavailable").calendar({
                     type: "date",
                     minDate: today,
                     today: true,
                     disabledDates: value
                 });
-                */
                 unavailableDates = value;
                 $("#add-unavailable-modal").data("id", $("#schedule-modal").data("id"));
                 $("#add-unavailable-modal").data("firstname", $("#schedule-modal").data("firstname"));
@@ -1702,7 +1637,6 @@ $("#adding-schedule-modal").modal({
     onShow: () => {
         accor_show = false;
         days = [];
-        /*
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
@@ -1716,7 +1650,6 @@ $("#adding-schedule-modal").modal({
             minDate,
             maxDate    
         })
-        */
         if(modalReset) {
             $("input[type='text']").val("");
             $(".ui .checkbox").checkbox('uncheck');
@@ -1754,7 +1687,6 @@ $("#adding-schedule-modal").modal({
 $("#editing-schedule-modal").modal({
     onShow: () => {
         deleteSchedule = false;
-        /*
         var minDate = new Date();
         var maxDate = new Date();
         minDate.setHours(8);
@@ -1768,7 +1700,6 @@ $("#editing-schedule-modal").modal({
             minDate,
             maxDate
         })
-        */
     },
     onHidden: () => {
         $(".ui .checkbox").checkbox('uncheck');
@@ -1852,7 +1783,14 @@ function setup() {
     currTab = "Dentist";
     $(".ui .item:contains('Dentist')").addClass("active");
     $(".ui .item:contains('Dentist')").css({'background-color':'#ebebeb'});
-    exportData();
+    $.ajax({
+        type: "get",
+        url: "admin/exportData",
+        success: (value) => {
+            $("#downloadFile").attr("href","data:text/csv;charset=utf-8," + encodeURI(value));
+            $("#downloadFile").attr("download","Appointment.csv");
+        }
+    })
 }
 
 function resizePage() {

@@ -1,3 +1,6 @@
+// current dentist
+var current;
+
 // resize window
 var oldWidth, newWidth;
 var startOfWeek, endOfWeek;
@@ -6,11 +9,14 @@ window.onresize = () => {
     newWidth = $(window).width();
     resizePage();
 };
-window.onload = () => {
+window.onload = async () => {
     $('#up-button').fadeOut({
         duration: 0
     }); 
     resizePage();
+    current = await $.get("dentist/getCurrentDentist", function (data) {
+        return data;
+    })
 }
 
 $(document).ready(() => {
@@ -82,7 +88,7 @@ $(document).ready(() => {
                 data: {
                     appID: $(temp).data("id")
                 },
-                success: (value) => {
+                success: async (value) => {
                     $("#title").text(value.firstname + " " + value.lastname);
                     $("#appDate").text(moment(Date.parse(value.date)).format("dddd, D MMM YYYY"));
                     $("#appTime").text("from " + moment(value.time, "h:mm A").format("h:mm A") + " to " + moment(value.time, "h:mm A").add(30, "minutes").format("h:mm A"));
@@ -95,6 +101,20 @@ $(document).ready(() => {
                     }
                     $("#procedure-list").text(list);
                     $("#contact-no").text(value.patientcontact);
+                    var doctors = "";
+                    if(value.doctor.length == 1) {
+                        $("#doctor-list").text("None");
+                    } else {
+                        for(var i = 0; i < value.doctor.length; i++) {
+                            if(current._id != value.doctor[i]._id) {
+                                doctors += "Dr. " + value.doctor[i].firstname + " " + value.doctor[i].lastname;
+                                if(i < value.doctor.length - 1) {
+                                    doctors += ", ";
+                                }
+                            }
+                        }
+                        $("#doctor-list").text(doctors);
+                    }
                     if(value.notes == "") {
                         $("#notes").text("None");
                     } else {
@@ -375,6 +395,18 @@ $("#logoutButton").hover(function () {
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('ifNotEquals', function(arg1, options) {
+    return (arg1 != current._id) ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('commafyDoctor', function(index) {
+    if (index > 1){
+        return new Handlebars.SafeString(", ");
+    } else {
+        return new Handlebars.SafeString("");
+    }
 });
 
 Handlebars.registerHelper('getEndTime', function(arg1, arg2) {

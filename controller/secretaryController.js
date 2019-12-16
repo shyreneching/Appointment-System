@@ -1208,14 +1208,14 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
             && !moment.utc(slots2Military[i], "HH:mm").isBetween(moment.utc(breakTime[dayOfWeek][0], "HH:mm"), moment.utc(breakTime[dayOfWeek][1], "HH:mm"), null, "[]"))) {
             availability2 = "unavailable"
         }
-
+        if(slots1[i] === undefined) availability1 = "undef"
+        if(slots2[i] === undefined) availability2 = "undef"
         row.push({
             timeSlot1: slots1[i],
             timeSlot2: slots2[i],
             available1: availability1,
             available2: availability2
         })
-
     }
 
     var displayDate = moment(date).format("MMMM DD YYYY")
@@ -1226,6 +1226,8 @@ router.post("/availabilityTime", urlencoder, async (req, res) => {
         displayDate: displayDate,
         date: date
     }
+
+    
 
     res.send({
         htmlData: availability_modalhbs,

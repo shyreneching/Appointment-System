@@ -233,8 +233,30 @@ router.post("/editProcess", async (req, res) => {
     }
 })
 
-router.post("/deleteProcess", (req, res) => {
-    Process.delete(req.body.processID);
+router.post("/deleteProcess", async (req, res) => {
+    let processID = req.body.processID;
+    let apps = await Appointment.getAll();
+        for (var i = 0; i < apps.length; i++) {
+            let appID = apps[i]._id;
+            var ary = apps[i].process;
+            ary.pull(processID)
+            if(ary.length == 0){
+                await Appointment.delete(appID);
+            }else{
+                let temp = new Appointment({
+                    firstname: apps[i].firstname,
+                    lastname: apps[i].lastname,
+                    patientcontact: apps[i].patientcontact,
+                    process: ary,
+                    notes: apps[i].notes,
+                    time: apps[i].time,
+                    date: apps[i].date,
+                    doctor: apps[i].doctor
+                });
+                await Appointment.updateAppointment(apps, temp);
+            }
+        }
+    Process.delete(processID);
     res.send({ message: true });
 })
 
@@ -728,9 +750,11 @@ router.get("/exportData", async (req, res) => {
         csv += row.notes + ",";
         csv += row.date + ",";
         csv += row.time + ",";
-        for(var j = 0; j < row.doctor.length; j++) {
-            var doc = await Doctor.findOne({_id: row.doctor[j]._id});
-            csv += doc.firstname + " " + doc.lastname + " - ";
+        if(row.doctor.length > 0) {
+            for(var k = 0; k < row.doctor.length; k++) {
+                var doc = await Doctor.findOne({_id: row.doctor[k]._id});
+                csv += doc.firstname + " " + doc.lastname + " - ";
+            }
         }
         csv = csv.substring(0, csv.length - 3);
         csv += ",";

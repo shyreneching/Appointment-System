@@ -88,6 +88,8 @@ Handlebars.registerHelper('isAvailableDayColor', function(availability) {
         return new Handlebars.SafeString("yellow");
     }else if(availability === "no more slots"){
         return new Handlebars.SafeString("red");
+    }else if(availability === "undef"){
+        return new Handlebars.SafeString("");
     }else{
         return new Handlebars.SafeString("black")
     }

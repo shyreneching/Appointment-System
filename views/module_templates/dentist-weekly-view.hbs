@@ -49,6 +49,11 @@
                     {{patientcontact}} <br>
                     {{#each process}}
                         {{commafy @index}}{{processname}}
+                    {{/each}} <br>
+                    {{#each doctor}}
+                        {{#ifNotEquals _id}}
+                            {{commafyDoctor @index}}Dr. {{firstname}} {{lastname}}
+                        {{/ifNotEquals}}
                     {{/each}}
                 </div>
             </td>

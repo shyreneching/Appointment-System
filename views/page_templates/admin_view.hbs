@@ -228,10 +228,10 @@
     <div class="ui mini modal" id="delete-user-modal">
       <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete User</div>
       <div class="content">
-          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span><br><br>
+          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-user" style="font-size: 15px; font-weight: bold;"></span><span style="font-size: 15px;">?</span><br><br>
           <div style="display: flex;" id="warning">
             <i class="info icon" style="color: red"></i>&nbsp;
-            <span id="delete-warning" style="color: red; font-size: 12px">All information and past appointments of the doctors will be deleted</span>
+            <span id="delete-warning" style="color: red; font-size: 13px">All appointments by this dentist will be deleted.</span>
           </div>
       </div>
       <div class="actions">
@@ -636,7 +636,11 @@
     <div class="ui mini modal" id="delete-procedure-modal">
       <div class="header"><i class="trash icon" style="color: white"></i>&nbsp;&nbsp;Delete Procedure</div>
       <div class="content">
-          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span> <span style="font-size: 15px;">?</span>
+          <span style="font-size: 15px;">Are you sure you want to delete</span> <span id="modal-text-delete-procedure" style="font-size: 15px; font-weight: bold;"></span><span style="font-size: 15px;">?</span><br><br>
+          <div style="display: flex;" id="warning">
+            <i class="info icon" style="color: red"></i>&nbsp;
+            <span style="color: red; font-size: 13px">All appointments with this procedure will be deleted.</span>
+          </div>
       </div>
       <div class="actions">
         <div class="ui right floated labeled icon red button" id="delete-procedure-button" style="margin-bottom: 15px;">

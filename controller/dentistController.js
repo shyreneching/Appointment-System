@@ -93,4 +93,10 @@ router.post("/weekly_view", urlencoder, async function (request, result) {
 
 });
 
+router.get("/getCurrentDentist", async (req, res) => {
+    var account = await Account.findOne({username: req.session.doctorUsername});
+    var doctor = await Doctor.findOne({_id: account.doctorID});
+    res.send(doctor);
+})
+
 module.exports = router;
